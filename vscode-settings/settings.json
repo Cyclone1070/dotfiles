@@ -1,0 +1,134 @@
+{
+	"editor.fontSize": 15,
+	"security.workspace.trust.untrustedFiles": "open",
+	"liveServer.settings.donotShowInfoMsg": true,
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"editor.acceptSuggestionOnCommitCharacter": false,
+	"prettier.tabWidth": 4,
+	"workbench.iconTheme": "material-icon-theme",
+	"workbench.colorCustomizations": {
+		"[orange in black by jalal], [One Dark Pro Darker]": {
+			// All kinds of borders
+			"editor.lineHighlightBorder": "#ff8c008e",
+			"editorGroup.border": "#ff5500",
+			"panel.border": "#ff5500",
+			"sideBar.border": "#ff5500",
+			"activityBar.border": "#ff5500",
+			"titleBar.border": "#ff5500",
+			"statusBar.border": "#ff5500",
+			"tab.border": "#ff5500",
+			"tab.hoverBackground": "#ffbf0097",
+			"tab.activeBorder": "#2e2e2e",
+			"tab.unfocusedActiveBorder": "#2e2e2e",
+			"editorGroupHeader.tabsBorder": "#ff5500",
+			// Bracket highlight
+			"editorBracketMatch.border": "#008800",
+			"editorBracketMatch.background": "#00FF0030",
+			// Adjust theme color
+			"editor.background": "#1a1a1a",
+			"sideBar.background": "#1a1a1a",
+			"activityBar.background": "#1a1a1a",
+			"editorGroupHeader.tabsBackground": "#1a1a1a",
+			"tab.activeBackground": "#1a1a1a",
+			"tab.unfocusedActiveBackground": "#1a1a1a",
+			"tab.inactiveBackground": "#1a1a1a",
+			"tab.unfocusedInactiveBackground": "#1a1a1a",
+			"terminal.background": "#1a1a1a"
+		}
+	},
+	"editor.tokenColorCustomizations": {
+		"[orange in black by jalal]": {
+			"functions": "#ff4800",
+			"textMateRules": [
+				{
+					"scope": "support.class.component",
+					"settings": {
+						"foreground": "#F6BE00"
+					}
+				}
+			]
+		}
+	},
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit"
+	},
+	"liveServer.settings.ChromeDebuggingAttachment": false,
+	"emmet.includeLanguages": {
+		"javascript": "javascriptreact"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"explorer.confirmDragAndDrop": false,
+	"explorer.confirmDelete": false,
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"prettier.printWidth": 120,
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"editor.accessibilitySupport": "off",
+	"editor.fontLigatures": false,
+	"git.openRepositoryInParentFolders": "always",
+	"editor.acceptSuggestionOnEnter": "off",
+	"workbench.colorTheme": "One Dark Pro Darker",
+	"github.copilot.editor.enableAutoCompletions": true,
+	"github.copilot.advanced": {},
+	"workbench.tree.indent": 16,
+	"editor.fontFamily": "ComicShannsMono Nerd Font Mono, 'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace",
+	"apc.font.family": "ComicShannsMono Nerd Font Mono",
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"editor.detectIndentation": false,
+	"editor.occurrencesHighlight": "off",
+	"extensions.experimental.affinity": {
+		"asvetliakov.vscode-neovim": 1
+	},
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.black-formatter"
+	},
+	"vscode-neovim.neovimInitVimPaths.darwin": "~/.config/nvimvscode/init.lua",
+	"vscode-neovim.compositeKeys": {
+		"jk": {
+			"command": "vscode-neovim.escape"
+		},
+		"kj": {
+			"command": "vscode-neovim.escape"
+		},
+		"JK": {
+			"command": "vscode-neovim.escape"
+		},
+		"KJ": {
+			"command": "vscode-neovim.escape"
+		}
+	},
+	"vscode-neovim.compositeTimeout": 150,
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"editor.wordWrap": "on",
+	"prettier.useTabs": true,
+	"editor.insertSpaces": false,
+	"editor.scrollBeyondLastLine": false,
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		".*": true,
+		"node_modules": true,
+	},
+}
