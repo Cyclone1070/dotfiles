@@ -14,8 +14,8 @@
 	"editor.acceptSuggestionOnCommitCharacter": false,
 	"prettier.tabWidth": 4,
 	"workbench.iconTheme": "material-icon-theme",
-	"workbench.colorCustomizations": {
-		"[orange in black by jalal], [One Dark Pro Darker]": {
+/* 	"workbench.colorCustomizations": {
+		"[orange in black by jalal] ": {
 			// All kinds of borders
 			"editor.lineHighlightBorder": "#ff8c008e",
 			"editorGroup.border": "#ff5500",
@@ -26,9 +26,8 @@
 			"statusBar.border": "#ff5500",
 			"tab.border": "#ff5500",
 			"tab.hoverBackground": "#ffbf0097",
-			"tab.activeBorder": "#2e2e2e",
-			"tab.unfocusedActiveBorder": "#2e2e2e",
-			"editorGroupHeader.tabsBorder": "#ff5500",
+			"tab.activeBorder": "#1A1A1A",
+			"tab.unfocusedActiveBorder": "#1A1A1A",
 			// Bracket highlight
 			"editorBracketMatch.border": "#008800",
 			"editorBracketMatch.background": "#00FF0030",
@@ -56,9 +55,10 @@
 				}
 			]
 		}
-	},
+	}, */
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit"
+		"source.fixAll.eslint": "explicit",
+		"source.organizeImports": "explicit",
 	},
 	"liveServer.settings.ChromeDebuggingAttachment": false,
 	"emmet.includeLanguages": {
@@ -81,7 +81,6 @@
 	"editor.fontLigatures": false,
 	"git.openRepositoryInParentFolders": "always",
 	"editor.acceptSuggestionOnEnter": "off",
-	"workbench.colorTheme": "One Dark Pro Darker",
 	"github.copilot.editor.enableAutoCompletions": true,
 	"github.copilot.advanced": {},
 	"workbench.tree.indent": 16,
@@ -94,9 +93,6 @@
 	"editor.occurrencesHighlight": "off",
 	"extensions.experimental.affinity": {
 		"asvetliakov.vscode-neovim": 1
-	},
-	"[python]": {
-		"editor.defaultFormatter": "ms-python.black-formatter"
 	},
 	"vscode-neovim.neovimInitVimPaths.darwin": "~/.config/nvimvscode/init.lua",
 	"vscode-neovim.compositeKeys": {
@@ -129,6 +125,14 @@
 		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
 		".*": true,
-		"node_modules": true,
+		"node_modules": true
 	},
+	"editor.foldingImportsByDefault": true,
+	"typescript.inlayHints.variableTypes.enabled": true,
+	"javascript.inlayHints.variableTypes.enabled": true,
+	"files.associations": {
+		"*.svg": "html"
+	},
+	"window.commandCenter": false,
+	"workbench.colorTheme": "Atom One Dark",
 }
