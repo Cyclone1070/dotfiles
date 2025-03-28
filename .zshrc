@@ -50,45 +50,64 @@ function qcd() {
 M_COPY_FILES=()
 M_MOVE_FILES=()
 
-# mark copy to mark a file for copying
+# Function to mark files for copying
 function mcp {
-    if [ -e "$1" ]; then
-        M_COPY_FILES+=("$(realpath "$1")")
-        echo "Marked $1 for copying"
-    else
-        echo "File $1 does not exist"
-    fi
+    for file in "$@"; do
+        if [ -e "$file" ]; then
+            M_COPY_FILES+=("$(realpath "$file")")
+            echo "Marked $file for copying"
+        else
+            echo "File $file does not exist"
+        fi
+    done
 }
 
-# mark move to mark a file for moving
+# Function to mark files for moving
 function mmv {
-    if [ -e "$1" ]; then
-        M_MOVE_FILES+=("$(realpath "$1")")
-        echo "Marked $1 for moving"
-    else
-        echo "File $1 does not exist"
-    fi
+    for file in "$@"; do
+        if [ -e "$file" ]; then
+            M_MOVE_FILES+=("$(realpath "$file")")
+            echo "Marked $file for moving"
+        else
+            echo "File $file does not exist"
+        fi
+    done
 }
-# Function to paste the marked files to the specified directory (or current directory if not specified)
-function mp {
-    local dest_dir="${1:-.}"  # Default to current directory if no argument is provided
 
-    if [ ! -d "$dest_dir" ]; then
-        echo "Destination directory $dest_dir does not exist"
-        return 1
+# Function to paste the marked files to the specified directories (or current directory if not specified)
+function mp {
+    local dest_dirs=("$@")  # Get all specified directories
+
+    # Default to current directory if no directories are provided
+    if [ ${#dest_dirs[@]} -eq 0 ]; then
+        dest_dirs=(".")
     fi
 
+    # Check if each destination directory exists
+    for dest_dir in "${dest_dirs[@]}"; do
+        if [ ! -d "$dest_dir" ]; then
+            echo "Destination directory $dest_dir does not exist"
+            return 1
+        fi
+    done
+
+    # Move files to each specified directory
     if [ ${#M_MOVE_FILES[@]} -gt 0 ]; then
         for file in "${M_MOVE_FILES[@]}"; do
-            mv "$file" "$dest_dir"
-            echo "Moved $file to $dest_dir"
+            for dest_dir in "${dest_dirs[@]}"; do
+                mv "$file" "$dest_dir"
+                echo "Moved $file to $dest_dir"
+            done
         done
         # Clear the array after moving files
         M_MOVE_FILES=()
     elif [ ${#M_COPY_FILES[@]} -gt 0 ]; then
+        # Copy files to each specified directory
         for file in "${M_COPY_FILES[@]}"; do
-            cp "$file" "$dest_dir"
-            echo "Copied $file to $dest_dir"
+            for dest_dir in "${dest_dirs[@]}"; do
+                cp "$file" "$dest_dir"
+                echo "Copied $file to $dest_dir"
+            done
         done
         # Clear the array after copying files
         M_COPY_FILES=()
