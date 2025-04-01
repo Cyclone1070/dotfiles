@@ -1,0 +1,578 @@
+{
+  "validatedData": {
+    "https://www.torn.com": {
+      "settings": {
+        "enabled": true
+      },
+      "shortcuts": {
+        "5": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "c": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "f": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "g": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "i": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "m": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "r": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "w": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        }
+      }
+    },
+    "https://www.torn.com/companies.php": {
+      "settings": {
+        "enabled": true
+      },
+      "shortcuts": {
+        "e": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "v": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        }
+      }
+    },
+    "https://www.torn.com/factions.php": {
+      "settings": {
+        "enabled": true
+      },
+      "shortcuts": {
+        "b": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "x": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        }
+      }
+    },
+    "https://www.torn.com/gym.php": {
+      "settings": {
+        "enabled": true
+      },
+      "shortcuts": {
+        "1": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "2": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "3": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "4": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        }
+      }
+    },
+    "https://www.torn.com/item.php": {
+      "settings": {
+        "enabled": true
+      },
+      "shortcuts": {
+        "b": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "x": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        }
+      }
+    },
+    "https://www.torn.com/loader.php": {
+      "settings": {
+        "enabled": true
+      },
+      "shortcuts": {
+        "j": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        },
+        "o": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        }
+      }
+    },
+    "https://www.torn.com/properties.php": {
+      "settings": {
+        "enabled": true
+      },
+      "shortcuts": {
+        "t": {
+          "elementData": {
+            "action": "click",
+            "properties": {
+              "clickOnlyWhenInViewport": false,
+              "clickOnlyWhenVisible": false
+            },
+            "rootNodePath": [],
+            "selectors": {
+              "ariaLabel": "",
+              "attributeAndClassSelector": "",
+              "cssSelector": "#nav-travel_agency .desktopLink___SG2RU",
+              "nthChildSelector": "",
+              "textContent": "",
+              "title": "",
+              "xpathSelector": ""
+            }
+          },
+          "enabled": true,
+          "name": "Single Element",
+          "properties": {
+            "selectionType": "singleElement",
+            "urlType": "domainAndAllPages"
+          }
+        }
+      }
+    }
+  }
+}
