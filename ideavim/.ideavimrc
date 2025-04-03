@@ -44,3 +44,15 @@ nnoremap H 5h
 
 " Space to hover
 nmap <space> <Action>(ShowHoverInfo)
+
+" Move line up with Alt+k in normal mode
+nnoremap <A-k> :m .-2<CR>==
+
+" Move line down with Alt+j in normal mode
+nnoremap <A-j> :m .+1<CR>==
+
+" Move selected lines up with Alt+k in visual mode
+vnoremap <A-k> :m '<-2<CR>gv=gv
+
+" Move selected lines down with Alt+j in visual mode
+vnoremap <A-j> :m '>+1<CR>gv=gv
