@@ -1,155 +1,163 @@
 // Place your key bindings in this file to override the defaultsauto[]
 [
-    {
-        "key": "up",
-        "command": "-selectPrevSuggestion",
-        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
-    },
-    {
-        "key": "down",
-        "command": "-selectNextSuggestion",
-        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
-    },
-    {
-        "key": "shift+cmd+w",
-        "command": "-workbench.action.closeWindow"
-    },
-    {
-        "key": "cmd+m cmd+w",
-        "command": "editor.emmet.action.wrapWithAbbreviation"
-    },
-    {
-        "key": "cmd+m cmd+backspace",
-        "command": "editor.emmet.action.removeTag"
-    },
-    {
-        "key": "cmd+m cmd+m",
-        "command": "editor.emmet.action.matchTag"
-    },
-    {
-        "key": "cmd+m cmd+/",
-        "command": "editor.emmet.action.toggleComment"
-    },
-    {
-        "key": "cmd+/",
-        "command": "editor.action.blockComment",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "shift+alt+a",
-        "command": "-editor.action.blockComment",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "shift+cmd+/",
-        "command": "editor.action.commentLine",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "cmd+/",
-        "command": "-editor.action.commentLine",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "cmd+/",
-        "command": "toggleExplainMode",
-        "when": "suggestWidgetVisible"
-    },
-    {
-        "key": "cmd+/",
-        "command": "-toggleExplainMode",
-        "when": "suggestWidgetVisible"
-    },
-    {
-        "key": "cmd+t cmd+p",
-        "command": "editor.action.peekTypeDefinition"
-    },
-    {
-        "key": "cmd+n",
-        "command": "explorer.newFile"
-    },
-    {
-        "key": "cmd+n",
-        "command": "-workbench.action.files.newUntitledFile"
-    },
 	{
-        "key": "alt+cmd+l",
-        "command": "editor.action.formatDocument.none",
-        "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
-    },
-    {
-        "key": "shift+alt+f",
-        "command": "-editor.action.formatDocument.none",
-        "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
-    },
-    {
-        "key": "alt+cmd+l",
-        "command": "editor.action.formatDocument",
-        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
-    },
-    {
-        "key": "shift+alt+f",
-        "command": "-editor.action.formatDocument",
-        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
-    },
-    // neovim moving in insert
-    {
-        "command": "vscode-neovim.send",
-        // the key sequence to activate the binding
-        "key": "ctrl+k",
-        // the input to send to Neovim
-        "args": "<C-k>"
-    },
-    {
-        "command": "vscode-neovim.send",
-        // the key sequence to activate the binding
-        "key": "ctrl+j",
-        // the input to send to Neovim
-        "args": "<C-j>"
-    },
-    {
-        "command": "vscode-neovim.send",
-        // the key sequence to activate the binding
-        "key": "ctrl+h",
-        // the input to send to Neovim
-        "args": "<C-h>"
-    },
-    {
-        "command": "vscode-neovim.send",
-        // the key sequence to activate the binding
-        "key": "ctrl+l",
-        // the input to send to Neovim
-        "args": "<C-l>"
-    },
-    // neovim explorer
-    { "key": "ctrl+n", "command": "workbench.view.explorer", "when": "!explorerViewletVisible" },
-    { "key": "ctrl+n", "command": "workbench.action.toggleSidebarVisibility", "when": "explorerViewletVisible" },
-    // neovim swap lines
-    { "key": "alt+k", "command": "editor.action.moveLinesUpAction" },
-    { "key": "alt+j", "command": "editor.action.moveLinesDownAction" },
-    // neovim surround
-    {
-        "key": "cmd+'",
-        "command": "editor.action.insertSnippet",
-        "when": "editorTextFocus",
-        "args": {
-            "snippet": "\"${TM_SELECTED_TEXT}\""
-        }
-    },
-    {
-        "key": "cmd+[",
-        "command": "editor.action.insertSnippet",
-        "when": "editorTextFocus",
-        "args": {
-            "snippet": "{${TM_SELECTED_TEXT}}"
-        }
-    },
-    // enable cmd outside of text buffer
-    {
-        "command": "vscode-neovim.send",
-        // the key sequence to activate the binding
-        "key": ";",
-        // the input to send to Neovim
-        "args": ";"
-    },
+		"key": "up",
+		"command": "-selectPrevSuggestion",
+		"when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
+	},
+	{
+		"key": "down",
+		"command": "-selectNextSuggestion",
+		"when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
+	},
+	{
+		"key": "shift+cmd+w",
+		"command": "-workbench.action.closeWindow"
+	},
+	{
+		"key": "cmd+m cmd+w",
+		"command": "editor.emmet.action.wrapWithAbbreviation"
+	},
+	{
+		"key": "cmd+m cmd+backspace",
+		"command": "editor.emmet.action.removeTag"
+	},
+	{
+		"key": "cmd+m cmd+m",
+		"command": "editor.emmet.action.matchTag"
+	},
+	{
+		"key": "cmd+m cmd+/",
+		"command": "editor.emmet.action.toggleComment"
+	},
+	{
+		"key": "cmd+/",
+		"command": "editor.action.blockComment",
+		"when": "editorTextFocus && !editorReadonly"
+	},
+	{
+		"key": "shift+alt+a",
+		"command": "-editor.action.blockComment",
+		"when": "editorTextFocus && !editorReadonly"
+	},
+	{
+		"key": "shift+cmd+/",
+		"command": "editor.action.commentLine",
+		"when": "editorTextFocus && !editorReadonly"
+	},
+	{
+		"key": "cmd+/",
+		"command": "-editor.action.commentLine",
+		"when": "editorTextFocus && !editorReadonly"
+	},
+	{
+		"key": "cmd+/",
+		"command": "toggleExplainMode",
+		"when": "suggestWidgetVisible"
+	},
+	{
+		"key": "cmd+/",
+		"command": "-toggleExplainMode",
+		"when": "suggestWidgetVisible"
+	},
+	{
+		"key": "cmd+t cmd+p",
+		"command": "editor.action.peekTypeDefinition"
+	},
+	{
+		"key": "cmd+n",
+		"command": "explorer.newFile"
+	},
+	{
+		"key": "cmd+n",
+		"command": "-workbench.action.files.newUntitledFile"
+	},
+	{
+		"key": "alt+cmd+l",
+		"command": "editor.action.formatDocument.none",
+		"when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+	},
+	{
+		"key": "shift+alt+f",
+		"command": "-editor.action.formatDocument.none",
+		"when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+	},
+	{
+		"key": "alt+cmd+l",
+		"command": "editor.action.formatDocument",
+		"when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+	},
+	{
+		"key": "shift+alt+f",
+		"command": "-editor.action.formatDocument",
+		"when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+	},
+	// neovim moving in insert
+	{
+		"command": "vscode-neovim.send",
+		// the key sequence to activate the binding
+		"key": "ctrl+k",
+		// the input to send to Neovim
+		"args": "<C-k>"
+	},
+	{
+		"command": "vscode-neovim.send",
+		// the key sequence to activate the binding
+		"key": "ctrl+j",
+		// the input to send to Neovim
+		"args": "<C-j>"
+	},
+	{
+		"command": "vscode-neovim.send",
+		// the key sequence to activate the binding
+		"key": "ctrl+h",
+		// the input to send to Neovim
+		"args": "<C-h>"
+	},
+	{
+		"command": "vscode-neovim.send",
+		// the key sequence to activate the binding
+		"key": "ctrl+l",
+		// the input to send to Neovim
+		"args": "<C-l>"
+	},
+	// neovim explorer
+	{ "key": "ctrl+n", "command": "workbench.view.explorer", "when": "!explorerViewletVisible" },
+	{ "key": "ctrl+n", "command": "workbench.action.toggleSidebarVisibility", "when": "explorerViewletVisible" },
+	// neovim swap lines
+	{ "key": "alt+k", "command": "editor.action.moveLinesUpAction" },
+	{ "key": "alt+j", "command": "editor.action.moveLinesDownAction" },
+	// neovim surround
+	{
+		"key": "cmd+'",
+		"command": "editor.action.insertSnippet",
+		"when": "editorTextFocus",
+		"args": {
+			"snippet": "\"${TM_SELECTED_TEXT}\""
+		}
+	},
+	{
+		"key": "cmd+[",
+		"command": "editor.action.insertSnippet",
+		"when": "editorTextFocus",
+		"args": {
+			"snippet": "{${TM_SELECTED_TEXT}}"
+		}
+	},
+	{
+		"key": "cmd+b",
+		"command": "workbench.action.toggleSidebarVisibility"
+	},
+	{
+		"key": "cmd+b",
+		"command": "-workbench.action.toggleSidebarVisibility"
+	},
+	{
+		"key": "ctrl+alt+n",
+		"command": "workbench.action.toggleAuxiliaryBar"
+	},
+	{
+		"key": "alt+cmd+b",
+		"command": "-workbench.action.toggleAuxiliaryBar"
+	}
 ]
