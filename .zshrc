@@ -151,6 +151,8 @@ alias lsa='lsd -a -ltr --group-dirs=first --date=relative --blocks=size,date,nam
 # weather
 alias weather='curl -s "wttr.in?n1"'
 alias forecast='curl -s "wttr.in?n2"'
+#nethack 
+alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfought.org'
 # wiki
 alias wiki='wiki -w 80'
 # quicklook
@@ -165,43 +167,54 @@ source /usr/local/bin/fuzzycd
 # gemini cli
 export GEMINI_API_KEY="AIzaSyCqOVNc1gQchw-WrOVEK6WoJBkALYNTPDE"
 alias geminif="gemini -m gemini-2.5-flash"
+
 # Custom tmux function for intelligent session handling
-tmux() {
-  # 'tmux d' -> detach from the current client and switch to "default"
+# Prioritizes valid commands, then falls back to "attach-or-create".
+t() {
+  # --- Priority 0: No arguments ---
+  # If `tmux` is run alone, attach to the last session or create a new one.
+  if [[ -z "$1" ]]; then
+    if [[ -n "$TMUX" ]]; then
+        command tmux choose-tree -s
+    else
+        # Try to attach, if it fails (exit code != 0), start a new session.
+        command tmux attach-session || command tmux new-session
+    fi
+    return $?
+  fi
+
+  # --- Priority 1: Custom Aliases ---
+  # These are your special, hardcoded shortcuts.
+
+  # 'tmux d'
   if [[ "$1" == "d" && -z "$2" ]]; then
     if [[ -n "$TMUX" ]]; then
-      # If inside tmux, detach and run the command to re-attach to "default"
       command tmux detach-client -E 'tmux attach-session -t default'
     else
-      # If outside, just detach any attached client
       command tmux detach-client
     fi
     return $?
   fi
 
-  # 'tmux n "name"' -> create a new session
+  # 'tmux n "name"'
   if [[ "$1" == "n" && -n "$2" ]]; then
     if [[ -n "$TMUX" ]]; then
-      # Inside tmux, create detached and switch to prevent nesting
-      command tmux new-session -d -s "$2" && command tmux switch-client -t "$2"
+      command tmux new-session -d -s "$2" "${@:3}" && command tmux switch-client -t "$2"
     else
-      # Outside tmux, create and attach normally
-      command tmux new-session -s "$2"
+      command tmux new-session -s "$2" "${@:3}"
     fi
     return $?
   fi
 
-  # 'tmux a "name"' -> attach or switch to a session
+  # 'tmux a "name"'
   if [[ "$1" == "a" ]]; then
     if [[ -n "$TMUX" ]]; then
-      # Inside tmux, use switch-client
       if [[ -n "$2" ]]; then
         command tmux switch-client -t "$2"
       else
         command tmux choose-tree -s
       fi
     else
-      # Outside tmux, use attach-session
       if [[ -n "$2" ]]; then
         command tmux attach-session -t "$2"
       else
@@ -211,42 +224,66 @@ tmux() {
     return $?
   fi
 
-  # 'tmux k', 'tmux kill-session', 'tmux kill-ses' -> intelligent session killing
+  # 'tmux k "name"'
   if [[ "$1" == "k" || "$1" == "kill-session" || "$1" == "kill-ses" ]]; then
+    # (Your existing 'k' logic remains unchanged)
     local target_session="$2"
     local current_session
     [[ -n "$TMUX" ]] && current_session=$(command tmux display-message -p '#S')
-
-    # Case 1: 'tmux k' (no name) inside a session.
-    # Action: Kill the current session and switch to "default".
     if [[ -z "$target_session" && -n "$current_session" ]]; then
       if [[ "$current_session" != "default" && $(command tmux has-session -t default 2>/dev/null && echo 1) ]]; then
         command tmux switch-client -t default && command tmux kill-session -t "$current_session"
       else
-        command tmux kill-session # Kill current session, will detach if it's the last one.
+        command tmux kill-session
       fi
       return $?
     fi
-
-    # Case 2: 'tmux k "name"' (name is provided).
     if [[ -n "$target_session" ]]; then
-      # Subcase: We are inside tmux and are killing the session we are currently in.
-      # Action: Switch to "default" first, then kill the target session to prevent terminal from closing.
       if [[ -n "$current_session" && "$current_session" == "$target_session" && "$current_session" != "default" && $(command tmux has-session -t default 2>/dev/null && echo 1) ]]; then
         command tmux switch-client -t default && command tmux kill-session -t "$target_session"
       else
-        # Otherwise (killing a different session, or outside tmux), just kill the target.
         command tmux kill-session -t "$target_session"
       fi
       return $?
     fi
-
-    # Fallback for commands like 'tmux kill-session' outside tmux without a target
     command tmux kill-session
     return $?
   fi
 
-  # For any other command (like 'tmux ls', etc.),
-  # pass it directly to the original tmux executable.
-  command tmux "$@"
+  # --- Priority 2: Check for ANY other valid tmux command OR alias ---
+  # This is a more robust method using awk for commands and grep for aliases.
+  local -a all_tmux_commands
+  all_tmux_commands=(
+    # 1. Get all base command names (the first word of each line).
+    ${(f)"$(command tmux list-commands | awk '{print $1}')"}
+    # 2. Find all aliases like '(ls)', grep them, and remove the parentheses.
+    ${(f)"$(command tmux list-commands | grep -o '([^)]*)' | tr -d '()')"}
+  )
+
+  # Check if the first argument exists as an element in the array.
+  if (( ${all_tmux_commands[(Ie)$1]} )); then
+    # The command IS valid. Execute it normally.
+    command tmux "$@"
+    return $?
+  fi
+  
+  # --- Priority 3: Fallback to Smart "Attach-or-Create" Logic ---
+  # If we get here, the command is not an alias and not a valid tmux command.
+  # We now assume it's a session name.
+  local session_name="$1"
+  if command tmux has-session -t "$session_name" 2>/dev/null; then
+    # SESSION EXISTS: Attach or switch to it.
+    if [[ -n "$TMUX" ]]; then
+      command tmux switch-client -t "$session_name"
+    else
+      command tmux attach-session -t "$session_name"
+    fi
+  else
+    # SESSION DOES NOT EXIST: Create a new session with that name.
+    if [[ -n "$TMUX" ]]; then
+      command tmux new-session -d -s "$session_name" "${@:2}" && command tmux switch-client -t "$session_name"
+    else
+      command tmux new-session -s "$session_name" "${@:2}"
+    fi
+  fi
 }
