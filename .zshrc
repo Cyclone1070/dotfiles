@@ -287,3 +287,8 @@ t() {
     fi
   fi
 }
+# hyper lazy alias
+alias ta='t a'
+alias td='t d'
+alias tn='t n'
+alias tk='t k'
