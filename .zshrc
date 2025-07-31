@@ -121,7 +121,7 @@ function mr {
     echo "Reset marked files"
 }
 # marked list to list the marked files
-function ml {
+function mls {
     if [ ${#M_MOVE_FILES[@]} -gt 0 ]; then
         echo "Files marked for moving:"
         for file in "${M_MOVE_FILES[@]}"; do
