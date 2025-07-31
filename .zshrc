@@ -168,43 +168,67 @@ source /usr/local/bin/fuzzycd
 export GEMINI_API_KEY="AIzaSyCqOVNc1gQchw-WrOVEK6WoJBkALYNTPDE"
 alias geminif="gemini -m gemini-2.5-flash"
 
-# Custom tmux function for intelligent session handling
+# --- Helper function to ensure a 'default' session exists ---
+# This is used by creation and detach commands to guarantee a fallback.
+_ensure_default_session_exists() {
+  if ! command tmux has-session -t default 2>/dev/null; then
+    command tmux new-session -d -s default
+  fi
+}
+
+# Smartly attach/switch to the first parameter (with partial match),
+# then create new sessions for all subsequent parameters.
+# If the first parameter doesn't match any existing session,
+# it creates all specified sessions and attaches to the first one.
 t() {
-  # This is the old "Priority 0" logic for when 't' is run alone.
+  # If 't' is run alone, use the original "chooser" logic.
   if [[ -z "$1" ]]; then
     if [[ -n "$TMUX" ]]; then
         command tmux choose-tree -s
     else
-        # Try to attach, if it fails (exit code != 0), start a new session.
-        command tmux attach-session || command tmux new-session
+        _ensure_default_session_exists
+        command tmux attach-session || command tmux new-session -s default
     fi
     return $?
   fi
 
-  # This is the "Priority 3" logic, copied verbatim.
-  local session_name="$1"
-  if command tmux has-session -t "$session_name" 2>/dev/null; then
-    # SESSION EXISTS: Attach or switch to it.
-    if [[ -n "$TMUX" ]]; then
-      command tmux switch-client -t "$session_name"
-    else
-      command tmux attach-session -t "$session_name"
+  local query="$1"
+  # Find the first session that partially matches the query.
+  local target_session=$(command tmux list-sessions -F '#S' 2>/dev/null | command grep --color=never "$query" | command head -n 1)
+
+  # CASE 1: A matching session was found.
+  if [[ -n "$target_session" ]]; then
+    if [[ $# -gt 1 ]]; then
+      for other_session_name in "${@:2}"; do
+        command tmux new-session -d -s "$other_session_name" 2>/dev/null
+      done
+      # NEW: Ensure 'default' exists if we performed a create operation.
+      _ensure_default_session_exists
     fi
-  else
-    # SESSION DOES NOT EXIST: Create a new session with that name.
+
     if [[ -n "$TMUX" ]]; then
-      command tmux new-session -d -s "$session_name" "${@:2}" && command tmux switch-client -t "$session_name"
+      command tmux switch-client -t "$target_session"
     else
-      command tmux new-session -s "$session_name" "${@:2}"
+      command tmux attach-session -t "$target_session"
+    fi
+
+  # CASE 2: No matching session was found.
+  else
+    for session_name in "$@"; do
+      command tmux new-session -d -s "$session_name" 2>/dev/null
+    done
+    # NEW: Ensure 'default' exists since we performed a create operation.
+    _ensure_default_session_exists
+
+    if [[ -n "$TMUX" ]]; then
+      command tmux switch-client -t "$1"
+    else
+      command tmux attach-session -t "$1"
     fi
   fi
 }
 
-# --- Dedicated functions for specific actions ---
-# The logic from the old "Priority 1" block is moved here.
-
 # Attach to a session (or show chooser).
-# Logic from 'if [[ "$1" == "a" ]]'
 ta() {
   if [[ -n "$TMUX" ]]; then
     if [[ -n "$1" ]]; then
@@ -216,50 +240,41 @@ ta() {
     if [[ -n "$1" ]]; then
       command tmux attach-session -t "$1"
     else
+      _ensure_default_session_exists
       command tmux attach-session
     fi
   fi
 }
 
-# Detach from a session (with smart fallback to 'default').
-# Logic from 'if [[ "$1" == "d" ]]'
+# Detach from a session, or switch to 'default' if inside tmux.
 td() {
+  # If inside a tmux session...
   if [[ -n "$TMUX" ]]; then
-    command tmux detach-client -E 'tmux attach-session -t default'
+    # Ensure the 'default' session exists so we can switch to it.
+    _ensure_default_session_exists
+    # Directly switch to the 'default' session. No flicker.
+    command tmux switch-client -t default
   else
+    # If outside tmux, perform a standard detach.
     command tmux detach-client
   fi
 }
 
 # Create one or more new sessions.
 tn() {
-  # If no arguments, show usage and exit.
   if [[ $# -eq 0 ]]; then
-    echo "Usage: tn <session-name-1> [session-name-2] ..."
     return 1
   fi
 
-  local last_session_name
-  # Loop through every argument provided.
   for session_name in "$@"; do
-    # Try to create a new session in the background.
-    if command tmux new-session -d -s "$session_name" 2>/dev/null; then
-      echo "Created session: '$session_name'"
-      # Keep track of the last one we successfully created.
-      last_session_name="$session_name"
-    else
-      # Report if it fails (likely because it already exists).
-      echo "Skipping session '$session_name': session already exists."
-    fi
+    command tmux new-session -d -s "$session_name" 2>/dev/null
   done
+  # NEW: Ensure 'default' exists since this is a create operation.
+  _ensure_default_session_exists
 
-  # If we are inside tmux and at least one session was created,
-  # switch to the LAST one in the list.
-  if [[ -n "$TMUX" && -n "$last_session_name" ]]; then
-    command tmux switch-client -t "$last_session_name"
-  # If we are OUTSIDE tmux and at least one session was created,
-  # attach to the FIRST one that was listed.
-  elif [[ -z "$TMUX" && -n "$last_session_name" ]]; then
+  if [[ -n "$TMUX" ]]; then
+    command tmux switch-client -t "$1"
+  else
     command tmux attach-session -t "$1"
   fi
 }
@@ -267,19 +282,30 @@ tn() {
 # Kill one or more sessions. This function is designed to be called via
 # the 'noglob tk' alias to allow for glob patterns.
 tk-underlying-function() {
-  # If no arguments, handle smart-kill for the current session.
+  # --- MODIFIED: Corrected logic for 'tk' with no arguments ---
   if [[ $# -eq 0 ]]; then
-    local current_session_no_args
-    [[ -n "$TMUX" ]] && current_session_no_args=$(command tmux display-message -p '#S')
-    if [[ "$current_session_no_args" != "default" && $(command tmux has-session -t default 2>/dev/null) ]]; then
-      command tmux run-shell "tmux switch-client -t default && tmux kill-session -t '$current_session_no_args'" &
-    else
-      command tmux kill-session
+    # This command should only work if we are inside tmux.
+    if [[ -z "$TMUX" ]]; then
+      return 1
     fi
+
+    local current_session_no_args
+    current_session_no_args=$(command tmux display-message -p '#S')
+
+    # If we are already in the 'default' session, do nothing.
+    if [[ "$current_session_no_args" == "default" ]]; then
+      return 0
+    fi
+
+    # For any other session, ensure 'default' exists and then run the detached switch-and-kill.
+    _ensure_default_session_exists
+    local cmd_sequence="tmux switch-client -t default && tmux kill-session -t '$current_session_no_args'"
+    command tmux run-shell "sleep 0.1; $cmd_sequence" &
+    
     return $?
   fi
 
-  # --- Implementing the "Lifeboat" Strategy (Silent) ---
+  # --- The rest of the "lifeboat" logic for 'tk <pattern>' remains the same ---
   
   local -a all_sessions sessions_to_kill unique_sessions
   all_sessions=( ${(f)"$(command tmux list-sessions -F '#{session_name}')"} )
@@ -295,7 +321,6 @@ tk-underlying-function() {
   done
 
   if [[ ${#sessions_to_kill[@]} -eq 0 ]]; then
-    # Silently exit if no sessions match.
     return 1
   fi
   
@@ -304,9 +329,14 @@ tk-underlying-function() {
   local current_session
   [[ -n "$TMUX" ]] && current_session=$(command tmux display-message -p '#S')
 
-  # --- Decision logic based on your new rules ---
+  # Special case for ONLY killing 'default' to reload it without switching.
+  if [[ ${#unique_sessions[@]} -eq 1 && "${unique_sessions[1]}" == "default" ]]; then
+    command tmux kill-session -t default &>/dev/null
+    command tmux new-session -d -s default
+    return $?
+  fi
 
-  # Check if 'default' is on the kill list OR if the current session is targeted.
+  # Check if 'default' or the current session is targeted to trigger the lifeboat.
   if [[ " ${unique_sessions[@]} " =~ " default " || " ${unique_sessions[@]} " =~ " $current_session " ]]; then
     local lifeboat_session="temp-lifeboat-$(date +%s)"
     
