@@ -169,10 +169,8 @@ export GEMINI_API_KEY="AIzaSyCqOVNc1gQchw-WrOVEK6WoJBkALYNTPDE"
 alias geminif="gemini -m gemini-2.5-flash"
 
 # Custom tmux function for intelligent session handling
-# Prioritizes valid commands, then falls back to "attach-or-create".
 t() {
-  # --- Priority 0: No arguments ---
-  # If `tmux` is run alone, attach to the last session or create a new one.
+  # This is the old "Priority 0" logic for when 't' is run alone.
   if [[ -z "$1" ]]; then
     if [[ -n "$TMUX" ]]; then
         command tmux choose-tree -s
@@ -183,93 +181,7 @@ t() {
     return $?
   fi
 
-  # --- Priority 1: Custom Aliases ---
-  # These are your special, hardcoded shortcuts.
-
-  # 'tmux d'
-  if [[ "$1" == "d" && -z "$2" ]]; then
-    if [[ -n "$TMUX" ]]; then
-      command tmux detach-client -E 'tmux attach-session -t default'
-    else
-      command tmux detach-client
-    fi
-    return $?
-  fi
-
-  # 'tmux n "name"'
-  if [[ "$1" == "n" && -n "$2" ]]; then
-    if [[ -n "$TMUX" ]]; then
-      command tmux new-session -d -s "$2" "${@:3}" && command tmux switch-client -t "$2"
-    else
-      command tmux new-session -s "$2" "${@:3}"
-    fi
-    return $?
-  fi
-
-  # 'tmux a "name"'
-  if [[ "$1" == "a" ]]; then
-    if [[ -n "$TMUX" ]]; then
-      if [[ -n "$2" ]]; then
-        command tmux switch-client -t "$2"
-      else
-        command tmux choose-tree -s
-      fi
-    else
-      if [[ -n "$2" ]]; then
-        command tmux attach-session -t "$2"
-      else
-        command tmux attach-session
-      fi
-    fi
-    return $?
-  fi
-
-  # 'tmux k "name"'
-  if [[ "$1" == "k" || "$1" == "kill-session" || "$1" == "kill-ses" ]]; then
-    # (Your existing 'k' logic remains unchanged)
-    local target_session="$2"
-    local current_session
-    [[ -n "$TMUX" ]] && current_session=$(command tmux display-message -p '#S')
-    if [[ -z "$target_session" && -n "$current_session" ]]; then
-      if [[ "$current_session" != "default" && $(command tmux has-session -t default 2>/dev/null && echo 1) ]]; then
-        command tmux switch-client -t default && command tmux kill-session -t "$current_session"
-      else
-        command tmux kill-session
-      fi
-      return $?
-    fi
-    if [[ -n "$target_session" ]]; then
-      if [[ -n "$current_session" && "$current_session" == "$target_session" && "$current_session" != "default" && $(command tmux has-session -t default 2>/dev/null && echo 1) ]]; then
-        command tmux switch-client -t default && command tmux kill-session -t "$target_session"
-      else
-        command tmux kill-session -t "$target_session"
-      fi
-      return $?
-    fi
-    command tmux kill-session
-    return $?
-  fi
-
-  # --- Priority 2: Check for ANY other valid tmux command OR alias ---
-  # This is a more robust method using awk for commands and grep for aliases.
-  local -a all_tmux_commands
-  all_tmux_commands=(
-    # 1. Get all base command names (the first word of each line).
-    ${(f)"$(command tmux list-commands | awk '{print $1}')"}
-    # 2. Find all aliases like '(ls)', grep them, and remove the parentheses.
-    ${(f)"$(command tmux list-commands | grep -o '([^)]*)' | tr -d '()')"}
-  )
-
-  # Check if the first argument exists as an element in the array.
-  if (( ${all_tmux_commands[(Ie)$1]} )); then
-    # The command IS valid. Execute it normally.
-    command tmux "$@"
-    return $?
-  fi
-  
-  # --- Priority 3: Fallback to Smart "Attach-or-Create" Logic ---
-  # If we get here, the command is not an alias and not a valid tmux command.
-  # We now assume it's a session name.
+  # This is the "Priority 3" logic, copied verbatim.
   local session_name="$1"
   if command tmux has-session -t "$session_name" 2>/dev/null; then
     # SESSION EXISTS: Attach or switch to it.
@@ -287,8 +199,146 @@ t() {
     fi
   fi
 }
-# hyper lazy alias
-alias ta='t a'
-alias td='t d'
-alias tn='t n'
-alias tk='t k'
+
+# --- Dedicated functions for specific actions ---
+# The logic from the old "Priority 1" block is moved here.
+
+# Attach to a session (or show chooser).
+# Logic from 'if [[ "$1" == "a" ]]'
+ta() {
+  if [[ -n "$TMUX" ]]; then
+    if [[ -n "$1" ]]; then
+      command tmux switch-client -t "$1"
+    else
+      command tmux choose-tree -s
+    fi
+  else
+    if [[ -n "$1" ]]; then
+      command tmux attach-session -t "$1"
+    else
+      command tmux attach-session
+    fi
+  fi
+}
+
+# Detach from a session (with smart fallback to 'default').
+# Logic from 'if [[ "$1" == "d" ]]'
+td() {
+  if [[ -n "$TMUX" ]]; then
+    command tmux detach-client -E 'tmux attach-session -t default'
+  else
+    command tmux detach-client
+  fi
+}
+
+# Create one or more new sessions.
+tn() {
+  # If no arguments, show usage and exit.
+  if [[ $# -eq 0 ]]; then
+    echo "Usage: tn <session-name-1> [session-name-2] ..."
+    return 1
+  fi
+
+  local last_session_name
+  # Loop through every argument provided.
+  for session_name in "$@"; do
+    # Try to create a new session in the background.
+    if command tmux new-session -d -s "$session_name" 2>/dev/null; then
+      echo "Created session: '$session_name'"
+      # Keep track of the last one we successfully created.
+      last_session_name="$session_name"
+    else
+      # Report if it fails (likely because it already exists).
+      echo "Skipping session '$session_name': session already exists."
+    fi
+  done
+
+  # If we are inside tmux and at least one session was created,
+  # switch to the LAST one in the list.
+  if [[ -n "$TMUX" && -n "$last_session_name" ]]; then
+    command tmux switch-client -t "$last_session_name"
+  # If we are OUTSIDE tmux and at least one session was created,
+  # attach to the FIRST one that was listed.
+  elif [[ -z "$TMUX" && -n "$last_session_name" ]]; then
+    command tmux attach-session -t "$1"
+  fi
+}
+
+# Kill one or more sessions. This function is designed to be called via
+# the 'noglob tk' alias to allow for glob patterns.
+tk-underlying-function() {
+  # If no arguments, handle smart-kill for the current session.
+  if [[ $# -eq 0 ]]; then
+    local current_session_no_args
+    [[ -n "$TMUX" ]] && current_session_no_args=$(command tmux display-message -p '#S')
+    if [[ "$current_session_no_args" != "default" && $(command tmux has-session -t default 2>/dev/null) ]]; then
+      command tmux run-shell "tmux switch-client -t default && tmux kill-session -t '$current_session_no_args'" &
+    else
+      command tmux kill-session
+    fi
+    return $?
+  fi
+
+  # --- Implementing the "Lifeboat" Strategy (Silent) ---
+  
+  local -a all_sessions sessions_to_kill unique_sessions
+  all_sessions=( ${(f)"$(command tmux list-sessions -F '#{session_name}')"} )
+
+  for pattern in "$@"; do
+    local regex_pattern="^${pattern//\*/.*}$"
+    regex_pattern="${regex_pattern//\?/.}"
+    for session in "${all_sessions[@]}"; do
+      if [[ $session =~ $regex_pattern ]]; then
+        sessions_to_kill+=("$session")
+      fi
+    done
+  done
+
+  if [[ ${#sessions_to_kill[@]} -eq 0 ]]; then
+    # Silently exit if no sessions match.
+    return 1
+  fi
+  
+  unique_sessions=( ${(u)sessions_to_kill} )
+  
+  local current_session
+  [[ -n "$TMUX" ]] && current_session=$(command tmux display-message -p '#S')
+
+  # --- Decision logic based on your new rules ---
+
+  # Check if 'default' is on the kill list OR if the current session is targeted.
+  if [[ " ${unique_sessions[@]} " =~ " default " || " ${unique_sessions[@]} " =~ " $current_session " ]]; then
+    local lifeboat_session="temp-lifeboat-$(date +%s)"
+    
+    local cmd_sequence="tmux new-session -d -s '$lifeboat_session' ; "
+    cmd_sequence+="tmux switch-client -t '$lifeboat_session' ; "
+    
+    for target in "${unique_sessions[@]}"; do
+      cmd_sequence+="tmux kill-session -t '$target' ; "
+    done
+    
+    cmd_sequence+="tmux new-session -d -s default ; "
+    cmd_sequence+="tmux switch-client -t default ; "
+    cmd_sequence+="tmux kill-session -t '$lifeboat_session'"
+    
+    command tmux run-shell "sleep 0.1; $cmd_sequence" &
+    
+  # Simple case: we are not killing 'default' or the current session.
+  else
+    for target in "${unique_sessions[@]}"; do
+      command tmux kill-session -t "$target"
+    done
+  fi
+}
+# This alias is required to prevent the 'zsh: no matches found' error.
+# It must be placed AFTER the function definition.
+alias tk='noglob tk-underlying-function'
+
+alias tls='command tmux list-sessions -F "#{session_name}:#{session_created}:#{session_attached}" | awk -F: '\''{
+    cmd = "date -r " $2 " +\"%a %b %d %T %Y\"";
+    cmd | getline fdate;
+    close(cmd);
+    attached = ($3 == "1") ? " (attached)" : "";
+    printf "%s: created %s%s\n", $1, fdate, attached;
+}'\'''
+alias tka='command tmux kill-server'
