@@ -1,0 +1,9 @@
+keybind = global:opt+space=toggle_visibility
+macos-hidden = always
+
+maximize = true
+window-padding-balance
+window-padding-y = 0
+
+confirm-close-surface = false
+quit-after-last-window-closed = true

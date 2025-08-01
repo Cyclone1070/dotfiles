@@ -1,0 +1,33 @@
+return{}
+-- return {
+-- 	"ray-x/go.nvim",
+-- 	-- Explicitly list dependencies to ensure correct load order.
+-- 	dependencies = {
+-- 		"neovim/nvim-lspconfig",
+-- 		"nvim-treesitter/nvim-treesitter",
+-- 		"ray-x/guihua.lua",
+-- 	},
+-- 	-- Use 'ft' (filetype) as the trigger to load the plugin.
+-- 	-- This is the most efficient and standard way.
+-- 	ft = { "go", "gomod" },
+-- 	-- This build step is excellent for auto-installing tools.
+-- 	build = ':lua require("go.install").update_all_sync()',
+-- 	config = function()
+-- 		-- This setup function will now reliably be called AFTER its dependencies are loaded.
+-- 		require("go").setup({
+-- 			-- This tells go.nvim to use its recommended settings for gopls.
+-- 			-- It will call `require('lspconfig').gopls.setup({...})` for you.
+-- 			lsp_cfg = true,
+--
+-- 			-- If you want format-on-save, this is the place to do it.
+-- 			lsp_on_attach = function(client, bufnr)
+-- 				vim.api.nvim_create_autocmd("BufWritePre", {
+-- 					buffer = bufnr,
+-- 					callback = function()
+-- 						require("go.format").goimports()
+-- 					end,
+-- 				})
+-- 			end,
+-- 		})
+-- 	end,
+-- }

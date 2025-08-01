@@ -1,0 +1,23 @@
+{
+	"React Functional Component (JS)": {
+		"prefix": "fc",
+		"description": "Creates a React Functional Component.",
+		"body": [
+			"export function $TM_FILENAME_BASE({ className }) {",
+			"\treturn (",
+			"\t\t$0",
+			"\t);",
+			"}"
+		]
+	},
+	"className": {
+		"prefix": "cl",
+		"description": "Adds a className attribute with template literals.",
+		"body": ["className={`$0`}"]
+	},
+	"className with merge": {
+		"prefix": "clm",
+		"description": "Adds a className attribute using mergeClasses.",
+		"body": ["className={mergeClasses(`$0`, className)}"]
+	}
+}
