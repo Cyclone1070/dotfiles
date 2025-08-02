@@ -7,6 +7,8 @@ vim.opt.wrap = true
 vim.opt.linebreak = true
 -- relative line numbers
 vim.opt.relativenumber = true
+-- termguicolors
+vim.opt.termguicolors = true
 
 --Neovide
 if vim.g.neovide then -- Check if Neovim is running inside Neovide
