@@ -1,2 +1,3 @@
 export GREP_OPTIONS='--color=auto'
-export LC_ALL=C
+export LANG="en_US.UTF-8"
+export LC_ALL="C"
