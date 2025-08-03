@@ -17,7 +17,7 @@ return { -- Autocompletion
 			["<C-j>"] = { "select_next", "fallback" },
 			["<C-k>"] = { "select_prev", "fallback" },
 			["<C-h>"] = { "cancel", "fallback" },
-			["<C-l>"] = { "snippet_forward", "select_and_accept", "fallback" },
+			["<C-s>"] = { "snippet_forward", "fallback" },
 			["<Tab>"] = {
 				"select_and_accept",
 				"fallback",
@@ -28,7 +28,7 @@ return { -- Autocompletion
 			},
 			["<Down>"] = {},
 			["<Up>"] = {},
-			["<C-c>"] = {
+			["<C-l>"] = {
 				function(cmp)
 					if require("copilot.suggestion").is_visible() then
 						require("copilot.suggestion").accept()
