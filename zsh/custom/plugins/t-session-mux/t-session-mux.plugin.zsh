@@ -13,7 +13,7 @@ _ensure_default_session_exists() {
 # If the first parameter doesn't match any existing session,
 # it creates all specified sessions and attaches to the first one.
 t() {
-  # If 't' is run alone, use the original "chooser" logic.
+  # If 't' is run alone, use the fzf session switcher
   if [[ -z "$1" ]]; then
     if [[ -n "$TMUX" ]]; then
         command tmux -u choose-tree -s

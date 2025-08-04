@@ -43,7 +43,7 @@ return {
 			local user = vim.env.USER or "User"
 			user = user:sub(1, 1):upper() .. user:sub(2)
 			return {
-				model = "gemini-2.5-pro",
+				model = "claude-sonnet-4",
 				mappings = {
 					submit_prompt = {
 						insert = "<C-CR>",
