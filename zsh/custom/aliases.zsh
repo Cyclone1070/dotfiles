@@ -16,6 +16,9 @@ alias mstart='brew services start mongodb-community@8.0'
 alias mstop='brew services stop mongodb-community@8.0'
 # gemini cli
 alias geminif="gemini -m gemini-2.5-flash"
+# autossh to enable and disable ssh portforwarding from remote oracle linux instance
+alias remoteon='launchctl load ~/Library/LaunchAgents/com.user.sshtunnel.plist'
+alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.user.sshtunnel.plist'
 
 
 # Setup a tmux session for react workflow
@@ -61,7 +64,7 @@ treact() {
   tmux new-session -d -s "$n_session_name" -c "$dir_path"
   tmux send-keys -t "$n_session_name" "nvim" C-m
 
-  tmux switch-client -t "$session_name"
+  tmux switch-client -t "$n_session_name"
 
   # The trap will automatically fire now, restoring the hook.
 }
