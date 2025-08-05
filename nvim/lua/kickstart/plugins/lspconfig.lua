@@ -67,7 +67,9 @@ return {
 									return false
 								end
 								-- Filter for actions that are likely to be "add import"
-								if action.title:match("[Aa]dd [Ii]mport") or action.title:match("[Uu]pdate [Ii]mport") then
+								if
+									action.title:match("[Aa]dd [Ii]mport") or action.title:match("[Uu]pdate [Ii]mport")
+								then
 									applied_actions[action.title] = true
 									return true
 								end
@@ -184,6 +186,56 @@ return {
 						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 					end, "[T]oggle Inlay [H]ints")
 				end
+			end,
+		})
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			group = vim.api.nvim_create_augroup("import-on-save", { clear = true }),
+			callback = function(event)
+				local bufnr = event.buf
+				local diagnostics = vim.diagnostic.get(bufnr)
+				local applied_actions = {}
+
+				if not diagnostics or #diagnostics == 0 then
+					print("No diagnostics found.")
+					return
+				end
+
+				for _, d in ipairs(diagnostics) do
+					-- Many language servers mark missing imports with 'unresolved' or 'undefined'
+					local params = {
+						context = {
+							diagnostics = { d },
+						},
+						range = {
+							start = { d.lnum + 1, d.col + 1 },
+							["end"] = { d.end_lnum + 1, d.end_col + 1 },
+						},
+						filter = function(action)
+							if applied_actions[action.title] then
+								return false
+							end
+							-- Filter for actions that are likely to be "add import"
+							if action.title:match("[Aa]dd [Ii]mport") or action.title:match("[Uu]pdate [Ii]mport") then
+								applied_actions[action.title] = true
+								return true
+							end
+							return false
+						end,
+						apply = true,
+					}
+					vim.lsp.buf.code_action(params)
+				end
+
+				-- After attempting to add imports, organize them.
+				-- We defer this to give the server time to process the previous actions.
+				local organize_params = {
+					filter = function(action)
+						-- Filter for actions that are likely to be "organize imports"
+						return action.title:match("[Oo]rganize [Ii]mports")
+					end,
+					apply = true,
+				}
+				vim.lsp.buf.code_action(organize_params)
 			end,
 		})
 
