@@ -17,9 +17,9 @@ alias mstop='brew services stop mongodb-community@8.0'
 # gemini cli
 alias geminif="gemini -m gemini-2.5-flash"
 # autossh to enable and disable ssh portforwarding from remote oracle linux instance
-alias remoteon='launchctl load ~/Library/LaunchAgents/com.user.sshtunnel.plist'
-alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.user.sshtunnel.plist'
-alias remotecheck='ps aux | grep autossh'
+alias remoteon='launchctl load ~/Library/LaunchAgents/com.autossh.tunnel.plist'
+alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.autossh.tunnel.plist'
+alias remotecheck='ps aux | grep "[a]utossh"'
 
 
 # Setup a tmux session for react workflow
