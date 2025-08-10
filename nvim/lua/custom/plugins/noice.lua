@@ -8,7 +8,7 @@ return {
 	keys = {
 		{ "<leader>n", "<cmd>Noice dismiss<CR>" },
 	},
-	config = {
+	opts = {
 		views = {
 			hover = {
 				size = {

@@ -10,6 +10,7 @@ return {
 
 		-- Allows extra capabilities provided by blink.cmp
 		"saghen/blink.cmp",
+		"nvim-java/nvim-java", -- Java LSP support
 	},
 	config = function()
 		-- If you're wondering about lsp vs treesitter, you can check out the wonderfully
