@@ -87,8 +87,6 @@ plugins=(
 	t-session-mux
 )
 
-bindkey '^L' autosuggest-accept
-
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
