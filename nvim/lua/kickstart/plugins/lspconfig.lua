@@ -286,6 +286,15 @@ return {
 
 		-- REMOVE: local lspconfig_instance = require('lspconfig') -- Not needed for setup in this new way
 
+		-- setup nvim-java
+		require("java").setup({
+			java_debug_adapter = {
+				enable = false,
+			},
+		})
+		require("lspconfig").jdtls.setup({})
+
+		-- setup the rest of the lsp
 		for server_name, user_server_config in pairs(servers_to_configure) do
 			if type(user_server_config) == "table" then
 				local server_opts = vim.deepcopy(user_server_config)

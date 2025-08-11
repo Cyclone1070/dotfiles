@@ -18,8 +18,6 @@ return {
 	eslint = {},
 	-- c++
 	clangd = {},
-	-- java
-	jdtls = {},
 	-- go
 	gopls = {
 		settings = {
