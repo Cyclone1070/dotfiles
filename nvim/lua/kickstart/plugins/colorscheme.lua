@@ -21,7 +21,6 @@ return {
 			local function set_additional_highlight()
 				-- Set additional highlights
 				-- constructing line number highlight style by combining fg with bg of cursorline
-				local normal_bg = vim.api.nvim_get_hl(0, { name = "Normal", link = false }).bg
 				local line_nr_bg = vim.api.nvim_get_hl(0, { name = "CursorLine", link = false }).bg
 				-- constructing tabline colors to keep their default and only append bg
 				local tabline_current = vim.api.nvim_get_hl(0, { name = "MiniTablineCurrent", link = false })
