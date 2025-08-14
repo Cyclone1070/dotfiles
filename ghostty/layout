@@ -3,7 +3,7 @@ font-size = 14
 font-thicken = true
 font-thicken-strength = 100
 
-cursor-color = #e8e8e8
+cursor-color = #ffffff
 cursor-text = #000000
 cursor-style = block
 cursor-style-blink = false

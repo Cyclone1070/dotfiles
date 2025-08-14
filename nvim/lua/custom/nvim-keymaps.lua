@@ -55,6 +55,8 @@ end
 -- enter command mode with ;
 map("n", ";", ":", opts)
 map("v", ";", ":", opts)
+-- leader w to save
+map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save File", noremap = true })
 -- mapping for search and replace
 map("n", "<leader>r", ":%s/", { desc = "Search and Replace", noremap = true })
 map("v", "<leader>r", ":s/", { desc = "Search and Replace in Selection", noremap = true })

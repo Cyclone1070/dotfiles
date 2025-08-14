@@ -1,4 +1,4 @@
 return {
 	"brenoprata10/nvim-highlight-colors",
-	opts = {},
+	opts = { render = "virtual" },
 }

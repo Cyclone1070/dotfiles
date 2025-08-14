@@ -46,6 +46,8 @@ return {
 				map("<leader>li", function()
 					local bufnr = event.buf
 					local diagnostics = vim.diagnostic.get(bufnr)
+					-- prevent react tags from importing twice
+					local applied_actions = {}
 
 					if not diagnostics or #diagnostics == 0 then
 						print("No diagnostics found.")
@@ -80,14 +82,16 @@ return {
 								["end"] = { d.end_lnum + 1, d.end_col + 1 },
 							},
 							filter = function(action)
-								if applied then
+								if applied or applied_actions[action.title] then
 									return false
 								end
 								-- Filter for actions that are likely to be "add import"
 								if action.title:match("[Uu]pdate [Ii]mport") then
 									applied = true
+									applied_actions[action.title] = true
 									return true
 								elseif action.title:match("[Aa]dd [Ii]mport") then
+									applied_actions[action.title] = true
 									return true
 								end
 								return false
@@ -104,7 +108,9 @@ return {
 						end,
 						apply = true,
 					}
-					vim.lsp.buf.code_action(organize_params)
+					vim.defer_fn(function()
+						vim.lsp.buf.code_action(organize_params)
+					end, 100)
 				end, "[L]sp Auto [I]mport")
 
 				-- Find references for the word under your cursor.
@@ -203,11 +209,19 @@ return {
 				end
 			end,
 		})
+		local should_import_on_save = true
 		vim.api.nvim_create_autocmd("BufWritePre", {
 			group = vim.api.nvim_create_augroup("import-on-save", { clear = true }),
 			callback = function(event)
+				if not should_import_on_save then
+					return
+				end
+
 				local bufnr = event.buf
 				local diagnostics = vim.diagnostic.get(bufnr)
+
+				-- prevent react tags from importing twice
+				local applied_actions = {}
 
 				if not diagnostics or #diagnostics == 0 then
 					print("No diagnostics found.")
@@ -242,14 +256,16 @@ return {
 							["end"] = { d.end_lnum + 1, d.end_col + 1 },
 						},
 						filter = function(action)
-							if applied then
+							if applied or applied_actions[action.title] then
 								return false
 							end
 							-- Filter for actions that are likely to be "add import"
 							if action.title:match("[Uu]pdate [Ii]mport") then
 								applied = true
+								applied_actions[action.title] = true
 								return true
 							elseif action.title:match("[Aa]dd [Ii]mport") then
+								applied_actions[action.title] = true
 								return true
 							end
 							return false
@@ -266,7 +282,14 @@ return {
 					end,
 					apply = true,
 				}
-				vim.lsp.buf.code_action(organize_params)
+				vim.defer_fn(function()
+					vim.lsp.buf.code_action(organize_params)
+					vim.defer_fn(function()
+						should_import_on_save = false
+						vim.cmd.write()
+						should_import_on_save = true
+					end, 100)
+				end, 100)
 			end,
 		})
 
