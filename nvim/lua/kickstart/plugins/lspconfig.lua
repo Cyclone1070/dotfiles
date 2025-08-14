@@ -46,7 +46,6 @@ return {
 				map("<leader>li", function()
 					local bufnr = event.buf
 					local diagnostics = vim.diagnostic.get(bufnr)
-					local applied_actions = {}
 
 					if not diagnostics or #diagnostics == 0 then
 						print("No diagnostics found.")
@@ -54,35 +53,50 @@ return {
 					end
 
 					for _, d in ipairs(diagnostics) do
+						local lsp_diagnostic = {
+							range = {
+								start = {
+									line = d.lnum,
+									character = d.col,
+								},
+								["end"] = {
+									line = d.end_lnum or d.lnum,
+									character = d.end_col or d.col,
+								},
+							},
+							severity = d.severity,
+							code = d.code,
+							source = d.source,
+							message = d.message,
+						}
+						local applied = false
 						-- Many language servers mark missing imports with 'unresolved' or 'undefined'
-						local params = {
+						vim.lsp.buf.code_action({
 							context = {
-								diagnostics = { d },
+								diagnostics = { lsp_diagnostic },
 							},
 							range = {
 								start = { d.lnum + 1, d.col + 1 },
 								["end"] = { d.end_lnum + 1, d.end_col + 1 },
 							},
 							filter = function(action)
-								if applied_actions[action.title] then
+								if applied then
 									return false
 								end
 								-- Filter for actions that are likely to be "add import"
-								if
-									action.title:match("[Aa]dd [Ii]mport") or action.title:match("[Uu]pdate [Ii]mport")
-								then
-									applied_actions[action.title] = true
+								if action.title:match("[Uu]pdate [Ii]mport") then
+									applied = true
+									return true
+								elseif action.title:match("[Aa]dd [Ii]mport") then
 									return true
 								end
 								return false
 							end,
 							apply = true,
-						}
-						vim.lsp.buf.code_action(params)
+						})
 					end
 
 					-- After attempting to add imports, organize them.
-					-- We defer this to give the server time to process the previous actions.
 					local organize_params = {
 						filter = function(action)
 							-- Filter for actions that are likely to be "organize imports"
@@ -194,7 +208,6 @@ return {
 			callback = function(event)
 				local bufnr = event.buf
 				local diagnostics = vim.diagnostic.get(bufnr)
-				local applied_actions = {}
 
 				if not diagnostics or #diagnostics == 0 then
 					print("No diagnostics found.")
@@ -202,33 +215,50 @@ return {
 				end
 
 				for _, d in ipairs(diagnostics) do
+					local lsp_diagnostic = {
+						range = {
+							start = {
+								line = d.lnum,
+								character = d.col,
+							},
+							["end"] = {
+								line = d.end_lnum or d.lnum,
+								character = d.end_col or d.col,
+							},
+						},
+						severity = d.severity,
+						code = d.code,
+						source = d.source,
+						message = d.message,
+					}
+					local applied = false
 					-- Many language servers mark missing imports with 'unresolved' or 'undefined'
-					local params = {
+					vim.lsp.buf.code_action({
 						context = {
-							diagnostics = { d },
+							diagnostics = { lsp_diagnostic },
 						},
 						range = {
 							start = { d.lnum + 1, d.col + 1 },
 							["end"] = { d.end_lnum + 1, d.end_col + 1 },
 						},
 						filter = function(action)
-							if applied_actions[action.title] then
+							if applied then
 								return false
 							end
 							-- Filter for actions that are likely to be "add import"
-							if action.title:match("[Aa]dd [Ii]mport") or action.title:match("[Uu]pdate [Ii]mport") then
-								applied_actions[action.title] = true
+							if action.title:match("[Uu]pdate [Ii]mport") then
+								applied = true
+								return true
+							elseif action.title:match("[Aa]dd [Ii]mport") then
 								return true
 							end
 							return false
 						end,
 						apply = true,
-					}
-					vim.lsp.buf.code_action(params)
+					})
 				end
 
 				-- After attempting to add imports, organize them.
-				-- We defer this to give the server time to process the previous actions.
 				local organize_params = {
 					filter = function(action)
 						-- Filter for actions that are likely to be "organize imports"
