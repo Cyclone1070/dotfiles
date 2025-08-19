@@ -40,6 +40,10 @@ return {
 		"williamboman/mason.nvim",
 		cmd = "Mason",
 		opts = {
+			registries = {
+				"github:mason-org/mason-registry",
+				"github:Crashdummyy/mason-registry",
+			},
 			ui = {
 				-- border and icons
 				border = "rounded",

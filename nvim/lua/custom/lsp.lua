@@ -18,6 +18,8 @@ return {
 	eslint = {},
 	-- c++
 	clangd = {},
+	-- c#
+	roslyn = {},
 	-- go
 	gopls = {
 		settings = {

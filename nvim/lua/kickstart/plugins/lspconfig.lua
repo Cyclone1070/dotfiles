@@ -72,7 +72,7 @@ return {
 							message = d.message,
 						}
 						local applied = false
-						-- Many language servers mark missing imports with 'unresolved' or 'undefined'
+
 						vim.lsp.buf.code_action({
 							context = {
 								diagnostics = { lsp_diagnostic },
@@ -246,7 +246,7 @@ return {
 						message = d.message,
 					}
 					local applied = false
-					-- Many language servers mark missing imports with 'unresolved' or 'undefined'
+
 					vim.lsp.buf.code_action({
 						context = {
 							diagnostics = { lsp_diagnostic },
@@ -288,7 +288,7 @@ return {
 						should_import_on_save = false
 						vim.cmd.write()
 						should_import_on_save = true
-					end, 100)
+					end, 700)
 				end, 100)
 			end,
 		})

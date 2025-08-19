@@ -85,6 +85,12 @@ vim.keymap.set("n", "<C-w>j", "<C-w>J", { desc = "Move window down" })
 vim.keymap.set("n", "<C-w>k", "<C-w>K", { desc = "Move window up" })
 vim.keymap.set("n", "<C-w>l", "<C-w>L", { desc = "Move window right" })
 vim.keymap.set("n", "<C-w><CR>", "<C-w>_<C-w>|", { desc = "Maximize window" })
+-- scroll
+map("n", "J", "<C-d>", { desc = "Scroll down" })
+map("n", "K", "<C-u>", { desc = "Scroll up" })
+-- scroll in visual mode
+map("v", "J", "<C-d>", { desc = "Scroll down" })
+map("v", "K", "<C-u>", { desc = "Scroll up" })
 -- Remap to moving based on visual lines
 map("n", "j", "gj", opts)
 map("n", "k", "gk", opts)
@@ -95,11 +101,6 @@ map("n", "gj", "j", opts)
 map("n", "gk", "k", opts)
 map("v", "gj", "j", opts)
 map("v", "gk", "k", opts)
--- Quick move cursors
-map("n", "J", "5gj", opts)
-map("n", "K", "5gk", opts)
-map("v", "J", "5gj", opts)
-map("v", "K", "5gk", opts)
 -- C-J and C-K to merge lines
 map("n", "<leader>j", "J", opts)
 map("n", "<leader>k", "K", opts)
