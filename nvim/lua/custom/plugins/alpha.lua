@@ -7,32 +7,59 @@ return {
 		local builtin = require("telescope.builtin")
 		local file_browser = require("telescope").extensions.file_browser.file_browser
 		local dashboard = require("alpha.themes.dashboard")
-		local logo = [[
-                                   .-----.           
-       .-----------------------.   | === |           
-       |.-"""""""""""""""""""-.|   |-----|           
-       ||                     ||   | === |           
-       ||                     ||   |-----|           
-       ||       NEOVIDE       ||   | === |           
-       ||                     ||   |-----|           
-       ||                     ||   |:::::|           
-       |'-...................-'|   |____o|           
-       `"")-----------------(""`   ___________       
-      /::::::::::|   |::::::::::\  \ no mouse \      
-     /:::========|   |==hjkl==:::\  \ required \     
-    '""""""""""""'   '""""""""""""'  '""""""""""'    ]]
-
-		dashboard.section.header.val = vim.split(logo, "\n")
-    -- stylua: ignore
-    dashboard.section.buttons.val = {
-      dashboard.button("f", " " .. " Find file", file_browser),
-      dashboard.button("n", " " .. " New file", [[<cmd> ene <BAR> startinsert <cr>]]),
-      dashboard.button("r", " " .. " Recent files", builtin.oldfiles),
-      dashboard.button("g", " " .. " Find text", builtin.live_grep),
-      dashboard.button("c", " " .. " Config", function() file_browser({ cwd = vim.fn.stdpath("config") }) end),
-      dashboard.button("s", " " .. " Restore Session", [[<cmd> lua require("persistence").load() <cr>]]),
-      dashboard.button("q", " " .. " Quit", "<cmd> qa <cr>"),
-    }
+		local logos = {
+			{
+				[[                                                                       ]],
+				[[                                                                     ]],
+				[[       ████ ██████           █████      ██                     ]],
+				[[      ███████████             █████                             ]],
+				[[      █████████ ███████████████████ ███   ███████████   ]],
+				[[     █████████  ███    █████████████ █████ ██████████████   ]],
+				[[    █████████ ██████████ █████████ █████ █████ ████ █████   ]],
+				[[  ███████████ ███    ███ █████████ █████ █████ ████ █████  ]],
+				[[ ██████  █████████████████████ ████ █████ █████ ████ ██████ ]],
+				[[                                                                       ]],
+			},
+			{
+				[[                                                                                   ]],
+				[[     /\__\         /\  \         /\  \         /\__\          ___        /\__\     ]],
+				[[    /::|  |       /::\  \       /::\  \       /:/  /         /\  \      /::|  |    ]],
+				[[   /:|:|  |      /:/\:\  \     /:/\:\  \     /:/  /          \:\  \    /:|:|  |    ]],
+				[[  /:/|:|  |__   /::\~\:\  \   /:/  \:\  \   /:/__/  ___      /::\__\  /:/|:|__|__  ]],
+				[[ /:/ |:| /\__\ /:/\:\ \:\__\ /:/__/ \:\__\  |:|  | /\__\  __/:/\/__/ /:/ |::::\__\ ]],
+				[[ \/__|:|/:/  / \:\~\:\ \/__/ \:\  \ /:/  /  |:|  |/:/  / /\/:/  /    \/__/~~/:/  / ]],
+				[[     |:/:/  /   \:\ \:\__\    \:\  /:/  /   |:|__/:/  /  \::/__/           /:/  /  ]],
+				[[     |::/  /     \:\ \/__/     \:\/:/  /     \::::/__/    \:\__\          /:/  /   ]],
+				[[     /:/  /       \:\__\        \::/  /       ~~~~         \/__/         /:/  /    ]],
+				[[     \/__/         \/__/         \/__/                                   \/__/     ]],
+				[[                                                                                   ]],
+			},
+			{
+				[[⠤⣤⣤⣤⣄⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣠⣤⠤⠤⠴⠶⠶⠶⠶]],
+				[[⢠⣤⣤⡄⣤⣤⣤⠄⣀⠉⣉⣙⠒⠤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠴⠘⣉⢡⣤⡤⠐⣶⡆⢶⠀⣶⣶⡦]],
+				[[⣄⢻⣿⣧⠻⠇⠋⠀⠋⠀⢘⣿⢳⣦⣌⠳⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠞⣡⣴⣧⠻⣄⢸⣿⣿⡟⢁⡻⣸⣿⡿⠁]],
+				[[⠈⠃⠙⢿⣧⣙⠶⣿⣿⡷⢘⣡⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⣿⣷⣝⡳⠶⠶⠾⣛⣵⡿⠋⠀⠀]],
+				[[⠀⠀⠀⠀⠉⠻⣿⣶⠂⠘⠛⠛⠛⢛⡛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠛⠀⠉⠒⠛⠀⠀⠀⠀⠀]],
+				[[⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⢸⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀]],
+				[[⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⣾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀]],
+				[[⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀]],
+				[[⠀⠀⠀⠀⠀⠀⢻⡁⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀]],
+				[[⠀⠀⠀⠀⠀⠀⠘⡇⠀⠀⠀⠀⠀⠀⠀                                   ]],
+				[[⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀           ]],
+				[[⠀⠀⠀ ⠀⠀⠀⠿                                          ]],
+			},
+		}
+		dashboard.section.header.val = logos[math.random(1, #logos)]
+		-- stylua: ignore
+		dashboard.section.buttons.val = {
+		  dashboard.button("f", " " .. " Find file", file_browser),
+		  dashboard.button("n", " " .. " New file", [[<cmd> ene <BAR> startinsert <cr>]]),
+		  dashboard.button("r", " " .. " Recent files", builtin.oldfiles),
+		  dashboard.button("g", " " .. " Find text", builtin.live_grep),
+		  dashboard.button("c", " " .. " Config", function() file_browser({ cwd = vim.fn.stdpath("config") }) end),
+		  dashboard.button("s", " " .. " Restore Session", [[<cmd> lua require("persistence").load() <cr>]]),
+		  dashboard.button("q", " " .. " Quit", "<cmd> qa <cr>"),
+		}
 		for _, button in ipairs(dashboard.section.buttons.val) do
 			button.opts.hl = "AlphaButtons"
 			button.opts.hl_shortcut = "AlphaShortcut"
