@@ -91,16 +91,6 @@ map("n", "K", "<C-u>", { desc = "Scroll up" })
 -- scroll in visual mode
 map("v", "J", "<C-d>", { desc = "Scroll down" })
 map("v", "K", "<C-u>", { desc = "Scroll up" })
--- Remap to moving based on visual lines
-map("n", "j", "gj", opts)
-map("n", "k", "gk", opts)
-map("v", "j", "gj", opts)
-map("v", "k", "gk", opts)
--- Remap to moving based on real lines
-map("n", "gj", "j", opts)
-map("n", "gk", "k", opts)
-map("v", "gj", "j", opts)
-map("v", "gk", "k", opts)
 -- C-J and C-K to merge lines
 map("n", "<leader>j", "J", opts)
 map("n", "<leader>k", "K", opts)
