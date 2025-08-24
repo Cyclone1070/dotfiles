@@ -326,7 +326,7 @@ return {
 				{ section = "header", padding = 1 },
 				{
 					section = "terminal",
-					cmd = "lavat",
+					cmd = chosen_terminal_command,
 					height = terminal_section_height,
 					padding = 1,
 					ttl = 10,
