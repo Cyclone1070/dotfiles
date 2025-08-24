@@ -2,3 +2,4 @@ config-file = window
 config-file = layout
 config-file = auto-update
 config-file = general
+config-file = shader
