@@ -55,6 +55,10 @@ end
 -- enter command mode with ;
 map("n", ";", ":", opts)
 map("v", ";", ":", opts)
+-- repeat last f, F, t, T with , (comma)
+map("n", ",", ";", opts)
+map("v", ",", ";", opts)
+
 -- leader w to save
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save File", noremap = true })
 -- mapping for search and replace
