@@ -5,7 +5,13 @@ local opts = { noremap = true }
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set("n", "<Esc>", function()
+	vim.cmd("nohlsearch")
+	local char = require("flash.plugins.char")
+	if char.state then
+		char.state:hide()
+	end
+end, { desc = "Clear highlights" })
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
@@ -55,9 +61,6 @@ end
 -- enter command mode with ;
 map("n", ";", ":", opts)
 map("v", ";", ":", opts)
--- repeat last f, F, t, T with , (comma)
-map("n", ",", ";", opts)
-map("v", ",", ";", opts)
 
 -- leader w to save
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save File", noremap = true })
@@ -89,6 +92,9 @@ vim.keymap.set("n", "<C-w>j", "<C-w>J", { desc = "Move window down" })
 vim.keymap.set("n", "<C-w>k", "<C-w>K", { desc = "Move window up" })
 vim.keymap.set("n", "<C-w>l", "<C-w>L", { desc = "Move window right" })
 vim.keymap.set("n", "<C-w><CR>", "<C-w>_<C-w>|", { desc = "Maximize window" })
+-- buffer mappings
+map("n", "L", "<C-^>", { desc = "Go to last used buffer" })
+map("n", "<leader>x", "<cmd>bd<CR>", { desc = "Close current buffer" })
 -- scroll
 map("n", "J", "<C-d>", { desc = "Scroll down" })
 map("n", "K", "<C-u>", { desc = "Scroll up" })

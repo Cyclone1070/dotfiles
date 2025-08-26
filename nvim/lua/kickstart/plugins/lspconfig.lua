@@ -97,6 +97,9 @@ return {
 								elseif filetype == "cs" and action.title:match("^[Uu]sing") then
 									applied_actions[action.title] = true
 									return true
+								elseif (filetype == "cpp") and action.title:match("^[Ii]nclude") then
+									applied_actions[action.title] = true
+									return true
 								end
 								return false
 							end,

@@ -145,17 +145,20 @@ local terminal_commands = {
 	"~/.config/nvim/rain",
 }
 local chosen_terminal_command
-
+-- match fire to fade logo
 if chosen_dashboard_logo == logos[1] then
 	chosen_terminal_command = terminal_commands[1]
 else
 	chosen_terminal_command = terminal_commands[math.random(1, #terminal_commands)]
 end
-
+if chosen_terminal_command == terminal_commands[1] then
+	chosen_dashboard_logo = logos[1]
+end
+-- adjust terminal section height for specific commands if needed
 if chosen_terminal_command:find("~/.config/nvim/fire.pl") then
 	terminal_section_height = 22
 end
-
+-- random color for lavat
 if chosen_terminal_command:find("lavat") then
 	-- red, blue, yellow, green, cyan, magenta, whit
 	local colors = { "red", "blue", "yellow", "green", "cyan", "magenta", "white" }
@@ -206,6 +209,13 @@ return {
 			desc = "Snacks Explorer",
 		},
 		{
+			"<leader>sb",
+			function()
+				Snacks.picker.buffers()
+			end,
+			desc = "Snacks Buffers",
+		},
+		{
 			"<leader>/",
 			function()
 				Snacks.picker.grep()
@@ -225,6 +235,13 @@ return {
 				Snacks.picker.help()
 			end,
 			desc = "Snacks Help",
+		},
+		{
+			"<leader>sH",
+			function()
+				Snacks.picker.highlights()
+			end,
+			desc = "Highlights",
 		},
 		{
 			"<leader>sn",
@@ -439,6 +456,30 @@ return {
 							picker:close()
 							Snacks.explorer(opts)
 						end,
+						explorer_smart_vsplit = function(picker)
+							local item = picker:current({ resolve = true })
+							if not item then
+								return
+							end
+							if item.dir then
+								picker:action("confirm")
+							else
+								vim.cmd("vsplit " .. item.file)
+								picker:close()
+							end
+						end,
+						explorer_smart_hsplit = function(picker)
+							local item = picker:current({ resolve = true })
+							if not item then
+								return
+							end
+							if item.dir then
+								picker:action("confirm")
+							else
+								vim.cmd("split " .. item.file)
+								picker:close()
+							end
+						end,
 					},
 					win = {
 						-- Add the explorer actions to the input window so they work while searching
@@ -446,6 +487,8 @@ return {
 							keys = {
 								["<Esc>"] = { "explorer_smart_esc", mode = "i" },
 								["<CR>"] = { "explorer_smart_confirm", mode = "i" },
+								["<C-v>"] = { "explorer_smart_vsplit", mode = "i" },
+								["<C-s>"] = { "explorer_smart_hsplit", mode = "i" },
 							},
 						},
 						list = {
@@ -454,6 +497,8 @@ return {
 								["<CR>"] = "explorer_smart_confirm",
 								["c"] = "explorer_add",
 								["a"] = "explorer_focus_and_clear_input",
+								["v"] = "explorer_smart_vsplit",
+								["s"] = "explorer_smart_hsplit",
 							},
 						},
 					},
