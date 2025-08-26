@@ -59,8 +59,7 @@ end
 -- aditional keymaps here
 
 -- enter command mode with ;
-map("n", ";", ":", opts)
-map("v", ";", ":", opts)
+map({ "n", "v" }, ";", ":", opts)
 
 -- leader w to save
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save File", noremap = true })
@@ -81,11 +80,9 @@ map("n", "<leader>n", function()
 	require("noice").cmd("dismiss")
 end, { desc = "Dismiss All Notifications" })
 -- remap go to end of line
-map({ "n", "o" }, "E", "g$", opts)
-map("v", "E", "g$", opts)
+map({ "n", "o", "v" }, "E", "$", opts)
 -- remap go to start of line
-map({ "n", "o" }, "B", "g^", opts)
-map("v", "B", "g^", opts)
+map({ "n", "o", "v" }, "B", "^", opts)
 -- move current window around
 vim.keymap.set("n", "<C-w>h", "<C-w>H", { desc = "Move window left" })
 vim.keymap.set("n", "<C-w>j", "<C-w>J", { desc = "Move window down" })
@@ -96,11 +93,8 @@ vim.keymap.set("n", "<C-w><CR>", "<C-w>_<C-w>|", { desc = "Maximize window" })
 map("n", "L", "<C-^>", { desc = "Go to last used buffer" })
 map("n", "<leader>x", "<cmd>bd<CR>", { desc = "Close current buffer" })
 -- scroll
-map("n", "J", "<C-d>", { desc = "Scroll down" })
-map("n", "K", "<C-u>", { desc = "Scroll up" })
--- scroll in visual mode
-map("v", "J", "<C-d>", { desc = "Scroll down" })
-map("v", "K", "<C-u>", { desc = "Scroll up" })
+map({ "n", "v" }, "J", "<C-d>", { desc = "Scroll down" })
+map({ "n", "v" }, "K", "<C-u>", { desc = "Scroll up" })
 -- C-J and C-K to merge lines
 map("n", "<leader>j", "J", opts)
 map("n", "<leader>k", "K", opts)

@@ -142,7 +142,7 @@ local terminal_commands = {
 	"pipes.sh -p 7 -t 1 -t 3 -f 100 -r 3000",
 	"cbonsai -t 0.01 -l -L 40",
 	"TERM=screen-256color lavat",
-	"~/.config/nvim/rain",
+	"TERM=screen-256color ~/.config/nvim/terminal_rain_lightning.py",
 }
 local chosen_terminal_command
 -- match fire to fade logo
@@ -384,6 +384,52 @@ return {
 						input = {
 							keys = {
 								["<CR>"] = { "edit_vsplit", mode = "i" },
+							},
+						},
+					},
+				},
+				buffers = {
+					actions = {
+						buffers_smart_esc = function(picker)
+							picker:action("focus_list")
+							picker:action("list_top")
+						end,
+						explorer_smart_vsplit = function(picker)
+							local item = picker:current({ resolve = true })
+							if not item then
+								return
+							end
+							if item.dir then
+								picker:action("confirm")
+							else
+								vim.cmd("vsplit " .. item.file)
+								picker:close()
+							end
+						end,
+						explorer_smart_hsplit = function(picker)
+							local item = picker:current({ resolve = true })
+							if not item then
+								return
+							end
+							if item.dir then
+								picker:action("confirm")
+							else
+								vim.cmd("split " .. item.file)
+								picker:close()
+							end
+						end,
+					},
+					win = {
+						input = {
+							keys = {
+								["<Esc>"] = { "buffers_smart_esc", mode = "i" },
+							},
+						},
+						list = {
+							keys = {
+								["x"] = "bufdelete",
+								["v"] = "explorer_smart_vsplit",
+								["s"] = "explorer_smart_hsplit",
 							},
 						},
 					},

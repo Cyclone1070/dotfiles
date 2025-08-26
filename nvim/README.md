@@ -14,7 +14,7 @@ sudo cpan Time::HiRes
 chmod +x ~/.config/nvim/asciiquarium
 chmod +x ~/.config/nvim/cxxmatrix
 chmod +x ~/.config/nvim/fire.pl
-chmod +x ~/.config/nvim/rain
+chmod +x ~/.config/nvim/terminal_rain_lightning.py
 brew install pipes-sh
 brew install cbonsai
 brew install lavat
