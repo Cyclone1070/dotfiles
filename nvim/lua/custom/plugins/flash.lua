@@ -8,9 +8,6 @@ return {
 					backdrop = false,
 				},
 			},
-			search = {
-				enabled = true,
-			},
 		},
 	},
 }

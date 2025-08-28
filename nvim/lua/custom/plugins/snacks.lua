@@ -136,7 +136,7 @@ end
 -- Randomly choose a terminal command
 local terminal_commands = {
 	"~/.config/nvim/fire.pl",
-	"~/.config/nvim/cxxmatrix --preserve-background --frame-rate 10 -s banner -m javascript -s rain-forever",
+	"~/.config/nvim/cxxmatrix --preserve-background --frame-rate 10 -s rain-forever",
 	"~/.config/nvim/cxxmatrix --preserve-background --frame-rate 10 -s conway -s loop",
 	"~/.config/nvim/asciiquarium -t",
 	"pipes.sh -p 7 -t 1 -t 3 -f 100 -r 3000",
@@ -430,6 +430,8 @@ return {
 								["x"] = "bufdelete",
 								["v"] = "explorer_smart_vsplit",
 								["s"] = "explorer_smart_hsplit",
+								["l"] = "confirm",
+								["<CR>"] = "confirm",
 							},
 						},
 					},
