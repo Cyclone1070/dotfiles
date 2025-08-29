@@ -52,6 +52,8 @@ return {
 				vim.api.nvim_set_hl(0, "SnacksPickerGitStatusUntracked", { link = "Comment" })
 				vim.api.nvim_set_hl(0, "SnacksPickerGitStatusIgnored", { link = "Comment" })
 				vim.api.nvim_set_hl(0, "SnacksPickerTree", { link = "SnacksPickerList" })
+				vim.api.nvim_set_hl(0, "FlashLabel", { link = "FlashMatch" })
+				vim.api.nvim_set_hl(0, "FlashCursor", { link = "FlashCurrent" })
 			end
 
 			-- function to be called in colorscheme

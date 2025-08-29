@@ -20,6 +20,7 @@ alias geminif="gemini -m gemini-2.5-flash"
 alias remoteon='launchctl load ~/Library/LaunchAgents/com.autossh.tunnel.plist && pmset displaysleepnow'
 alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.autossh.tunnel.plist'
 alias remotecheck='ps aux | grep "[a]utossh"'
+alias cd='z'
 
 
 # Setup a tmux session for react workflow

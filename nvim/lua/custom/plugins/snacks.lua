@@ -378,6 +378,47 @@ return {
 			},
 		},
 		picker = {
+			actions = {
+				smart_confirm = function(picker)
+					-- We get the item safely here. This context is reliable.
+					local item = picker:current({ resolve = true })
+					if not item then
+						return
+					end
+
+					if item.dir then
+						picker:action("confirm")
+					else
+						-- For a file, perform the "jump" action.
+						picker:action("jump")
+					end
+				end,
+				smart_esc = function(picker)
+					picker:action("focus_list")
+					if picker.finder.filter.pattern ~= "" then
+						picker:action("list_top")
+					end
+				end,
+			},
+			win = {
+				input = {
+					keys = {
+						["<Esc>"] = { "smart_esc", mode = "i" },
+						["<CR>"] = { "smart_confirm", mode = "i" },
+						["<C-v>"] = { "edit_vsplit", mode = "i" },
+						["<C-s>"] = { "edit_hsplit", mode = "i" },
+					},
+				},
+				list = {
+					keys = {
+						["v"] = "edit_vsplit",
+						["s"] = "edit_hsplit",
+						["l"] = "smart_confirm",
+						["<CR>"] = "smart_confirm",
+					},
+				},
+			},
+
 			sources = {
 				help = {
 					win = {
@@ -389,49 +430,11 @@ return {
 					},
 				},
 				buffers = {
-					actions = {
-						buffers_smart_esc = function(picker)
-							picker:action("focus_list")
-							picker:action("list_top")
-						end,
-						explorer_smart_vsplit = function(picker)
-							local item = picker:current({ resolve = true })
-							if not item then
-								return
-							end
-							if item.dir then
-								picker:action("confirm")
-							else
-								vim.cmd("vsplit " .. item.file)
-								picker:close()
-							end
-						end,
-						explorer_smart_hsplit = function(picker)
-							local item = picker:current({ resolve = true })
-							if not item then
-								return
-							end
-							if item.dir then
-								picker:action("confirm")
-							else
-								vim.cmd("split " .. item.file)
-								picker:close()
-							end
-						end,
-					},
+					focus = "list",
 					win = {
-						input = {
-							keys = {
-								["<Esc>"] = { "buffers_smart_esc", mode = "i" },
-							},
-						},
 						list = {
 							keys = {
 								["x"] = "bufdelete",
-								["v"] = "explorer_smart_vsplit",
-								["s"] = "explorer_smart_hsplit",
-								["l"] = "confirm",
-								["<CR>"] = "confirm",
 							},
 						},
 					},
@@ -481,72 +484,18 @@ return {
 					jump = { close = true },
 					-- keymap for the explorer picker
 					actions = {
-						explorer_smart_confirm = function(picker)
-							-- We get the item safely here. This context is reliable.
-							local item = picker:current({ resolve = true })
-							if not item then
-								return
-							end
-
-							if item.dir then
-								picker:action("confirm")
-							else
-								-- For a file, perform the "jump" action.
-								picker:action("jump")
-							end
-						end,
-						explorer_smart_esc = function(picker)
-							picker:action("focus_list")
-							picker:action("list_top")
-						end,
 						explorer_focus_and_clear_input = function(picker)
 							local opts = picker.init_opts
 							picker:close()
 							Snacks.explorer(opts)
 						end,
-						explorer_smart_vsplit = function(picker)
-							local item = picker:current({ resolve = true })
-							if not item then
-								return
-							end
-							if item.dir then
-								picker:action("confirm")
-							else
-								vim.cmd("vsplit " .. item.file)
-								picker:close()
-							end
-						end,
-						explorer_smart_hsplit = function(picker)
-							local item = picker:current({ resolve = true })
-							if not item then
-								return
-							end
-							if item.dir then
-								picker:action("confirm")
-							else
-								vim.cmd("split " .. item.file)
-								picker:close()
-							end
-						end,
 					},
 					win = {
 						-- Add the explorer actions to the input window so they work while searching
-						input = {
-							keys = {
-								["<Esc>"] = { "explorer_smart_esc", mode = "i" },
-								["<CR>"] = { "explorer_smart_confirm", mode = "i" },
-								["<C-v>"] = { "explorer_smart_vsplit", mode = "i" },
-								["<C-s>"] = { "explorer_smart_hsplit", mode = "i" },
-							},
-						},
 						list = {
 							keys = {
-								["l"] = "explorer_smart_confirm",
-								["<CR>"] = "explorer_smart_confirm",
 								["c"] = "explorer_add",
 								["a"] = "explorer_focus_and_clear_input",
-								["v"] = "explorer_smart_vsplit",
-								["s"] = "explorer_smart_hsplit",
 							},
 						},
 					},
