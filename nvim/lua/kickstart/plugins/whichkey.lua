@@ -6,6 +6,7 @@ return { -- Useful plugin to show you pending keybinds.
 		triggers = {
 			{ "<auto>", mode = "nixsotc" },
 			{ "s", mode = { "n" } },
+			{ "H", mode = { "n" } },
 		},
 		-- delay between pressing a key and opening which-key (milliseconds)
 		-- this setting is independent of vim.opt.timeoutlen

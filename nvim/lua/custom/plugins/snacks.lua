@@ -399,20 +399,44 @@ return {
 						picker:action("list_top")
 					end
 				end,
+				smart_vsplit = function(picker)
+					local item = picker:current({ resolve = true })
+					if not item then
+						return
+					end
+					if item.dir then
+						picker:action("confirm")
+					else
+						vim.cmd("vsplit " .. item.file)
+						picker:close()
+					end
+				end,
+				smart_hsplit = function(picker)
+					local item = picker:current({ resolve = true })
+					if not item then
+						return
+					end
+					if item.dir then
+						picker:action("confirm")
+					else
+						vim.cmd("split " .. item.file)
+						picker:close()
+					end
+				end,
 			},
 			win = {
 				input = {
 					keys = {
 						["<Esc>"] = { "smart_esc", mode = "i" },
 						["<CR>"] = { "smart_confirm", mode = "i" },
-						["<C-v>"] = { "edit_vsplit", mode = "i" },
-						["<C-s>"] = { "edit_hsplit", mode = "i" },
+						["<C-v>"] = { "smart_vsplit", mode = "i" },
+						["<C-s>"] = { "smart_hsplit", mode = "i" },
 					},
 				},
 				list = {
 					keys = {
-						["v"] = "edit_vsplit",
-						["s"] = "edit_hsplit",
+						["v"] = "smart_vsplit",
+						["s"] = "smart_hsplit",
 						["l"] = "smart_confirm",
 						["<CR>"] = "smart_confirm",
 					},
@@ -496,6 +520,8 @@ return {
 							keys = {
 								["c"] = "explorer_add",
 								["a"] = "explorer_focus_and_clear_input",
+								["l"] = "smart_confirm",
+								["<CR>"] = "smart_confirm",
 							},
 						},
 					},

@@ -17,9 +17,12 @@ alias mstop='brew services stop mongodb-community@8.0'
 # gemini cli
 alias geminif="gemini -m gemini-2.5-flash"
 # autossh to enable and disable ssh portforwarding from remote oracle linux instance
-alias remoteon='launchctl load ~/Library/LaunchAgents/com.autossh.tunnel.plist && pmset displaysleepnow'
-alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.autossh.tunnel.plist'
+alias azureon='launchctl load ~/Library/LaunchAgents/com.azure.tunnel.plist && pmset displaysleepnow'
+alias azureoff='launchctl unload ~/Library/LaunchAgents/com.azure.tunnel.plist'
+alias oracleon='launchctl load ~/Library/LaunchAgents/com.oracle.tunnel.plist && pmset displaysleepnow'
+alias oracleoff='launchctl unload ~/Library/LaunchAgents/com.oracle.tunnel.plist'
 alias remotecheck='ps aux | grep "[a]utossh"'
+# map cd to zoxide
 alias cd='z'
 
 
