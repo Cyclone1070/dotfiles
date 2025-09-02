@@ -386,7 +386,9 @@ return {
 						return
 					end
 
-					if item.dir then
+					if item.dir == nil then
+						picker:action("confirm")
+					elseif item.dir then
 						picker:action("confirm")
 					else
 						-- For a file, perform the "jump" action.
@@ -513,15 +515,34 @@ return {
 							picker:close()
 							Snacks.explorer(opts)
 						end,
+						explorer_smart_confirm = function(picker)
+							-- We get the item safely here. This context is reliable.
+							local item = picker:current({ resolve = true })
+							if not item then
+								return
+							end
+
+							if item.dir then
+								picker:action("confirm")
+							else
+								-- For a file, perform the "jump" action.
+								picker:action("jump")
+							end
+						end,
 					},
 					win = {
 						-- Add the explorer actions to the input window so they work while searching
+						input = {
+							keys = {
+								["<CR>"] = { "explorer_smart_confirm", mode = "i" },
+							},
+						},
 						list = {
 							keys = {
 								["c"] = "explorer_add",
 								["a"] = "explorer_focus_and_clear_input",
-								["l"] = "smart_confirm",
-								["<CR>"] = "smart_confirm",
+								["l"] = "explorer_smart_confirm",
+								["<CR>"] = "explorer_smart_confirm",
 							},
 						},
 					},
