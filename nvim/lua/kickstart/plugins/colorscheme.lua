@@ -54,6 +54,8 @@ return {
 				vim.api.nvim_set_hl(0, "SnacksPickerTree", { link = "SnacksPickerList" })
 				vim.api.nvim_set_hl(0, "FlashLabel", { link = "FlashMatch" })
 				vim.api.nvim_set_hl(0, "FlashCursor", { link = "FlashCurrent" })
+				-- Markdown links blue and underline
+				vim.api.nvim_set_hl(0, "MarkviewHyperLink", { fg = "#99c3ff", underline = true })
 			end
 
 			-- function to be called in colorscheme
