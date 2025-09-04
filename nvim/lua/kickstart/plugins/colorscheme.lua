@@ -56,6 +56,8 @@ return {
 				vim.api.nvim_set_hl(0, "FlashCursor", { link = "FlashCurrent" })
 				-- Markdown links blue and underline
 				vim.api.nvim_set_hl(0, "MarkviewHyperLink", { fg = "#99c3ff", underline = true })
+				-- Fix java colors
+				vim.api.nvim_set_hl(0, "@lsp.type.modifier.java", { link = "Statement" })
 			end
 
 			-- function to be called in colorscheme
