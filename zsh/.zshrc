@@ -83,7 +83,7 @@ plugins=(
 	zsh-syntax-highlighting
 	zsh-autopair
 	marked-operations
-	t-session-mux
+	tmux-windows
 )
 
 source $ZSH/oh-my-zsh.sh
