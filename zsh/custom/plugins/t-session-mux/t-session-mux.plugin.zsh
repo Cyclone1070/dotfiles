@@ -270,24 +270,25 @@ _t_split_and_join() {
     return 1
   # The '-n' flag checks if there is more than one line of output.
   elif [[ -n "$(echo "$matches" | tail -n +2)" ]]; then
-    # --- MODIFIED: Floating FZF with Live Preview ---
+    # --- MODIFIED: FZF options for correct rendering and layout ---
     local tmp_file
     tmp_file=$(mktemp) || return 1 # Exit if mktemp fails
     trap "rm -f '$tmp_file'" RETURN # Ensure temp file is cleaned up
 
-    # The preview command captures the content of the selected window.
-    # The '{}' is replaced by fzf with the currently highlighted line (the window name).
-    local fzf_preview_command="tmux capture-pane -p -t ':{}'"
+    # The preview command now includes '-e' to preserve ANSI color/style codes.
+    # This is the key to fixing the rendering.
+    local fzf_preview_command="tmux capture-pane -ep -t ':{}'"
     
     # Define fzf options for a better experience.
     local fzf_options=(
       "--height 100%"
+      "--layout=reverse" # This moves the prompt to the top.
       "--header 'Select a window to join'"
       "--preview \"$fzf_preview_command\""
       "--preview-window 'right:60%:border-rounded'"
     )
 
-    # Run fzf inside a styled tmux popup, redirecting the selection to the temp file.
+    # Run fzf inside a styled tmux popup.
     command tmux display-popup -w 80% -h 80% -b rounded -E "echo \"$matches\" | fzf ${fzf_options[*]} > \"$tmp_file\""
 
     # Read the selection back from the temp file.
