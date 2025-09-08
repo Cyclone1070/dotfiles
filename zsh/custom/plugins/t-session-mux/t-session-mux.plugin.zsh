@@ -172,47 +172,27 @@ tn() {
 }
 
 # Kill one or more windows.
+# Kill the current pane (no args) or specified windows (with args).
 tk-underlying-function() {
-  # --- MODIFIED: Logic for 'tk' with no arguments ---
+  # --- MODIFIED BLOCK: Logic for 'tk' with no arguments ---
   if [[ $# -eq 0 ]]; then
     # This command should only work if we are inside tmux.
     if [[ -z "$TMUX" ]]; then
+      echo "Error: Cannot kill pane outside of a tmux session." >&2
       return 1
     fi
 
-    local current_window_name
-    current_window_name=$(command tmux -u display-message -p '#W')
-    local current_window_index=$(command tmux -u display-message -p '#I')
-
-    # If we are in the 'default' window, kill it safely by offloading the task.
-    if [[ "$current_window_name" == "default" ]]; then
-      local temp_window_name="defaultkilltemp"
-      local default_window_index=0
-      local default_window_name="default"
-
-      # Create a temporary window in detached mode
-      command tmux -u new-window -d -n "$temp_window_name" 2>/dev/null
-
-      # Send commands to the temporary window to execute the sequence
-      command tmux -u send-keys -t "$temp_window_name" "
-        tmux kill-window -t :$current_window_index;
-        tmux new-window -d -t :$default_window_index -n $default_window_name;
-        tmux select-window -t :$default_window_index;
-        tmux kill-window -t :$temp_window_name;
-        exit
-      " C-m
-
-      sleep 0.1 # Give tmux a moment to process the commands
-    else
-      # For any other window, kill it and switch to 'default'.
-      command tmux -u kill-window -t :"$current_window_index" 2>/dev/null
-      _ensure_default_window_exists # Ensure default exists
-      command tmux -u select-window -t :default # Switch to default
-    fi
+    # The 'kill-pane' command is smart:
+    # - If there are multiple panes, it closes the current one.
+    # - If it's the last pane, it closes the window as well.
+    command tmux kill-pane
+    command tmux display-message "Pane killed"
     return $?
   fi
+  # --- END OF MODIFIED BLOCK ---
 
-  # --- The rest of the logic for 'tk <pattern>' ---
+
+  # --- UNCHANGED: The rest of the logic for 'tk <pattern>' ---
   local -a all_windows windows_to_kill unique_windows
   all_windows=( ${(f)"$(command tmux -u list-windows -F '#{window_name}')"} )
 
