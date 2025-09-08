@@ -322,7 +322,6 @@ _t_split_and_join() {
   # Recreate 'default' if it was just joined
   if [[ "$joining_default" == true ]]; then
     command tmux new-window -d -t :0 -n "default"
-    command tmux display-message "Joined 'default' and recreated it at index 0"
   fi
 }
 # Split pane vertically. If a pattern is given, join the matched window.
