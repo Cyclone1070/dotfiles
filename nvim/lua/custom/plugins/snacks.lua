@@ -128,7 +128,7 @@ local logo_line_count = 0
 for _ in string.gmatch(chosen_dashboard_logo, "([^\n]*)") do
 	logo_line_count = logo_line_count + 1
 end
-local terminal_section_height = vim.opt.lines:get() - logo_line_count + 2 -- Total screen lines
+local terminal_section_height = vim.opt.lines:get() - logo_line_count + 4 -- Total screen lines
 local dashboard_width = vim.opt.columns:get()
 if dashboard_width > 120 then
 	dashboard_width = 120
@@ -366,7 +366,7 @@ return {
 					cmd = chosen_terminal_command,
 					height = terminal_section_height,
 					padding = 1,
-					ttl = 10,
+					ttl = 5 * 60,
 				},
 				{ section = "startup", padding = 1 },
 				{ section = "keys" },
