@@ -254,19 +254,45 @@ _t_split_and_join() {
     return 1
   fi
 
-  # --- CORE LOGIC ---
   # If no search query was provided, perform a simple split.
   if [[ -z "$query" ]]; then
     command tmux split-window "$split_flag"
-    return $? # Exit with the status of the split command
+    return $?
   fi
 
-  # If a query was provided, proceed with the find-and-join logic.
-  local target_window=$(command tmux list-windows -F '#W' 2>/dev/null | grep --color=never -i "$query" | head -n 1)
+  # Find all matching windows
+  local matches=$(command tmux list-windows -F '#W' 2>/dev/null | grep --color=never -i "$query")
+  local target_window=""
 
-  if [[ -z "$target_window" ]]; then
+  # Check how many matches were found.
+  if [[ -z "$matches" ]]; then
     echo "Error: No window found matching '$query'." >&2
     return 1
+  # The '-n' flag checks if there is more than one line of output.
+  elif [[ -n "$(echo "$matches" | tail -n +2)" ]]; then
+    # --- NEW: Floating FZF Logic ---
+    # Create a temporary file to capture fzf's output.
+    local tmp_file
+    tmp_file=$(mktemp) || return 1 # Exit if mktemp fails
+
+    # Use a trap to ensure the temp file is deleted when the function exits.
+    # 'RETURN' is a Zsh-specific trap that is better for functions than 'EXIT'.
+    trap "rm -f '$tmp_file'" RETURN
+
+    # Run fzf inside a styled tmux popup, redirecting the selection to the temp file.
+    command tmux display-popup -w 80% -h 60% -b rounded -E "echo \"$matches\" | fzf > \"$tmp_file\""
+
+    # Read the selection back from the temp file.
+    target_window=$(cat "$tmp_file")
+
+    # If the user cancelled fzf (e.g., pressed Esc), the file will be empty. Abort.
+    if [[ -z "$target_window" ]]; then
+      return 1
+    fi
+    # --- END OF NEW LOGIC ---
+  else
+    # Exactly one match was found.
+    target_window="$matches"
   fi
 
   local current_window=$(command tmux display-message -p '#W')
@@ -275,10 +301,21 @@ _t_split_and_join() {
     return 1
   fi
 
+  # "Default" Window Safety Net
+  local joining_default=false
+  if [[ "$target_window" == "default" ]]; then
+    joining_default=true
+  fi
+
   # Use join-pane, which both splits and moves the source pane.
   command tmux join-pane "$split_flag" -s ":$target_window"
-}
 
+  # Recreate 'default' if it was just joined
+  if [[ "$joining_default" == true ]]; then
+    command tmux new-window -d -t :0 -n "default"
+    command tmux display-message "Joined 'default' and recreated it at index 0"
+  fi
+}
 # Split pane vertically. If a pattern is given, join the matched window.
 # Usage: tv [window_name_pattern]
 tv() {
