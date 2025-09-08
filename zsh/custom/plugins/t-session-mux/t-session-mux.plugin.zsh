@@ -5,25 +5,23 @@ alias tmux='tmux -u'
 _ensure_default_window_exists() {
   local default_window_name="default"
   local default_window_index=0
+  local window_name_at_index_0=""
 
-  # Check if window at index 0 exists
+  # Get the name of the window at index 0, if it exists
   if command tmux -u has-window -t :"$default_window_index" 2>/dev/null; then
-    local current_window_at_index_0=$(command tmux -u display-message -p '#{window_name}' -t :"$default_window_index" 2>/dev/null)
-    if [[ "$current_window_at_index_0" != "$default_window_name" ]]; then
-      # If window 0 exists but is not named 'default', rename it to 'default'
-      command tmux -u rename-window -t :"$default_window_index" "$default_window_name" 2>/dev/null
-      echo "Renamed window at index $default_window_index to '$default_window_name'." >&2
-    fi
-  else
-    # If window at index 0 does not exist, create 'default' at index 0
-    command tmux -u new-window -d -t :"$default_window_index" -n "$default_window_name" 2>/dev/null
-    echo "Created default window at index $default_window_index." >&2
+    window_name_at_index_0=$(command tmux -u display-message -p '#{window_name}' -t :"$default_window_index" 2>/dev/null)
   fi
 
-  # Ensure there's always at least one window. This handles cases where all windows might have been killed.
-  if [[ $(command tmux -u list-windows -F '#{window_name}' 2>/dev/null | wc -l) -eq 0 ]]; then
+  if [[ "$window_name_at_index_0" == "$default_window_name" ]]; then
+    # Case 1: Window at index 0 exists and is already named "default". Do nothing.
+    return 0
+  elif [[ -n "$window_name_at_index_0" ]]; then
+    # Case 2: Window exists at index 0, but it's not named "default". Rename it.
+    command tmux -u rename-window -t :"$default_window_index" "$default_window_name" 2>/dev/null
+    echo "Renamed window at index $default_window_index to '$default_window_name'." >&2
+  else
+    # Case 3: No window exists at index 0. Create the default window there.
     command tmux -u new-window -d -t :"$default_window_index" -n "$default_window_name" 2>/dev/null
-    echo "Recreated default window as no windows were found." >&2
   fi
 }
 
@@ -50,7 +48,6 @@ t() {
     if [[ -n "$TMUX" ]]; then
         command tmux -u choose-window
     else
-        _ensure_default_window_exists
         command tmux -u attach-session || command tmux -u new-session -s default
     fi
     return $?
@@ -106,12 +103,10 @@ t() {
         fi
       fi
     done
-    _ensure_default_window_exists
 
     if [[ -n "$TMUX" ]]; then
       command tmux -u select-window -t :"$1"
     else
-      _ensure_default_window_exists
       command tmux -u attach-session || command tmux -u new-session -s default
       command tmux -u select-window -t :"$1"
     fi
@@ -171,7 +166,6 @@ tn() {
   if [[ -n "$TMUX" ]]; then
     command tmux -u select-window -t :"$1"
   else
-    _ensure_default_window_exists
     command tmux -u attach-session || command tmux -u new-session -s default
     command tmux -u select-window -t :"$1"
   fi
