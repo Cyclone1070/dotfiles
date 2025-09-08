@@ -261,3 +261,87 @@ _t_list_windows() {
 }
 alias tls='_t_list_windows'
 alias tka='command tmux -u kill-server'
+
+# Helper function to handle the logic for splitting and joining.
+# Not intended to be called directly by the user.
+_t_split_and_join() {
+  local split_flag="$1" # The flag for tmux command (-v or -h)
+  local query="$2"      # The user's search pattern
+
+  # Guard clause: Must be inside a tmux session.
+  if [[ -z "$TMUX" ]]; then
+    echo "Error: This command can only be run inside a tmux session." >&2
+    return 1
+  fi
+
+  # --- CORE LOGIC ---
+  # If no search query was provided, perform a simple split.
+  if [[ -z "$query" ]]; then
+    command tmux split-window "$split_flag"
+    return $? # Exit with the status of the split command
+  fi
+
+  # If a query was provided, proceed with the find-and-join logic.
+  local target_window=$(command tmux list-windows -F '#W' 2>/dev/null | grep --color=never -i "$query" | head -n 1)
+
+  if [[ -z "$target_window" ]]; then
+    echo "Error: No window found matching '$query'." >&2
+    return 1
+  fi
+
+  local current_window=$(command tmux display-message -p '#W')
+  if [[ "$current_window" == "$target_window" ]]; then
+    echo "Error: Cannot join a window with itself." >&2
+    return 1
+  fi
+
+  # Use join-pane, which both splits and moves the source pane.
+  command tmux join-pane "$split_flag" -s ":$target_window"
+}
+
+# Split pane vertically. If a pattern is given, join the matched window.
+# Usage: tv [window_name_pattern]
+tv() {
+  # The '-v' flag specifies a vertical split.
+  # We pass all arguments ("$@") to the helper.
+  _t_split_and_join "-v" "$@"
+}
+
+# Split pane horizontally. If a pattern is given, join the matched window.
+# Usage: th [window_name_pattern]
+th() {
+  # The '-h' flag specifies a horizontal split.
+  # We pass all arguments ("$@") to the helper.
+  _t_split_and_join "-h" "$@"
+}
+
+# Unsplit the current pane into a new, named window.
+# A name for the new window is required.
+# Usage: tu <new_window_name>
+tu() {
+  # Guard clause: Must be inside a tmux session.
+  if [[ -z "$TMUX" ]]; then
+    echo "Error: This command can only be run inside a tmux session." >&2
+    return 1
+  fi
+
+  local new_name="$1"
+
+  # --- MODIFIED LOGIC ---
+  # Check if a name was provided. If not, print usage and exit.
+  if [[ -z "$new_name" ]]; then
+    echo "Usage: tu <new_window_name>" >&2
+    echo "Error: You must provide a name for the new window." >&2
+    return 1
+  fi
+
+  # Check for uniqueness using the existing helper function.
+  if ! _t_check_unique_window_name "$new_name"; then
+    # The helper function already prints a detailed error message.
+    return 1
+  fi
+
+  # The 'break-pane' command creates the new window and switches to it.
+  # We chain the 'rename-window' command right after it.
+  command tmux break-pane \; rename-window "$new_name"
+}
