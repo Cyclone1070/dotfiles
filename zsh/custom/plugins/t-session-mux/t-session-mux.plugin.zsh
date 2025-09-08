@@ -270,26 +270,34 @@ _t_split_and_join() {
     return 1
   # The '-n' flag checks if there is more than one line of output.
   elif [[ -n "$(echo "$matches" | tail -n +2)" ]]; then
-    # --- NEW: Floating FZF Logic ---
-    # Create a temporary file to capture fzf's output.
+    # --- MODIFIED: Floating FZF with Live Preview ---
     local tmp_file
     tmp_file=$(mktemp) || return 1 # Exit if mktemp fails
+    trap "rm -f '$tmp_file'" RETURN # Ensure temp file is cleaned up
 
-    # Use a trap to ensure the temp file is deleted when the function exits.
-    # 'RETURN' is a Zsh-specific trap that is better for functions than 'EXIT'.
-    trap "rm -f '$tmp_file'" RETURN
+    # The preview command captures the content of the selected window.
+    # The '{}' is replaced by fzf with the currently highlighted line (the window name).
+    local fzf_preview_command="tmux capture-pane -p -t ':{}'"
+    
+    # Define fzf options for a better experience.
+    local fzf_options=(
+      "--height 100%"
+      "--header 'Select a window to join'"
+      "--preview \"$fzf_preview_command\""
+      "--preview-window 'right:60%:border-rounded'"
+    )
 
     # Run fzf inside a styled tmux popup, redirecting the selection to the temp file.
-    command tmux display-popup -w 80% -h 60% -b rounded -E "echo \"$matches\" | fzf > \"$tmp_file\""
+    command tmux display-popup -w 80% -h 80% -b rounded -E "echo \"$matches\" | fzf ${fzf_options[*]} > \"$tmp_file\""
 
     # Read the selection back from the temp file.
     target_window=$(cat "$tmp_file")
 
-    # If the user cancelled fzf (e.g., pressed Esc), the file will be empty. Abort.
+    # If the user cancelled fzf (e.g., pressed Esc), abort.
     if [[ -z "$target_window" ]]; then
       return 1
     fi
-    # --- END OF NEW LOGIC ---
+    # --- END OF MODIFIED BLOCK ---
   else
     # Exactly one match was found.
     target_window="$matches"
