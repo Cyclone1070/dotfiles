@@ -44,6 +44,7 @@ _t_check_unique_window_name() {
 # If the first parameter doesn't match any existing window,
 # it creates all specified windows and attaches to the first one.
 t() {
+  _ensure_default_window_exists # Ensure default window exists at index 0
   # If 't' is run alone, use the window switcher
   if [[ -z "$1" ]]; then
     if [[ -n "$TMUX" ]]; then
@@ -153,6 +154,7 @@ td() {
 
 # Create one or more new windows.
 tn() {
+  _ensure_default_window_exists # Ensure default window exists at index 0
   if [[ $# -eq 0 ]]; then
     return 1
   fi
