@@ -48,7 +48,7 @@ t() {
     if [[ -n "$TMUX" ]]; then
         command tmux -u choose-window
     else
-        command tmux -u attach-session || command tmux -u new-session -s default
+		command tmux -u attach-session || command tmux -u new-session -s default -n default
     fi
     return $?
   fi
@@ -124,11 +124,11 @@ ta() {
   else
     if [[ -n "$1" ]]; then
       _ensure_default_window_exists
-      command tmux -u attach-session || command tmux -u new-session -s default
+      command tmux -u attach-session || command tmux -u new-session -s default -n default
       command tmux -u select-window -t :"$1"
     else
       _ensure_default_window_exists
-      command tmux -u attach-session || command tmux -u new-session -s default
+      command tmux -u attach-session || command tmux -u new-session -s default -n default
     fi
   fi
 }
@@ -166,7 +166,7 @@ tn() {
   if [[ -n "$TMUX" ]]; then
     command tmux -u select-window -t :"$1"
   else
-    command tmux -u attach-session || command tmux -u new-session -s default
+    command tmux -u attach-session || command tmux -u new-session -s default -n default
     command tmux -u select-window -t :"$1"
   fi
 }
