@@ -535,6 +535,7 @@ return {
 						input = {
 							keys = {
 								["<CR>"] = { "explorer_smart_confirm", mode = "i" },
+								["<C-h>"] = { "toggle_hidden", mode = "i" },
 							},
 						},
 						list = {
