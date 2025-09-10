@@ -41,35 +41,26 @@ treact() {
     return 1
   fi
 
-  local original_hook
-  original_hook=$(tmux show-hooks -g | grep 'session-created')
-
-  # Set a trap to restore the hook when the function exits (for any reason).
-  if [[ -n "$original_hook" ]]; then
-    trap "tmux set-hook -g ${original_hook}" EXIT
-  else
-    trap "tmux set-hook -g -u session-created" EXIT
-  fi
-
-  # Unset the hook for the duration of this function's execution.
-  tmux set-hook -g -u session-created
+  local current_session_name
+  current_session_name=$(tmux display-message -p '#S')
 
   local dir_name
   dir_name=$(basename "$dir_path")
-  local session_name=${dir_name//./_}
+  local window_base_name=${dir_name//./_}
 
-  # Create the sessions
-  tmux new-session -d -s "$session_name" -c "$dir_path"
+  # Create the first window with just the directory name
+  tmux new-window -n "$window_base_name" -c "$dir_path"
 
-  local h_session_name="h$session_name"
-  tmux new-session -d -s "$h_session_name" -c "$dir_path"
-  tmux send-keys -t "$h_session_name" "pnpm dev --host" C-m
+  # Create a new window for pnpm dev --host
+  local h_window_name="h$window_base_name"
+  tmux new-window -n "$h_window_name" -c "$dir_path"
+  tmux send-keys -t "$current_session_name:$h_window_name" "pnpm dev --host" C-m
 
-  local n_session_name="n$session_name"
-  tmux new-session -d -s "$n_session_name" -c "$dir_path"
-  tmux send-keys -t "$n_session_name" "nvim" C-m
+  # Create a new window for nvim
+  local n_window_name="n$window_base_name"
+  tmux new-window -n "$n_window_name" -c "$dir_path"
+  tmux send-keys -t "$current_session_name:$n_window_name" "nvim" C-m
 
-  tmux switch-client -t "$n_session_name"
-
-  # The trap will automatically fire now, restoring the hook.
+  # Select the nvim window
+  tmux select-window -t "$current_session_name:$n_window_name"
 }
