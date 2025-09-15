@@ -276,7 +276,7 @@ return {
 							elseif action.title:match("[Aa]dd [Ii]mport") then
 								applied_actions[action.title] = true
 								return true
-							elseif filetype == "cs" and action.title:match("^[Uu]sing") then
+							elseif filetype == "cs" and action.title:match("[Uu]sing") then
 								applied_actions[action.title] = true
 								return true
 							end

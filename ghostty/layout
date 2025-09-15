@@ -12,5 +12,5 @@ mouse-hide-while-typing = true
 
 theme = GitHub-Dark-Default
 
-background-opacity = 0.9
+background-opacity = 0.85
 background-blur = true

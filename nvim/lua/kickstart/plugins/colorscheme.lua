@@ -1,4 +1,36 @@
 return {
+	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		opts = {
+			transparent = true,
+		},
+		config = function()
+			require("tokyonight").setup({
+				transparent = true,
+			})
+			vim.cmd.colorscheme("tokyonight")
+			vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "SnacksPickerUnselected", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "SnacksPickerPathHidden", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "SnacksPickerPathIgnored", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "SnacksPickerGitStatusUntracked", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "SnacksPickerGitStatusIgnored", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "SnacksPickerTree", { link = "SnacksPickerList" })
+			vim.api.nvim_set_hl(0, "FlashLabel", { link = "FlashMatch" })
+			vim.api.nvim_set_hl(0, "FlashCursor", { link = "FlashCurrent" })
+			vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "Comment", { fg = "#8186a3" })
+			vim.api.nvim_set_hl(0, "CopilotSuggestion", { link = "Comment" })
+			vim.api.nvim_set_hl(0, "CopilotAnnotation", { link = "Comment" })
+
+			local comment_fg = vim.api.nvim_get_hl(0, { name = "Comment", link = false }).fg
+			vim.api.nvim_set_hl(0, "LineNrAbove", { fg = comment_fg })
+			vim.api.nvim_set_hl(0, "LineNrBelow", { fg = comment_fg })
+			vim.api.nvim_set_hl(0, "LineNr", { fg = comment_fg })
+		end,
+	},
 	{ "echasnovski/mini.colors", opts = {} },
 	{
 		"echasnovski/mini.hues",
@@ -33,13 +65,8 @@ return {
 				-- Set the entire left column to new style
 				vim.api.nvim_set_hl(0, "LineNr", { fg = "#788a8a", bg = line_nr_bg })
 				vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#bbbbbb", bg = line_nr_bg })
-				vim.api.nvim_set_hl(0, "SignColumn", { fg = "#788a8a", bg = line_nr_bg })
 				vim.api.nvim_set_hl(0, "CursorLineSign", { fg = "#788a8a", bg = line_nr_bg })
-				-- Set minitabline color
-				vim.api.nvim_set_hl(0, "MiniTablineCurrent", tabline_current)
-				vim.api.nvim_set_hl(0, "MiniTablineVisible", { link = "MiniTablineHidden" })
-				vim.api.nvim_set_hl(0, "MiniTablineHidden", tabline_hidden)
-				vim.api.nvim_set_hl(0, "MiniTablineTrunc", tabline_trunc)
+				vim.api.nvim_set_hl(0, "SignColumn", { fg = "#788a8a", bg = line_nr_bg })
 				-- Keywords highlight
 				vim.api.nvim_set_hl(0, "Statement", { fg = "#E1914C" })
 				-- Blink cmp ghost text
@@ -73,10 +100,7 @@ return {
 				hues.setup(base_colors)
 				set_additional_highlight()
 			end
-
-			-- enable colorscheme
-			vim.cmd.colorscheme("minirandom")
-
+			-- vim.cmd.colorscheme("minirandom")
 			-- -- Uncomment the following lines to enable the color switch animation feature
 			-- -- autocmd to change color on buffer change
 			-- -- get the hue animation steps
