@@ -453,6 +453,12 @@ return {
 								["<CR>"] = { "edit_vsplit", mode = "i" },
 							},
 						},
+						list = {
+							keys = {
+								["<CR>"] = { "edit_vsplit" },
+								["l"] = { "edit_vsplit" },
+							},
+						},
 					},
 				},
 				buffers = {
@@ -536,6 +542,7 @@ return {
 							keys = {
 								["<CR>"] = { "explorer_smart_confirm", mode = "i" },
 								["<C-h>"] = { "toggle_hidden", mode = "i" },
+								["<C-p>"] = { "toggle_preview", mode = "i" },
 							},
 						},
 						list = {

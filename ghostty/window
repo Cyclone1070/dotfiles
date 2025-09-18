@@ -7,8 +7,8 @@ macos-hidden = always
 
 maximize = true
 window-padding-balance
-window-padding-y = 3
-window-padding-x = 5
+window-padding-y = 10
+window-padding-x = 15
 
 confirm-close-surface = false
 #quit-after-last-window-closed = true
