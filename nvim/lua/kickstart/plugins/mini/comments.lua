@@ -32,10 +32,6 @@ return {
 					end,
 				},
 			})
-			-- Disable default 'gc' mapping for normal and visual modes
-			vim.keymap.del({ "n", "x" }, "gc")
-			vim.keymap.del("n", "gcc")
-			vim.keymap.del("o", "gc")
 		end,
 	},
 }

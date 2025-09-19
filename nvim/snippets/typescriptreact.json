@@ -8,7 +8,7 @@
 			"\t$1",
 			"}",
 			"",
-			"export function $TM_FILENAME_BASE({ className }: Props) {",
+			"export function $TM_FILENAME_BASE({ className = \"\" }: Props) {",
 			"\treturn (",
 			"\t\t$0",
 			"\t);",
