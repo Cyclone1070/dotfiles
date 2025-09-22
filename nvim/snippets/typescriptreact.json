@@ -18,11 +18,11 @@
 	"className": {
 		"prefix": "cl",
 		"description": "Adds a className attribute with template literals.",
-		"body": ["className={`$0`}"]
+		"body": ["className={\"$0\"}"]
 	},
 	"className with merge": {
 		"prefix": "clm",
 		"description": "Adds a className attribute using mergeClasses.",
-		"body": ["className={mergeClasses(`$0`, className)}"]
+		"body": ["className={mergeClasses(\"$0\", className)}"]
 	}
 }
