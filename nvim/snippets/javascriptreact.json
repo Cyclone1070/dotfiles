@@ -11,13 +11,13 @@
 		]
 	},
 	"className": {
-		"prefix": "cl",
+		"prefix": "cn",
 		"description": "Adds a className attribute with template literals.",
 		"body": ["className={\"$0\"}"]
 	},
 	"className with merge": {
-		"prefix": "clm",
+		"prefix": "cnm",
 		"description": "Adds a className attribute using mergeClasses.",
-		"body": ["className={mergeClasses(\"$0\", className)}"]
+		"body": ["className={twMerge(\"$0\", className)}"]
 	}
 }

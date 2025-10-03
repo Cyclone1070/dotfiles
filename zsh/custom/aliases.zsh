@@ -15,7 +15,7 @@ alias vide='neovide --fork'
 alias mstart='brew services start mongodb-community@8.0'
 alias mstop='brew services stop mongodb-community@8.0'
 # gemini cli
-alias geminif="gemini -m gemini-2.5-flash"
+alias geminif="gemini -m gemini-flash-latest"
 # autossh to enable and disable ssh portforwarding from remote oracle linux instance
 alias azureon='launchctl load ~/Library/LaunchAgents/com.azure.tunnel.plist && pmset displaysleepnow'
 alias azureoff='launchctl unload ~/Library/LaunchAgents/com.azure.tunnel.plist'
