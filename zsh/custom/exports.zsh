@@ -8,3 +8,10 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 
 # Disable Homebrew's built-in auto-update
 export HOMEBREW_NO_AUTO_UPDATE="1"
+
+# pnpm
+export PNPM_HOME="/Users/mac/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
