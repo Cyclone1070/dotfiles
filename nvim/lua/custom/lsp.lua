@@ -20,6 +20,7 @@ return {
 	clangd = {},
 	-- c#
 	roslyn = {},
+	jdtls = {},
 	-- go
 	gopls = {
 		settings = {

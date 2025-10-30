@@ -10,7 +10,7 @@ return {
 
 		-- Allows extra capabilities provided by blink.cmp
 		"saghen/blink.cmp",
-		"nvim-java/nvim-java", -- Java LSP support
+		-- "nvim-java/nvim-java", -- Java LSP support
 	},
 	config = function()
 		-- If you're wondering about lsp vs treesitter, you can check out the wonderfully
@@ -351,13 +351,13 @@ return {
 
 		-- REMOVE: local lspconfig_instance = require('lspconfig') -- Not needed for setup in this new way
 
-		-- setup nvim-java
-		require("java").setup({
-			java_debug_adapter = {
-				enable = false,
-			},
-		})
-		require("lspconfig").jdtls.setup({})
+		-- -- setup nvim-java
+		-- require("java").setup({
+		-- 	java_debug_adapter = {
+		-- 		enable = false,
+		-- 	},
+		-- })
+		-- require("lspconfig").jdtls.setup({})
 
 		-- setup the rest of the lsp
 		for server_name, user_server_config in pairs(servers_to_configure) do
