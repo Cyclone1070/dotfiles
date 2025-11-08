@@ -9,8 +9,8 @@ alias lsa='lsd -a -ltr --group-dirs=first --date=relative --blocks=size,date,nam
 alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfought.org'
 # quicklook
 alias ql='qlmanage -p'
-# neovide
-alias vide='neovide --fork'
+# opencode
+alias vibe='opencode --agent router'
 # mongo
 alias mstart='brew services start mongodb-community@8.0'
 alias mstop='brew services stop mongodb-community@8.0'
