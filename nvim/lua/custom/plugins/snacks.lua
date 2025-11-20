@@ -187,11 +187,18 @@ return {
 			desc = "[G]oto [L]SP [I]mplementation",
 		},
 		{
-			"gld",
+			"glD",
 			function()
 				Snacks.picker.lsp_declarations()
 			end,
 			desc = "[G]oto [L]SP [D]eclarations",
+		},
+		{
+			"gld",
+			function()
+				Snacks.picker.lsp_definitions()
+			end,
+			desc = "[G]oto [L]SP [D]efinitions",
 		},
 		{
 			"glt",

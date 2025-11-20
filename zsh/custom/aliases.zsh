@@ -3,7 +3,7 @@ alias bi='trash'
 # look inside trash
 alias bil='lsd -ltr --group-dirs=first --date=relative --blocks=date,name ~/.Trash'
 # enhanced ls
-alias ls='lsd -ltr --group-dirs=first --date=relative --blocks=size,date,name'
+alias ls='lsd -ltr --group-dirs=first --date=relative --blocks=size,date,git,name'
 alias lsa='lsd -a -ltr --group-dirs=first --date=relative --blocks=size,date,name'
 #nethack 
 alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfought.org'
@@ -11,6 +11,7 @@ alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfough
 alias ql='qlmanage -p'
 # opencode
 alias vibe='opencode --agent router'
+alias ai='opencode --agent generalist'
 # mongo
 alias mstart='brew services start mongodb-community@8.0'
 alias mstop='brew services stop mongodb-community@8.0'
