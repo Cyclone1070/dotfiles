@@ -1,7 +1,9 @@
 -- setting up table of tools for mason to install
 local lsp = vim.tbl_keys(require("custom.lsp"))
 local formatters = require("custom.formatters")
-local linters = require("custom.linters")
+local linters_config = require("custom.linters")
+local linters = linters_config.linters
+local linter_to_mason = linters_config.linter_to_mason
 
 local function get_unique_strings_from_table(input_table)
 	local result_array = {}
@@ -25,14 +27,27 @@ local function get_unique_strings_from_table(input_table)
 	return result_array
 end
 
+-- Map linter names to Mason package names
+local function map_linters_to_mason(linter_list, mapping_table)
+	local result = {}
+	for _, linter_name in ipairs(linter_list) do
+		-- Use the mapped name if it exists, otherwise use the linter name as-is
+		local mason_name = mapping_table[linter_name] or linter_name
+		table.insert(result, mason_name)
+	end
+	return result
+end
+
 -- find unique values
 local unique_formatters = get_unique_strings_from_table(formatters)
 local unique_linters = get_unique_strings_from_table(linters)
+local unique_linters_mason = map_linters_to_mason(unique_linters, linter_to_mason)
+
 -- final table with tools to install
 local all_packages = {}
 table.move(lsp, 1, #lsp, 1, all_packages)
 table.move(unique_formatters, 1, #unique_formatters, #all_packages + 1, all_packages)
-table.move(unique_linters, 1, #unique_linters, #all_packages + 1, all_packages)
+table.move(unique_linters_mason, 1, #unique_linters_mason, #all_packages + 1, all_packages)
 
 return {
 	-- setup mason engine, required
