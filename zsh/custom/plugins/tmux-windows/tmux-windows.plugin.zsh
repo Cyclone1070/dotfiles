@@ -1,9 +1,9 @@
 # force UTF-8 mode for tmux
 alias tmux='tmux -u'
-# --- Helper function to ensure a 'default' window exists at index 0 ---
-# This is used by creation and detach commands to guarantee a fallback and enforce index 0 for default.
+# --- Helper function to ensure a 'zsh' window exists at index 0 ---
+# This is used by creation and detach commands to guarantee a fallback and enforce index 0 for zsh.
 _ensure_default_window_exists() {
-  local default_window_name="default"
+  local default_window_name="zsh"
   local default_window_index=0
   local window_name_at_index_0=""
 
@@ -13,14 +13,14 @@ _ensure_default_window_exists() {
   fi
 
   if [[ "$window_name_at_index_0" == "$default_window_name" ]]; then
-    # Case 1: Window at index 0 exists and is already named "default". Do nothing.
+    # Case 1: Window at index 0 exists and is already named "zsh". Do nothing.
     return 0
   elif [[ -n "$window_name_at_index_0" ]]; then
-    # Case 2: Window exists at index 0, but it's not named "default". Rename it.
+    # Case 2: Window exists at index 0, but it's not named "zsh". Rename it.
     command tmux -u rename-window -t :"$default_window_index" "$default_window_name" 2>/dev/null
     echo "Renamed window at index $default_window_index to '$default_window_name'." >&2
   else
-    # Case 3: No window exists at index 0. Create the default window there.
+    # Case 3: No window exists at index 0. Create the zsh window there.
     command tmux -u new-window -d -t :"$default_window_index" -n "$default_window_name" 2>/dev/null
   fi
 }
@@ -42,13 +42,13 @@ _t_check_unique_window_name() {
 # If the first parameter doesn't match any existing window,
 # it creates all specified windows and attaches to the first one.
 t() {
-  _ensure_default_window_exists # Ensure default window exists at index 0
+  _ensure_default_window_exists # Ensure zsh window exists at index 0
   # If 't' is run alone, use the window switcher
   if [[ -z "$1" ]]; then
     if [[ -n "$TMUX" ]]; then
         command tmux -u choose-window
     else
-		command tmux -u attach-session || command tmux -u new-session -s default -n default
+		command tmux -u attach-session || command tmux -u new-session -n zsh
     fi
     return $?
   fi
@@ -65,7 +65,7 @@ t() {
       fi
     else
       _ensure_default_window_exists
-      command tmux -u attach-session || command tmux -u new-session -s default
+      command tmux -u attach-session || command tmux -u new-session
       command tmux -u select-window -t :"$query" 2>/dev/null
       return $?
     fi
@@ -90,7 +90,7 @@ t() {
     if [[ -n "$TMUX" ]]; then
       command tmux -u select-window -t :"$target_window"
     else
-      command tmux -u attach-session || command tmux -u new-session -s default
+      command tmux -u attach-session || command tmux -u new-session
       command tmux -u select-window -t :"$target_window"
     fi
 
@@ -107,7 +107,7 @@ t() {
     if [[ -n "$TMUX" ]]; then
       command tmux -u select-window -t :"$1"
     else
-      command tmux -u attach-session || command tmux -u new-session -s default
+      command tmux -u attach-session || command tmux -u new-session
       command tmux -u select-window -t :"$1"
     fi
   fi
@@ -124,23 +124,23 @@ ta() {
   else
     if [[ -n "$1" ]]; then
       _ensure_default_window_exists
-      command tmux -u attach-session || command tmux -u new-session -s default -n default
+      command tmux -u attach-session || command tmux -u new-session -n zsh
       command tmux -u select-window -t :"$1"
     else
       _ensure_default_window_exists
-      command tmux -u attach-session || command tmux -u new-session -s default -n default
+      command tmux -u attach-session || command tmux -u new-session -n zsh
     fi
   fi
 }
 
-# Detach from a client, or switch to 'default' window if inside tmux.
+# Detach from a client, or switch to 'zsh' window if inside tmux.
 td() {
   # If inside a tmux session...
   if [[ -n "$TMUX" ]]; then
-    # Ensure the 'default' window exists so we can switch to it.
+    # Ensure the 'zsh' window exists so we can switch to it.
     _ensure_default_window_exists
-    # Directly switch to the 'default' window. No flicker.
-    command tmux -u select-window -t :default
+    # Directly switch to the 'zsh' window. No flicker.
+    command tmux -u select-window -t :zsh
   else
     # If outside tmux, perform a standard detach.
     command tmux -u detach-client
@@ -149,7 +149,7 @@ td() {
 
 # Create one or more new windows.
 tn() {
-  _ensure_default_window_exists # Ensure default window exists at index 0
+  _ensure_default_window_exists # Ensure zsh window exists at index 0
   if [[ $# -eq 0 ]]; then
     return 1
   fi
@@ -166,7 +166,7 @@ tn() {
   if [[ -n "$TMUX" ]]; then
     command tmux -u select-window -t :"$1"
   else
-    command tmux -u attach-session || command tmux -u new-session -s default -n default
+    command tmux -u attach-session || command tmux -u new-session -n zsh
     command tmux -u select-window -t :"$1"
   fi
 }
@@ -215,18 +215,18 @@ tk-underlying-function() {
   local current_window
   [[ -n "$TMUX" ]] && current_window=$(command tmux -u display-message -p '#W')
 
-  # Check if 'default' or the current window is targeted.
-  if [[ " ${unique_windows[@]} " =~ " default " || " ${unique_windows[@]} " =~ " $current_window " ]]; then
-    # If the current window or default is being killed, ensure we switch away first.
+  # Check if 'zsh' or the current window is targeted.
+  if [[ " ${unique_windows[@]} " =~ " zsh " || " ${unique_windows[@]} " =~ " $current_window " ]]; then
+    # If the current window or zsh is being killed, ensure we switch away first.
     _ensure_default_window_exists
-    command tmux -u select-window -t :default
+    command tmux -u select-window -t :zsh
     sleep 0.1 # Give tmux a moment to switch
   fi
 
   for target in "${unique_windows[@]}"; do
     command tmux -u kill-window -t :"$target" 2>/dev/null
   done
-  _ensure_default_window_exists # Ensure default is still there after killing
+  _ensure_default_window_exists # Ensure zsh is still there after killing
 }
 # This alias is required to prevent the 'zsh: no matches found' error.
 # It must be placed AFTER the function definition.
@@ -310,18 +310,18 @@ _t_split_and_join() {
     return 1
   fi
 
-  # "Default" Window Safety Net
+  # "zsh" Window Safety Net
   local joining_default=false
-  if [[ "$target_window" == "default" ]]; then
+  if [[ "$target_window" == "zsh" ]]; then
     joining_default=true
   fi
 
   # Use join-pane, which both splits and moves the source pane.
   command tmux join-pane "$split_flag" -s ":$target_window"
 
-  # Recreate 'default' if it was just joined
+  # Recreate 'zsh' if it was just joined
   if [[ "$joining_default" == true ]]; then
-    command tmux new-window -d -t :0 -n "default"
+    command tmux new-window -d -t :0 -n "zsh"
   fi
 }
 # Split pane vertically. If a pattern is given, join the matched window.
