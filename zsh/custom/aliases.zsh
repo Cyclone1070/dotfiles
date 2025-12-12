@@ -21,3 +21,5 @@ alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.oracle.tunnel.plist
 alias remotecheck='ps aux | grep "[a]utossh"'
 # map cd to zoxide
 alias cd='z'
+# build mac mouse fix
+alias buildmousefix='xcodebuild clean -scheme "App - Release" && xcodebuild clean -scheme "Helper - Release" && xcodebuild -scheme "Helper - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS="$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED" CONFIGURATION_BUILD_DIR="/Applications" && xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS="$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED" CONFIGURATION_BUILD_DIR="/Applications"'
