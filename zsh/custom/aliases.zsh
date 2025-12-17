@@ -22,4 +22,19 @@ alias remotecheck='ps aux | grep "[a]utossh"'
 # map cd to zoxide
 alias cd='z'
 # build mac mouse fix
-alias buildmousefix='xcodebuild clean -scheme "App - Release" && xcodebuild clean -scheme "Helper - Release" && xcodebuild -scheme "Helper - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS="$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED" CONFIGURATION_BUILD_DIR="/Applications" && xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS="$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED" CONFIGURATION_BUILD_DIR="/Applications"'
+# open with: open ~/Library/Developer/Xcode/DerivedData/Mouse_Fix-*/Build/Products/Release/
+
+buildmousefix() {
+    cd ~/Desktop/repos/mac-mouse-fix && \
+    xcodebuild clean -scheme "App - Release" && \
+    xcodebuild clean -scheme "Helper - Release" && \
+    xcodebuild -scheme "Helper - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' && \
+    xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED'
+}
+# Function to remove hyphens and overwrite the original file
+function epubfix() {
+  local input="$1"
+  local temp="${input%.*}_temp.epub"
+  
+  /Applications/calibre.app/Contents/MacOS/ebook-convert "$input" "$temp" --extra-css "body { -epub-hyphens: none; -webkit-hyphens: none; hyphens: none; }" && mv "$temp" "$input"
+}
