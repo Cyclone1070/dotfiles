@@ -31,10 +31,13 @@ buildmousefix() {
     xcodebuild -scheme "Helper - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' && \
     xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED'
 }
-# Function to remove hyphens and overwrite the original file
+# Function to remove hyphens and font and overwrite the original file
 function epubfix() {
   local input="$1"
   local temp="${input%.*}_temp.epub"
   
-  /Applications/calibre.app/Contents/MacOS/ebook-convert "$input" "$temp" --extra-css "body { -epub-hyphens: none; -webkit-hyphens: none; hyphens: none; }" && mv "$temp" "$input"
+  /Applications/calibre.app/Contents/MacOS/ebook-convert "$input" "$temp" \
+    --extra-css "body { -epub-hyphens: none; -webkit-hyphens: none; hyphens: none; }" \
+    --filter-css "font-family" \
+    && mv "$temp" "$input"
 }
