@@ -33,11 +33,25 @@ buildmousefix() {
 }
 # Function to remove hyphens and font and overwrite the original file
 function epubfix() {
-  local input="$1"
-  local temp="${input%.*}_temp.epub"
+  if [ $# -eq 0 ]; then
+    echo "Usage: epubfix <file1.epub> [file2.epub] [...]"
+    return 1
+  fi
   
-  /Applications/calibre.app/Contents/MacOS/ebook-convert "$input" "$temp" \
-    --extra-css "body { -epub-hyphens: none; -webkit-hyphens: none; hyphens: none; }" \
-    --filter-css "font-family" \
-    && mv "$temp" "$input"
+  for input in "$@"; do
+    if [ ! -f "$input" ]; then
+      echo "Error: '$input' not found, skipping..."
+      continue
+    fi
+    
+    local temp="${input%.*}_temp.epub"
+    echo "Processing: $input"
+    
+    /Applications/calibre.app/Contents/MacOS/ebook-convert "$input" "$temp" \
+      --extra-css "body { -epub-hyphens: none; -webkit-hyphens: none; hyphens: none; }" \
+      --filter-css "font-family" \
+      && mv "$temp" "$input" \
+      && echo "✓ Completed: $input" \
+      || echo "✗ Failed: $input"
+  done
 }
