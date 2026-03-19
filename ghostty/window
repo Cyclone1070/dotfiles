@@ -8,7 +8,7 @@ quick-terminal-space-behavior = remain
 macos-hidden = always
 
 maximize = true
-window-padding-balance
+window-padding-balance = true
 window-padding-y = 10
 window-padding-x = 15
 

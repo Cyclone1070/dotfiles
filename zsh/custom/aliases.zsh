@@ -33,14 +33,16 @@ alias cd='z'
 # brew update, upgrade, cleanup
 alias brewup="brew update && brew upgrade && brew cleanup"
 
+alias iav="~/Desktop/repos/iav/iav"
+
 # build mac mouse fix
 # open with: open ~/Library/Developer/Xcode/DerivedData/Mouse_Fix-*/Build/Products/Release/
 buildmousefix() {
     cd ~/Desktop/repos/mac-mouse-fix && \
     xcodebuild clean -scheme "App - Release" && \
     xcodebuild clean -scheme "Helper - Release" && \
-    xcodebuild -scheme "Helper - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' && \
-    xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED'
+    xcodebuild -scheme "Helper - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' -allowProvisioningUpdates && \
+    xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' -allowProvisioningUpdates
 }
 
 # Function to remove hyphens and font and overwrite the original epub file
