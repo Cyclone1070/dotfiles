@@ -69,11 +69,6 @@ map("v", "v", "<ESC>")
 map("n", "p", '"0p')
 map("n", "P", '"0P')
 
--- diagnostics shortcut
-map("n", "<leader>i", function()
-  vim.diagnostic.open_float()
-end, { desc = "Show diagnostic under cursor" })
-
 -- remap go to end of line
 map({ "n", "o", "v" }, "E", "$", opts)
 
