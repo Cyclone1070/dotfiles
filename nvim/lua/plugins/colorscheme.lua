@@ -1,4 +1,12 @@
 return {
+  -- Configure LazyVim to load theme
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "tokyonight",
+    },
+  },
+
   {
     "folke/tokyonight.nvim",
     opts = {
