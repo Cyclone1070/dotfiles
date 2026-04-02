@@ -21,25 +21,18 @@ return {
 		--    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
 		--    function will be executed to configure the current buffer
 		--  This function wil not override server specific onattach
-	vim.api.nvim_create_autocmd("LspAttach", {
-		group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
-		callback = function(event)
-			-- CRITICAL FIX: Skip CodeDiff virtual buffers to prevent LSP hover issues
-			-- CodeDiff creates buffers with 'codediff://' URI scheme which breaks LSP functionality
-			local buf_name = vim.api.nvim_buf_get_name(event.buf)
-			if buf_name:match("^codediff://") then
-				return
-			end
-
-			-- NOTE: Remember that Lua is a real programming language, and as such it is possible
-			-- to define small helper and utility functions so you don't have to repeat yourself.
-			--
-			-- In this case, we create a function that lets us more easily define mappings specific
-			-- for LSP related items. It sets the mode, buffer and description for us each time.
-			local map = function(keys, func, desc, mode)
-				mode = mode or "n"
-				vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
-			end
+		vim.api.nvim_create_autocmd("LspAttach", {
+			group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
+			callback = function(event)
+				-- NOTE: Remember that Lua is a real programming language, and as such it is possible
+				-- to define small helper and utility functions so you don't have to repeat yourself.
+				--
+				-- In this case, we create a function that lets us more easily define mappings specific
+				-- for LSP related items. It sets the mode, buffer and description for us each time.
+				local map = function(keys, func, desc, mode)
+					mode = mode or "n"
+					vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+				end
 
 				-- Rename the variable under your cursor.
 				--  Most Language Servers support renaming across files, etc.
@@ -155,52 +148,10 @@ return {
 				-- --  Useful when you're not sure what type a variable is and you want to see
 				-- --  the definition of its *type*, not where it was *defined*.
 				-- map("glt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
-				-- Hover display with diagnostic logging
-				local hover_call_count = 0
-				map("r", function()
-					hover_call_count = hover_call_count + 1
-					local log_file = vim.fn.stdpath("data") .. "/codediff-lsp-debug.log"
-					local function log(msg)
-						local file = io.open(log_file, "a")
-						if file then
-							file:write(os.date("%Y-%m-%d %H:%M:%S") .. " | " .. msg .. "\n")
-							file:close()
-						end
-					end
-					
-					log("🔍 HOVER CALL #" .. hover_call_count .. " - Starting")
-					local buf = vim.api.nvim_get_current_buf()
-					local pos = vim.api.nvim_win_get_cursor(0)
-					log("  Buffer: " .. buf .. " | Cursor: line " .. pos[1] .. ", col " .. pos[2])
-					log("  File: " .. vim.api.nvim_buf_get_name(buf))
-					
-					-- Check LSP clients
-					local clients = vim.lsp.get_clients({ bufnr = buf })
-					log("  LSP clients for this buffer: " .. #clients)
-					for _, client in ipairs(clients) do
-						local hover_support = client.server_capabilities.hoverProvider and "YES" or "NO"
-						log("    - " .. client.name .. " (hover: " .. hover_support .. ")")
-					end
-					
-					-- Track if hover window opens
-					local windows_before = vim.api.nvim_list_wins()
-					
-					-- Call hover
-					vim.lsp.buf.hover()
-					
-					-- Check after a delay if window opened
-					vim.defer_fn(function()
-						local windows_after = vim.api.nvim_list_wins()
-						if #windows_after > #windows_before then
-							log("✅ HOVER CALL #" .. hover_call_count .. " - Opened hover window")
-						else
-							log("❌ HOVER CALL #" .. hover_call_count .. " - No hover window opened (likely 'no information available')")
-						end
-						log("")
-					end, 500)
-				end, "Hove[R]")
+				-- Hover display
+				map("r", vim.lsp.buf.hover, "Hove[R]")
 				-- Diagnostic display
-				map("<leader>ld", vim.diagnostic.open_float, "[D]iagnostic")
+				map("<leader>ld", vim.diagnostic.open_float, "Hove[R]")
 
 				-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 				---@param client vim.lsp.Client
