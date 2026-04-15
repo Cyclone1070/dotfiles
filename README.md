@@ -1,7 +1,3 @@
-# My Dotfiles
+# Homelab
 
-Main content:
-    - Zsh
-    - Tmux
-    - Ghostty
-    - Neovim
+Homelab setup with ansible.
