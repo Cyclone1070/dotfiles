@@ -31,6 +31,7 @@ require("lazy").setup({
     -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
   ui = {
+    border = "rounded",
     custom_keys = {
       -- Disables <leader>l to open Lazy UI
       ["<leader>l"] = false,
