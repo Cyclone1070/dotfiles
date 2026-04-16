@@ -33,7 +33,7 @@ alias cd='z'
 # brew update, upgrade, cleanup
 alias brewup="brew update && brew upgrade && brew cleanup"
 
-alias iav="~/Desktop/repos/iav/iav"
+alias iav="~/repos/iav/iav"
 
 # build mac mouse fix
 # open with: open ~/Library/Developer/Xcode/DerivedData/Mouse_Fix-*/Build/Products/Release/

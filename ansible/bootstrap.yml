@@ -1,0 +1,54 @@
+- name: Bootstrap fresh machine
+  hosts: all
+  become: yes
+  vars:
+    # Set this via -e "target_hostname=yourname"
+    target_hostname: "{{ target_hostname | default('new-machine') }}"
+    ssh_key_path: "~/.ssh/id_rsa.pub"
+  vars_files:
+    - vars/secrets.yml
+
+  tasks:
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ target_hostname }}"
+
+    - name: Ensure .ssh directory exists
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user | default(lookup('env', 'USER')) }}/.ssh"
+        state: directory
+        mode: '0700'
+        owner: "{{ ansible_user | default(lookup('env', 'USER')) }}"
+
+    - name: Deploy SSH public key
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user | default(lookup('env', 'USER')) }}"
+        state: present
+        key: "{{ lookup('file', ssh_key_path) }}"
+
+    - name: Install Tailscale (Fedora)
+      ansible.builtin.dnf:
+        name: tailscale
+        state: present
+
+    - name: Enable and start Tailscale service
+      ansible.builtin.systemd:
+        name: tailscale
+        state: started
+        enabled: yes
+
+    - name: Join Tailscale network
+      ansible.builtin.command:
+        cmd: "tailscale up --authkey=tskey-client-{{ tailscale_client_id }}-{{ tailscale_client_secret }} --accept-routes"
+      register: tailscale_result
+      changed_when: "'already authenticated' not in tailscale_result.stdout"
+
+    - name: Keep track of success in inventory.ini
+      delegate_to: localhost
+      become: no
+      ansible.builtin.lineinfile:
+        path: "{{ playbook_dir }}/inventory.ini"
+        line: "{{ target_hostname }} ansible_host={{ target_hostname }}"
+        insertafter: "^\\[servers\\]"
+        state: present
+      when: not ansible_check_mode

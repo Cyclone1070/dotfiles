@@ -1,1 +1,2 @@
 configs/zsh/custom/secret.zsh
+ansible/vars/secrets.yml
