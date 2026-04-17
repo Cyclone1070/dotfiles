@@ -1,0 +1,9 @@
+- name: Desktop Entertainment Configuration
+  hosts: all
+  become: true
+  vars_files:
+    - vars/secrets.yml
+
+  tasks:
+    - name: Ensure Git is configured
+      ansible.builtin.include_tasks: tasks/git.yml
