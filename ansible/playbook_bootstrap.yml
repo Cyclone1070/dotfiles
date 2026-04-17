@@ -1,6 +1,6 @@
 - name: Bootstrap fresh machine
   hosts: all
-  become: yes
+  become: true
   vars:
     # Set this via -e "target_hostname=yourname"
     target_hostname: "{{ target_hostname | default('new-machine') }}"
@@ -10,20 +10,20 @@
   pre_tasks:
     - name: Ensure SSH key exists on local machine
       delegate_to: localhost
-      become: no
+      become: false
       ansible.builtin.shell:
         cmd: "ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/id_ed25519"
         creates: "~/.ssh/id_ed25519"
 
     - name: Get Tailscale OAuth token
       delegate_to: localhost
-      become: no
+      become: false
       ansible.builtin.uri:
         url: "https://api.tailscale.com/api/v2/oauth/token"
         method: POST
         user: "{{ tailscale_client_id }}"
         password: "{{ tailscale_client_secret }}"
-        force_basic_auth: yes
+        force_basic_auth: true
         body_format: form-urlencoded
         body:
           grant_type: client_credentials
@@ -31,7 +31,7 @@
 
     - name: Discover Tailnet name from devices
       delegate_to: localhost
-      become: no
+      become: false
       ansible.builtin.uri:
         url: "https://api.tailscale.com/api/v2/tailnet/-/devices"
         headers:
@@ -80,7 +80,7 @@
       ansible.builtin.systemd:
         name: tailscaled
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Check Tailscale status
       ansible.builtin.command: tailscale status --json
@@ -97,12 +97,20 @@
           'tag:homelab' not in (tailscale_status_raw.stdout | from_json).Self.Tags | default([])
       register: tailscale_join_result
 
+    - name: Silence terminal login banners (Hushlogin)
+      become: true
+      become_user: "{{ ansible_user | default(lookup('env', 'USER')) }}"
+      ansible.builtin.file:
+        path: "~/.hushlogin"
+        state: touch
+        mode: '0644'
+
     - name: Keep track of success in inventory.ini
       delegate_to: localhost
-      become: no
+      become: false
       ansible.builtin.lineinfile:
         path: "{{ playbook_dir }}/inventory.ini"
-        line: "{{ target_hostname }} ansible_host={{ target_hostname }}"
+        line: "{{ target_hostname }} ansible_host={{ target_hostname }} ansible_user={{ ansible_user | default(lookup('env', 'USER')) }}"
         insertafter: "^\\[servers\\]"
         state: present
       when: not ansible_check_mode

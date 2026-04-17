@@ -6,23 +6,12 @@ This directory contains playbooks and inventory for managing the homelab.
 
 Before running the bootstrap, ensure the following are configured:
 
-### 1. Tailscale OAuth Credentials
-
-Create `ansible/vars/secrets.yml` with your Tailscale OAuth Client ID and Secret:
-
-```yaml
-tailscale_client_id: "YOUR_CLIENT_ID"
-tailscale_client_secret: "tskey-client-..."
-```
-
-**OAuth Scopes Required:**
-
-- `devices` (Read & Write)
-- `auth_keys` (Write)
+### 1. Configure Secrets
+Copy `ansible/vars/secrets.yml.example` to `ansible/vars/secrets.yml` and fill in your Tailscale and GitHub credentials.
 
 ### 2. Local Machine Setup
 
-- Your local machine **must be connected to Tailscale** (if you are on mac you must use the app, not the brew version).
+- Your Mac **must be connected to Tailscale**.
 - Ensure `ansible` is installed locally.
 
 ## Initial Bootstrap (Fresh Machine)
@@ -32,7 +21,7 @@ tailscale_client_secret: "tskey-client-..."
 Execute the following command from your Mac to set up a new machine:
 
 ```bash
-ansible-playbook -i '<remote_ip>,' bootstrap.yml -e "target_hostname=<target_hostname>" -u <remote_user> --ask-pass -K
+ansible-playbook -i '<remote_ip>,' playbook_bootstrap.yml -e "target_hostname=<target_hostname>" -u <remote_user> --ask-pass -K
 ```
 
 Then enter ssh and sudo passwords when prompted.
