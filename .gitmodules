@@ -1,12 +1,12 @@
-[submodule "configs/zsh/custom/plugins/zsh-autopair"]
-	path = configs/zsh/custom/plugins/zsh-autopair
+[submodule "zsh/custom/plugins/zsh-autopair"]
+	path = zsh/custom/plugins/zsh-autopair
 	url = https://github.com/hlissner/zsh-autopair.git
-[submodule "configs/zsh/custom/plugins/zsh-autosuggestions"]
-	path = configs/zsh/custom/plugins/zsh-autosuggestions
+[submodule "zsh/custom/plugins/zsh-autosuggestions"]
+	path = zsh/custom/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
-[submodule "configs/zsh/custom/plugins/zsh-syntax-highlighting"]
-	path = configs/zsh/custom/plugins/zsh-syntax-highlighting
+[submodule "zsh/custom/plugins/zsh-syntax-highlighting"]
+	path = zsh/custom/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "configs/zsh/custom/themes/powerlevel10k"]
-	path = configs/zsh/custom/themes/powerlevel10k
+[submodule "zsh/custom/themes/powerlevel10k"]
+	path = zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
