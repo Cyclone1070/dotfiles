@@ -138,9 +138,9 @@ end
 local terminal_commands = {
   "~/.config/nvim/fire.pl",
   "~/.config/nvim/asciiquarium -t",
-  "pipes.sh -p 7 -t 1 -t 3 -f 100 -r 3000",
-  "cbonsai -t 0.01 -l -L 40",
-  "TERM=screen-256color lavat",
+  "~/.config/nvim/pipes.sh -p 7 -t 1 -t 3 -f 100 -r 3000",
+  "~/.config/nvim/cbonsai -t 0.01 -l -L 40",
+  "TERM=screen-256color ~/.config/nvim/lavat",
   "TERM=screen-256color ~/.config/nvim/terminal_rain_lightning.py",
 }
 -- heavy matrix headers
