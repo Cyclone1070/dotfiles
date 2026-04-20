@@ -20,6 +20,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.oracle.tunnel.plist'
     alias remotecheck='ps aux | grep "[a]utossh"'
     alias brewup="brew update && brew upgrade && brew cleanup"
+    alias iav='~/repos/iav/iav'
     
     # Functions
     buildmousefix() {
