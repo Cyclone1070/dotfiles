@@ -148,7 +148,7 @@ end
 
 -- Randomly choose a terminal command
 local terminal_commands = {
-  get_bin("fire.pl"),
+  get_bin("fire"),
   get_bin("asciiquarium") .. " -t",
   get_bin("pipes.sh") .. " -p 7 -t 1 -t 3 -f 100 -r 3000",
   get_bin("cbonsai") .. " -t 0.01 -l -L 40",
@@ -170,7 +170,7 @@ if chosen_terminal_command == terminal_commands[1] then
   chosen_dashboard_logo = logos[1]
 end
 -- adjust terminal section height for specific commands if needed
-if chosen_terminal_command:find("fire.pl") then
+if chosen_terminal_command:find("fire") then
   terminal_section_height = 22
 end
 -- random color for lavat
