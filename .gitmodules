@@ -10,3 +10,12 @@
 [submodule "zsh/custom/themes/powerlevel10k"]
 	path = zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "nvim/src/cbonsai"]
+	path = nvim/src/cbonsai
+	url = https://gitlab.com/jallbrit/cbonsai.git
+[submodule "nvim/src/lavat"]
+	path = nvim/src/lavat
+	url = https://github.com/AngelJumbo/lavat.git
+[submodule "nvim/src/cxxmatrix"]
+	path = nvim/src/cxxmatrix
+	url = https://github.com/akinomyoga/cxxmatrix.git

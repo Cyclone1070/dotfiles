@@ -134,18 +134,30 @@ if dashboard_width > 120 then
   dashboard_width = 120
 end
 
+-- Helper function to get the correct binary path based on OS
+local function get_bin(name)
+  local os = vim.uv.os_uname().sysname:lower()
+  local subfolder = (os == "darwin") and "macos" or "linux"
+  local config_path = vim.fn.stdpath("config")
+  local local_path = config_path .. "/bin/" .. subfolder .. "/" .. name
+  if vim.fn.filereadable(local_path) == 1 then
+    return local_path
+  end
+  return config_path .. "/bin/common/" .. name
+end
+
 -- Randomly choose a terminal command
 local terminal_commands = {
-  "~/.config/nvim/fire.pl",
-  "~/.config/nvim/asciiquarium -t",
-  "~/.config/nvim/pipes.sh -p 7 -t 1 -t 3 -f 100 -r 3000",
-  "~/.config/nvim/cbonsai -t 0.01 -l -L 40",
-  "TERM=screen-256color ~/.config/nvim/lavat",
-  "TERM=screen-256color ~/.config/nvim/terminal_rain_lightning.py",
+  get_bin("fire.pl"),
+  get_bin("asciiquarium") .. " -t",
+  get_bin("pipes.sh") .. " -p 7 -t 1 -t 3 -f 100 -r 3000",
+  get_bin("cbonsai") .. " -t 0.01 -l -L 40",
+  "TERM=screen-256color " .. get_bin("lavat"),
+  "TERM=screen-256color " .. get_bin("terminal_rain_lightning.py"),
 }
 -- heavy matrix headers
---  "~/.config/nvim/cxxmatrix --preserve-background --frame-rate 10 -s rain-forever",
---  "~/.config/nvim/cxxmatrix --preserve-background --frame-rate 10 -s conway -s loop",
+--  get_bin("cxxmatrix") .. " --preserve-background --frame-rate 10 -s rain-forever",
+--  get_bin("cxxmatrix") .. " --preserve-background --frame-rate 10 -s conway -s loop",
 
 local chosen_terminal_command
 -- match fire to fade logo
@@ -158,7 +170,7 @@ if chosen_terminal_command == terminal_commands[1] then
   chosen_dashboard_logo = logos[1]
 end
 -- adjust terminal section height for specific commands if needed
-if chosen_terminal_command:find("~/.config/nvim/fire.pl") then
+if chosen_terminal_command:find("fire.pl") then
   terminal_section_height = 22
 end
 -- random color for lavat
