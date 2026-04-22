@@ -17,3 +17,6 @@ opt.shiftwidth = 4 -- Size of an indent
 opt.tabstop = 4 -- Number of spaces tabs count for
 opt.softtabstop = 4 -- Number of spaces tabs count for while editing
 opt.expandtab = true -- Use spaces instead of tabs
+
+-- linewrap
+vim.opt.wrap = true
