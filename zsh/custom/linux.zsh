@@ -15,12 +15,43 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
         echo "Usage: dl <URL>"
         return 1
       fi
-      curl -s -d "{\"jsonrpc\":\"2.0\",\"method\":\"aria2.addUri\",\"id\":\"ansible\",\"params\":[[\"$1\"]]}" "$ARIA2_RPC_URL" | jq .
+      aria2p add "$1"
     }
 
-    # Check status of active downloads
+    # Check status of active downloads (Interactive Dashboard)
     dls() {
-      curl -s -d '{"jsonrpc":"2.0","method":"aria2.tellActive","id":"ansible","params":[]}' "$ARIA2_RPC_URL" \
-      | jq -r '.result[] | "GID: \(.gid) | Status: \(.status) | Speed: \((.downloadSpeed | tonumber) / 1024 / 1024 | . * 100 | round / 100) MB/s | Progress: \(((.completedLength | tonumber) / ((.totalLength | tonumber) + 0.000001) * 100) | round)%"'
+      aria2p top
+    }
+
+    # Add a Non-Steam Game to the library via CLI
+    addgame() {
+      local exe="$1"
+      local name="$2"
+      if [ -z "$exe" ] || [ -z "$name" ]; then
+        echo "Usage: addgame <path/to/exe> <Game Name>"
+        return 1
+      fi
+
+      # Check if Steam is running
+      if pgrep -x "steam" > /dev/null; then
+        echo "Steam is running. Steam must be closed to inject the shortcut."
+        echo -n "Kill Steam now? (y/n) "
+        read -r choice
+        if [ "$choice" = "y" ]; then
+          pkill -TERM steam
+          sleep 2
+        else
+          echo "Operation cancelled."
+          return 1
+        fi
+      fi
+
+      # Absolute path
+      local abs_exe=$(readlink -f "$exe")
+
+      # Inject via STL
+      steamtinkerlaunch addnonsteamgame --exepath="$abs_exe" --appname="$name" --compatibilitytool="proton_9"
+
+      echo "Game '$name' added to Steam with Proton 9.0 compatibility."
     }
 fi
