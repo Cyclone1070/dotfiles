@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+import os
+import sys
+import vdf
+import psutil
+import glob
+
+def get_steam_path():
+    return os.path.expanduser("~/.local/share/Steam")
+
+def get_shortcuts_path():
+    steam_path = get_steam_path()
+    userdata_path = os.path.join(steam_path, "userdata")
+    shortcuts_files = glob.glob(os.path.join(userdata_path, "*", "config", "shortcuts.vdf"))
+    if not shortcuts_files:
+        return None
+    # Use the most recently modified one if there are multiple users
+    return max(shortcuts_files, key=os.path.getmtime)
+
+def is_steam_running():
+    for proc in psutil.process_iter(['name']):
+        if proc.info['name'] == 'steam':
+            return True
+    return False
+
+def add_game(name, exe_path):
+    shortcuts_path = get_shortcuts_path()
+    if not shortcuts_path:
+        print("Error: Could not find shortcuts.vdf")
+        sys.exit(1)
+
+    if is_steam_running():
+        print("Error: Steam is running. Please close Steam before adding games.")
+        sys.exit(1)
+
+    abs_exe = os.path.abspath(exe_path)
+    start_dir = os.path.dirname(abs_exe)
+
+    with open(shortcuts_path, "rb") as f:
+        data = vdf.binary_load(f)
+
+    # Initialize shortcuts list if empty
+    if 'shortcuts' not in data:
+        data['shortcuts'] = {}
+
+    # Find the next index
+    indices = [int(k) for k in data['shortcuts'].keys()]
+    next_index = str(max(indices) + 1 if indices else 0)
+
+    # Check for duplicates
+    for s in data['shortcuts'].values():
+        if s.get('AppName') == name or s.get('Exe') == f'"{abs_exe}"':
+            print(f"Warning: Game '{name}' or path '{abs_exe}' already exists in Steam.")
+            return
+
+    new_shortcut = {
+        "AppName": name,
+        "Exe": f'"{abs_exe}"',
+        "StartDir": f'"{start_dir}"',
+        "icon": "",
+        "ShortcutPath": "",
+        "LaunchOptions": "",
+        "IsHidden": 0,
+        "AllowDesktopConfig": 1,
+        "AllowOverlay": 1,
+        "OpenVR": 0,
+        "Devkit": 0,
+        "DevkitGameID": "",
+        "DevkitOverrideAppID": 0,
+        "LastPlayTime": 0,
+        "FlatpakAppID": "",
+        "tags": {}
+    }
+
+    data['shortcuts'][next_index] = new_shortcut
+
+    with open(shortcuts_path, "wb") as f:
+        vdf.binary_dump(data, f)
+
+    print(f"Success: '{name}' added to Steam library.")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Usage: addgame \"Game Name\" \"/path/to/game.exe\"")
+        sys.exit(1)
+    
+    add_game(sys.argv[1], sys.argv[2])

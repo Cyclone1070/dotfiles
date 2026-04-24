@@ -24,34 +24,5 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     }
 
     # Add a Non-Steam Game to the library via CLI
-    addgame() {
-      local exe="$1"
-      local name="$2"
-      if [ -z "$exe" ] || [ -z "$name" ]; then
-        echo "Usage: addgame <path/to/exe> <Game Name>"
-        return 1
-      fi
-
-      # Check if Steam is running
-      if pgrep -x "steam" > /dev/null; then
-        echo "Steam is running. Steam must be closed to inject the shortcut."
-        echo -n "Kill Steam now? (y/n) "
-        read -r choice
-        if [ "$choice" = "y" ]; then
-          pkill -TERM steam
-          sleep 2
-        else
-          echo "Operation cancelled."
-          return 1
-        fi
-      fi
-
-      # Absolute path
-      local abs_exe=$(readlink -f "$exe")
-
-      # Inject via STL
-      steamtinkerlaunch addnonsteamgame --exepath="$abs_exe" --appname="$name" --compatibilitytool="proton_9"
-
-      echo "Game '$name' added to Steam with Proton 9.0 compatibility."
-    }
 fi
+export PATH="$HOME/repos/dotfiles/bin/linux:$PATH"
