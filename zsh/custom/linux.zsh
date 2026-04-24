@@ -22,7 +22,5 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     dls() {
       aria2p top
     }
-
-    # Add a Non-Steam Game to the library via CLI
 fi
 export PATH="$HOME/repos/dotfiles/bin/linux:$PATH"
