@@ -4,6 +4,7 @@ import sys
 import vdf
 import psutil
 import glob
+import zlib
 
 def get_steam_path():
     return os.path.expanduser("~/.local/share/Steam")
@@ -14,8 +15,10 @@ def get_shortcuts_path():
     shortcuts_files = glob.glob(os.path.join(userdata_path, "*", "config", "shortcuts.vdf"))
     if not shortcuts_files:
         return None
-    # Use the most recently modified one if there are multiple users
     return max(shortcuts_files, key=os.path.getmtime)
+
+def get_config_path():
+    return os.path.expanduser("~/.local/share/Steam/config/config.vdf")
 
 def is_steam_running():
     for proc in psutil.process_iter(['name']):
@@ -23,10 +26,15 @@ def is_steam_running():
             return True
     return False
 
+def calculate_appid(exe, name):
+    s = exe + name
+    return str(zlib.crc32(s.encode('utf-8')) | 0x80000000)
+
 def add_game(name, exe_path):
     shortcuts_path = get_shortcuts_path()
-    if not shortcuts_path:
-        print("Error: Could not find shortcuts.vdf")
+    config_path = get_config_path()
+    if not shortcuts_path or not os.path.exists(config_path):
+        print("Error: Could not find Steam configuration files.")
         sys.exit(1)
 
     if is_steam_running():
@@ -34,54 +42,69 @@ def add_game(name, exe_path):
         sys.exit(1)
 
     abs_exe = os.path.abspath(exe_path)
-    start_dir = os.path.dirname(abs_exe)
+    q_exe = f'"{abs_exe}"'
+    start_dir = f'"{os.path.dirname(abs_exe)}/"'
 
     with open(shortcuts_path, "rb") as f:
-        data = vdf.binary_load(f)
+        s_data = vdf.binary_load(f)
 
-    # Initialize shortcuts list if empty
-    if 'shortcuts' not in data:
-        data['shortcuts'] = {}
+    if 'shortcuts' not in s_data:
+        s_data['shortcuts'] = {}
 
-    # Find the next index
-    indices = [int(k) for k in data['shortcuts'].keys()]
+    indices = [int(k) for k in s_data['shortcuts'].keys()]
     next_index = str(max(indices) + 1 if indices else 0)
 
-    # Check for duplicates
-    for s in data['shortcuts'].values():
-        if s.get('AppName') == name or s.get('Exe') == f'"{abs_exe}"':
-            print(f"Warning: Game '{name}' or path '{abs_exe}' already exists in Steam.")
-            return
+    for s in s_data['shortcuts'].values():
+        if s.get('AppName') == name or s.get('Exe') == q_exe:
+            print(f"Warning: Game '{name}' already exists in Steam.")
+            break
+    else:
+        new_shortcut = {
+            "AppName": name,
+            "Exe": q_exe,
+            "StartDir": start_dir,
+            "icon": "",
+            "ShortcutPath": "",
+            "LaunchOptions": "",
+            "IsHidden": 0,
+            "AllowDesktopConfig": 1,
+            "AllowOverlay": 1,
+            "OpenVR": 0,
+            "Devkit": 0,
+            "DevkitGameID": "",
+            "DevkitOverrideAppID": 0,
+            "LastPlayTime": 0,
+            "FlatpakAppID": "",
+            "tags": {}
+        }
+        s_data['shortcuts'][next_index] = new_shortcut
+        with open(shortcuts_path, "wb") as f:
+            vdf.binary_dump(s_data, f)
 
-    new_shortcut = {
-        "AppName": name,
-        "Exe": f'"{abs_exe}"',
-        "StartDir": f'"{start_dir}"',
-        "icon": "",
-        "ShortcutPath": "",
-        "LaunchOptions": "",
-        "IsHidden": 0,
-        "AllowDesktopConfig": 1,
-        "AllowOverlay": 1,
-        "OpenVR": 0,
-        "Devkit": 0,
-        "DevkitGameID": "",
-        "DevkitOverrideAppID": 0,
-        "LastPlayTime": 0,
-        "FlatpakAppID": "",
-        "tags": {}
+    appid = calculate_appid(q_exe, name)
+
+    with open(config_path, "r") as f:
+        c_data = vdf.load(f)
+
+    try:
+        mapping = c_data['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
+    except KeyError:
+        print("Error: Could not find CompatToolMapping in config.vdf")
+        sys.exit(1)
+
+    mapping[appid] = {
+        "name": "proton_11",
+        "config": "",
+        "priority": "250"
     }
 
-    data['shortcuts'][next_index] = new_shortcut
+    with open(config_path, "w") as f:
+        vdf.dump(c_data, f, pretty=True)
 
-    with open(shortcuts_path, "wb") as f:
-        vdf.binary_dump(data, f)
-
-    print(f"Success: '{name}' added to Steam library.")
+    print(f"Success: '{name}' (ID: {appid}) added with Proton 11 forced.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: addgame \"Game Name\" \"/path/to/game.exe\"")
+        print('Usage: addgame "Game Name" "/path/to/game.exe"')
         sys.exit(1)
-    
     add_game(sys.argv[1], sys.argv[2])
