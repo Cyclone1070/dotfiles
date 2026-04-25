@@ -22,5 +22,27 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     dls() {
       aria2p top
     }
+
+    # Wolf Streaming Host Management
+    wolf() {
+      case $1 in
+        up)
+          systemctl --user start container-wolf
+          ;;
+        down)
+          systemctl --user stop container-wolf
+          ;;
+        status)
+          systemctl --user status container-wolf
+          ;;
+        logs)
+          journalctl --user -u container-wolf -f
+          ;;
+        *)
+          echo "Usage: wolf {up|down|status|logs}"
+          return 1
+          ;;
+      esac
+    }
 fi
 export PATH="$HOME/repos/dotfiles/bin/linux:$PATH"
