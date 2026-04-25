@@ -23,21 +23,19 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
       aria2p top
     }
 
-    # Wolf Streaming Host Management
     wolf() {
       case $1 in
         up)
-          systemctl --user daemon-reload
-          systemctl --user start wolf
+          sudo systemctl start wolf
           ;;
         down)
-          systemctl --user stop wolf
+          sudo systemctl stop wolf
           ;;
         status)
-          systemctl --user status wolf
+          sudo systemctl status wolf
           ;;
         logs)
-          podman logs -f wolf
+          sudo podman logs -f wolf
           ;;
         *)
           echo "Usage: wolf {up|down|status|logs}"
