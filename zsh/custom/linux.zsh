@@ -23,22 +23,22 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
       aria2p top
     }
 
-    wolf() {
+    sunshine() {
       case $1 in
         up)
-          sudo systemctl start wolf
+          systemctl --user start sunshine
           ;;
         down)
-          sudo systemctl stop wolf
+          systemctl --user stop sunshine
           ;;
         status)
-          sudo systemctl status wolf
+          systemctl --user status sunshine
           ;;
         logs)
-          sudo podman logs -f wolf
+          journalctl --user -u sunshine -f
           ;;
         *)
-          echo "Usage: wolf {up|down|status|logs}"
+          echo "Usage: sunshine {up|down|status|logs}"
           return 1
           ;;
       esac
