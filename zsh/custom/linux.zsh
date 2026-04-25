@@ -22,14 +22,5 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     dls() {
       aria2p top
     }
-    # Sunshine Service Control
-    sunshine() {
-      case "$1" in
-        up) systemctl --user start app-dev.lizardbyte.app.Sunshine ;;
-        down) systemctl --user stop app-dev.lizardbyte.app.Sunshine ;;
-        status) systemctl --user status app-dev.lizardbyte.app.Sunshine ;;
-        *) systemctl --user "$@" app-dev.lizardbyte.app.Sunshine ;;
-      esac
-    }
 fi
 export PATH="$HOME/repos/dotfiles/bin/linux:$PATH"
