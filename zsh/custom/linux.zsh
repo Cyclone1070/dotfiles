@@ -37,7 +37,7 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
           systemctl --user status container-wolf
           ;;
         logs)
-          journalctl --user -u container-wolf -f
+          podman logs -f wolf
           ;;
         *)
           echo "Usage: wolf {up|down|status|logs}"
