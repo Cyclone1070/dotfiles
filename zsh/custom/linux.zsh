@@ -28,13 +28,13 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
       case $1 in
         up)
           systemctl --user daemon-reload
-          systemctl --user start container-wolf
+          systemctl --user start wolf
           ;;
         down)
-          systemctl --user stop container-wolf
+          systemctl --user stop wolf
           ;;
         status)
-          systemctl --user status container-wolf
+          systemctl --user status wolf
           ;;
         logs)
           podman logs -f wolf
