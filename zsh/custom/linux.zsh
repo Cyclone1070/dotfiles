@@ -27,6 +27,7 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     wolf() {
       case $1 in
         up)
+          systemctl --user daemon-reload
           systemctl --user start container-wolf
           ;;
         down)
