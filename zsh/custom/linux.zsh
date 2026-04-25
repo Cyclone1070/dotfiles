@@ -26,16 +26,16 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     sunshine() {
       case $1 in
         up)
-          systemctl --user start sunshine
+          systemctl --user start app-dev.lizardbyte.app.Sunshine.service
           ;;
         down)
-          systemctl --user stop sunshine
+          systemctl --user stop app-dev.lizardbyte.app.Sunshine.service
           ;;
         status)
-          systemctl --user status sunshine
+          systemctl --user status app-dev.lizardbyte.app.Sunshine.service
           ;;
         logs)
-          journalctl --user -u sunshine -f
+          journalctl --user -u app-dev.lizardbyte.app.Sunshine.service -f
           ;;
         *)
           echo "Usage: sunshine {up|down|status|logs}"
