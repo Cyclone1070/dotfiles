@@ -5,7 +5,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     export PATH="$HOME/.dotnet/tools:$PATH"
     export DOTNET_ROOT="/usr/local/share/dotnet"
     export PNPM_HOME="$HOME/Library/pnpm"
-    
+
     case ":$PATH:" in
       *":$PNPM_HOME:"*) ;;
       *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -21,7 +21,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     alias remotecheck='ps aux | grep "[a]utossh"'
     alias brewup="brew update && brew upgrade && brew cleanup"
     alias iav='~/repos/iav/iav'
-    
+
+    # open ~/Library/Developer/Xcode/DerivedData/Mouse_Fix*/Build/Products/Release
     # Functions
     buildmousefix() {
         cd ~/repos/mac-mouse-fix && \
