@@ -12,10 +12,6 @@ alias lsa='lsd -a -ltr --group-dirs=first --date=relative --blocks=size,date,nam
 # nethack 
 alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfought.org'
 
-# opencode
-alias vibe='opencode --agent router'
-alias ai='opencode --agent generalist'
-
 # map cd to zoxide
 alias cd='z'
 

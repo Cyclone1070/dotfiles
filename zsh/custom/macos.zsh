@@ -14,13 +14,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # Aliases
     alias bil='lsd -ltr --group-dirs=first --date=relative --blocks=date,name ~/.Trash'
     alias ql='qlmanage -p'
-    alias mstart='brew services start mongodb-community@8.0'
-    alias mstop='brew services stop mongodb-community@8.0'
     alias remoteon='launchctl load ~/Library/LaunchAgents/com.oracle.tunnel.plist && pmset displaysleepnow'
     alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.oracle.tunnel.plist'
     alias remotecheck='ps aux | grep "[a]utossh"'
     alias brewup="brew update && brew upgrade && brew cleanup"
-    alias iav='~/repos/iav/iav'
+    alias cmd='~/repos/autocmd/autocmd'
 
     # open ~/Library/Developer/Xcode/DerivedData/Mouse_Fix*/Build/Products/Release
     # Functions
