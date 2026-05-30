@@ -15,6 +15,9 @@ alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfough
 # map cd to zoxide
 alias cd='z'
 
+# ai to opencode
+alias ai='opencode'
+
 # Common Exports
 export GREP_OPTIONS='--color=auto'
 export LANG="en_US.UTF-8"
