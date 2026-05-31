@@ -18,7 +18,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     alias remoteoff='launchctl unload ~/Library/LaunchAgents/com.oracle.tunnel.plist'
     alias remotecheck='ps aux | grep "[a]utossh"'
     alias brewup="brew update && brew upgrade && brew cleanup"
-    alias cmd='~/repos/autocmd/autocmd'
 
     # open ~/Library/Developer/Xcode/DerivedData/Mouse_Fix*/Build/Products/Release
     # Functions
