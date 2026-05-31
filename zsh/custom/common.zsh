@@ -29,3 +29,6 @@ export PATH="$HOME/.local/bin:$PATH"
 # Keymaps
 bindkey -r '^L'
 bindkey '^L' autosuggest-accept
+
+# Enable opencode websearch
+export OPENCODE_ENABLE_EXA=1
