@@ -26,7 +26,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         xcodebuild clean -scheme "App - Release" && \
         xcodebuild clean -scheme "Helper - Release" && \
         xcodebuild -scheme "Helper - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' -allowProvisioningUpdates && \
-        xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' -allowProvisioningUpdates
+        xcodebuild -scheme "App - Release" SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) FORCE_LICENSED FORCE_NOT_EXPIRED' -allowProvisioningUpdates && \
+        open ~/Library/Developer/Xcode/DerivedData/Mouse_Fix*/Build/Products/Release
     }
 
     epubfix() {
