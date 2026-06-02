@@ -15,9 +15,6 @@ alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfough
 # map cd to zoxide
 alias cd='z'
 
-# ai to opencode
-alias ai='opencode'
-
 # Common Exports
 export GREP_OPTIONS='--color=auto'
 export LANG="en_US.UTF-8"
@@ -30,8 +27,12 @@ export PATH="$HOME/.local/bin:$PATH"
 bindkey -r '^L'
 bindkey '^L' autosuggest-accept
 
-# Enable opencode websearch
+# Opencode settings
 export OPENCODE_ENABLE_EXA=1
+
+# Pi settings
+alias ai='pi'
+export EDITOR='nvim'
 
 # Export languages bin paths
 export PATH="$PATH:~/go/bin"
