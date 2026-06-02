@@ -33,5 +33,6 @@ bindkey '^L' autosuggest-accept
 # Enable opencode websearch
 export OPENCODE_ENABLE_EXA=1
 
-# Export go path
-export PATH="$PATH:/Users/mac/go/bin"
+# Export languages bin paths
+export PATH="$PATH:~/go/bin"
+export PATH="$PATH:~/.bun/bin"
