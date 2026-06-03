@@ -35,5 +35,5 @@ alias ai='pi'
 export EDITOR='nvim'
 
 # Export languages bin paths
-export PATH="$PATH:~/go/bin"
-export PATH="$PATH:~/.bun/bin"
+export PATH="$PATH:$HOME/go/bin"
+export PATH="$PATH:$HOME/.bun/bin"
