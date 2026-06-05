@@ -1,0 +1,17 @@
+{
+  "defaultModel": "deepseek-v4-flash-free",
+  "defaultProvider": "opencode",
+  "defaultThinkingLevel": "xhigh",
+  "hideThinkingBlock": true,
+  "lastChangelogVersion": "0.78.1",
+  "packages": [
+    "npm:pi-web-access",
+    "npm:pi-mcp-adapter",
+    "npm:@mrclrchtr/supi-bash-timeout",
+    "npm:@termdraw/pi"
+  ],
+  "extensions": [
+    "/Users/mac/.pi/agent/extensions/minimal-subagent/src/index.ts"
+  ],
+  "theme": "amber"
+}

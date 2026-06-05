@@ -1,0 +1,21 @@
+{
+  "name": "guardrails",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aliou/pi-utils-settings": "^0.15.1",
+    "@aliou/sh": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/path-access/index.ts",
+      "./extensions/guardrails/index.ts",
+      "./extensions/permission-gate/index.ts"
+    ]
+  }
+}

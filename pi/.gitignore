@@ -1,0 +1,24 @@
+# Secrets
+agent/auth.json
+
+# Session logs
+agent/sessions/
+
+# npm packages managed by pi
+agent/npm/
+
+# MCP cache
+agent/mcp-cache.json
+
+# Git clones of extension sources
+agent/git/
+
+# Temp files
+agent/tmp/
+
+# Extension dependencies (managed by pi install/update)
+agent/extensions/*/node_modules/
+agent/extensions/*/package-lock.json
+agent/extensions/*/.gitignore
+agent/extensions/*/*.tsbuildinfo
+agent/extensions/*/dist/
