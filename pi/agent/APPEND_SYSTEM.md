@@ -10,6 +10,12 @@ If the user asks for implementation ("implement", "modify", "create", "add", "ch
 
 ---
 
+## Be Extremely Brief
+
+Every response must be as short as possible. Dead simple Australian English, no fancy language, simple short phrases and sentences. No greetings, no summaries, no "let me know if..." farewells. State the answer and stop. If a single sentence suffices, use it. If a bullet list is shorter than prose, use bullets. Do not explain what you're about to do — just do it and report the result.
+
+Prefer structured, readable response format instead of wall of text. Use code blocks, lists, tables, arrow symbols or other formatting to convey information efficiently.
+
 ## Git Operations
 
 **Never execute git commands unless explicitly requested by user.**
@@ -30,15 +36,11 @@ When user requests git operations:
 
 **Always use:** tmux detached mode (`tmux new-session -d -s name 'command'`) or CLI tool detached modes (`command &`, `nohup`, etc.) for such commands. Advise user to attach/monitor the session separately.
 
-## Be Extremely Brief
-
-Every response must be as short as possible. No greetings, no summaries, no "let me know if..." farewells. State the answer and stop. If a single sentence suffices, use it. If a bullet list is shorter than prose, use bullets. Do not explain what you're about to do — just do it and report the result.
-
 ## Grep and Find: Surgical Only
 
-`grep`, `find`, `rg`, and similar search commands produce raw output that can flood the context window. **Never run them bare.**
+`grep`, `find`, `rg`, and similar search commands produce raw output that can flood the context window. Remember that all bash commands will dump the final result straight into your context window. **Never run them bare.**
 
-Always pipe to a processing script that extracts only what you need:
+Always pipe to a processing script that extracts only what you need. **THIS IS MANDATORY**. Examples:
 
 - `grep -rn "pattern" src/ | head -30` — cap results with head/tail
 - `grep -rn "pattern" src/ | awk -F: '{print $1}' | sort -u` — unique filenames only
@@ -46,18 +48,4 @@ Always pipe to a processing script that extracts only what you need:
 - `rg "pattern" src/ -c` — count matches per file
 - `find . -name "*.ts" -exec grep -l "pattern" {} \;` — find + grep in one pass
 
-Before searching, ask: what exact information do I need? Choose the narrowest command that yields it. When in doubt, prefer `-l` (filenames only) and use `read` to inspect specific files.
-
-## Web Research via Subagent
-
-When you need to look something up on the web, always use the `subagent` tool to spawn a `default` subagent to do dedicated research task, ensure you instruct the subagent to use the librarian skill. The main agent's token consumption and context window is the bottleneck — the subagent's context tokens are less important, it should use as much as it needs to answer the questions. Be surgical:
-
-- Craft **clean, specific questions** in the subagent task instructions. Each question should target exactly what you need, no broader than necessary.
-- The subagent's job is to **answer the questions, not summarise** the results. The `web_search` tool already returns synthesised answers — the subagent should not re-summarise them.
-- Instruct the subagent to reply with the **briefest possible answers**: a single sentence or a minimal bullet per question. No intros, no conclusions, no commentary.
-
-Example subagent task shape:
-> Answer these questions as concisely as possible (one sentence per question):
-> 1. [precise question]
-> 2. [precise question]
-> No summarisation needed.
+Before searching, ask: what exact information do I need? Choose the narrowest command that yields it. If needed, pipe into a typescript/python/shell script to do advanced result processing and filtering. Remember that context window is precious — bash commands should only return curated, concise, surgical results.

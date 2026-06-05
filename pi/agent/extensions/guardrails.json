@@ -15,7 +15,10 @@
       "/var/tmp/",
       "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/README.md",
       "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/docs/",
-      "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/"
+      "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/",
+      "~/.pi/agent/npm/node_modules/pi-web-access/skills/librarian/",
+      "~/.pi/agent/skills/superpowers/",
+      "~/.pi/agent/skills/"
     ]
   }
 }

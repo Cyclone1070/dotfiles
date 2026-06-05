@@ -16,6 +16,9 @@ agent/git/
 # Temp files
 agent/tmp/
 
+# Former superpowers repo symlink (replaced with adapted skills)
+agent/skills/superpowers
+
 # Extension dependencies (managed by pi install/update)
 agent/extensions/*/node_modules/
 agent/extensions/*/package-lock.json
