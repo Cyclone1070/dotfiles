@@ -1,24 +1,22 @@
 {
-  "$schema": "https://unpkg.com/guardrails@0.1.0/schema.json",
-  "enabled": true,
-  "features": {
-    "policies": true,
-    "permissionGate": true,
-    "pathAccess": true
-  },
-  "pathAccess": {
-    "mode": "ask",
-    "allowedPaths": [
-      "/dev/",
-      "/tmp/",
-      "/private/tmp/",
-      "/var/tmp/",
-      "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/README.md",
-      "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/docs/",
-      "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/",
-      "~/.pi/agent/npm/node_modules/pi-web-access/skills/librarian/",
-      "~/.pi/agent/skills/superpowers/",
-      "~/.pi/agent/skills/"
-    ]
-  }
+    "$schema": "https://unpkg.com/guardrails@0.1.0/schema.json",
+    "enabled": true,
+    "features": {
+        "policies": true,
+        "permissionGate": true,
+        "pathAccess": true
+    },
+    "pathAccess": {
+        "mode": "ask",
+        "allowedPaths": [
+            "/dev/",
+            "/tmp/",
+            "/private/tmp/",
+            "/var/tmp/",
+            "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/README.md",
+            "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/docs/",
+            "/usr/local/Cellar/pi-coding-agent/0.75.5/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/",
+            "~/.pi/"
+        ]
+    }
 }
