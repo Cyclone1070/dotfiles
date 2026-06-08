@@ -1,23 +1,21 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { createBashToolDefinition } from "@earendil-works/pi-coding-agent";
+import { createWriteToolDefinition } from "@earendil-works/pi-coding-agent";
 import { Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
-const DEFAULT_TIMEOUT = 120;
-
 export default function (pi: ExtensionAPI) {
-	const bashDef = createBashToolDefinition(process.cwd());
-	const nativeRenderCall = bashDef.renderCall;
+	const writeDef = createWriteToolDefinition(process.cwd());
+	const nativeRenderCall = writeDef.renderCall;
 	const nativeProps =
-		bashDef.parameters &&
-		typeof bashDef.parameters === "object" &&
-		"properties" in bashDef.parameters
-			? (bashDef.parameters.properties as Record<string, unknown>)
+		writeDef.parameters &&
+		typeof writeDef.parameters === "object" &&
+		"properties" in writeDef.parameters
+			? (writeDef.parameters.properties as Record<string, unknown>)
 			: {};
 
 	pi.registerTool({
 		// Inherit everything from native def — renames/new fields flow through
-		...bashDef,
+		...writeDef,
 
 		// Only override what we touch:
 
@@ -25,14 +23,14 @@ export default function (pi: ExtensionAPI) {
 		parameters: Type.Object({
 			description: Type.String({
 				description:
-					"What this command does and why. Shown as a # comment in the UI above the command.",
+					"What this write does and why. Shown as a # comment in the UI above the command.",
 				minLength: 1,
 			}),
 			...nativeProps,
 		}),
 		promptGuidelines: [
-			...(bashDef.promptGuidelines ?? []),
-			"Every bash call must include a 'description' field explaining what the command does and why.",
+			...(writeDef.promptGuidelines ?? []),
+			"Every write call must include a 'description' field explaining what the change is and why.",
 		],
 		// Compose with native renderCall to add description line
 		renderCall(args, theme, context) {
@@ -44,15 +42,10 @@ export default function (pi: ExtensionAPI) {
 			}
 			return text;
 		},
-		// Strip description param, apply default timeout, delegate to native execute
+		// Strip description param, delegate to native execute
 		async execute(id, params, signal, onUpdate) {
-			const { description: _description, timeout, ...nativeParams } = params as any;
-			return bashDef.execute(
-				id,
-				{ ...nativeParams, timeout: timeout ?? DEFAULT_TIMEOUT },
-				signal,
-				onUpdate,
-			);
+			const { description: _description, ...nativeParams } = params as any;
+			return writeDef.execute(id, nativeParams, signal, onUpdate);
 		},
 	});
 }
