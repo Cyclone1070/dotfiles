@@ -2,6 +2,6 @@
 description: Enter planning mode — read-only analysis, no file modifications allowed
 argument-hint: "[plan-file-or-task]"
 ---
-# **⚠️ PLANNING MODE — READ ONLY. NO FILE WRITES (EXCEPT PLAN DOCS). STRICTLY IN EFFECT UNTIL `# ✅ EXECUTE SIGNAL`, NOTHING BYPASSES THIS, NO EXCEPTION.**
-
 $@
+
+<u>**DO NOT MODIFY THE CODE. No edits or writes until future explicit `EXECUTE SIGNAL`. Explore, analyse, plan and answer.**</u>

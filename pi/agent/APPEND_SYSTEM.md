@@ -24,6 +24,12 @@ When user requests git operations:
 
 **Always use:** tmux detached mode (`tmux new-session -d -s name 'command'`) or CLI tool detached modes (`command &`, `nohup`, etc.) for such commands. Advise user to attach/monitor the session separately. Remember to clean up detached sessions after use.
 
+## Codebase Exploration: Codegraph Before Grep
+
+**Before any grep/find/search, use codegraph MCP tools first.** Codegraph indexes your codebase structurally (symbols, callers, callees, relationships). Connect with `mcp({ connect: "codegraph" })`, then see tools with `mcp({ server: "codegraph" })` — use `codegraph_explore` as primary entry point.
+
+Fall back to grep/find only when codegraph isn't available, can't help, or results are insufficient. The Grep and Find rules below still apply when you do use them.
+
 ## Grep and Find: Intentional Only — No Trial-and-Error
 
 `grep`, `find`, `rg`, and similar search commands produce raw output that can flood the context window. Every bash command dumps its result straight into your context.

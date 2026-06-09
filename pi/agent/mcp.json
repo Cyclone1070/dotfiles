@@ -5,6 +5,14 @@
             "headers": {
                 "CONTEXT7_API_KEY": "ctx7sk-0fe7333b-900a-4cb1-971f-9f87d481e3b3"
             }
+        },
+        "codegraph": {
+            "type": "stdio",
+            "command": "codegraph",
+            "args": [
+                "serve",
+                "--mcp"
+            ]
         }
     }
 }

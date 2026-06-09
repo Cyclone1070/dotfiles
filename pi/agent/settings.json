@@ -3,7 +3,7 @@
   "defaultProvider": "opencode",
   "defaultThinkingLevel": "xhigh",
   "hideThinkingBlock": true,
-  "lastChangelogVersion": "0.78.1",
+  "lastChangelogVersion": "0.79.0",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
