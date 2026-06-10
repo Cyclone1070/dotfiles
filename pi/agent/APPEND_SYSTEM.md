@@ -26,9 +26,7 @@ When user requests git operations:
 
 ## Codebase Exploration: Codegraph Before Grep
 
-**Before any grep/find/search, use codegraph MCP tools first.** Codegraph indexes your codebase structurally (symbols, callers, callees, relationships). Connect with `mcp({ connect: "codegraph" })`, then see tools with `mcp({ server: "codegraph" })` — use `codegraph_explore` as primary entry point.
-
-Fall back to grep/find only when codegraph isn't available, can't help, or results are insufficient. The Grep and Find rules below still apply when you do use them.
+**Before any grep/find/search, use codegraph MCP tools first.** Codegraph indexes your codebase structurally (symbols, callers, callees, relationships). Use `mcp({ server: "codegraph" })` to list tools, `mcp({ describe: ... })` for parameters, then call them. Fall back to grep/find only when codegraph isn't available, can't help, or results are insufficient. The Grep and Find rules below still apply when you do use them.
 
 ## Grep and Find: Intentional Only — No Trial-and-Error
 
