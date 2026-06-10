@@ -4,4 +4,4 @@ argument-hint: "[plan-file-or-task]"
 ---
 $@
 
-<u>**DO NOT MODIFY THE CODE. No edits or writes until future explicit `EXECUTE SIGNAL`. Explore, analyse, plan and answer.**</u>
+<u>**DO NOT MODIFY THE CODE. No edits or writes until future explicit `EXECUTE SIGNAL`. Explore, analyse, plan and answer only.**</u>
