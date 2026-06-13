@@ -12,5 +12,8 @@
   "extensions": [
     "/Users/mac/.pi/agent/extensions/minimal-subagent/src/index.ts"
   ],
-  "theme": "amber"
+  "theme": "amber",
+  "terminal": {
+    "clearOnShrink": false
+  }
 }
