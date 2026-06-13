@@ -27,6 +27,11 @@ export PATH="$HOME/.local/bin:$PATH"
 bindkey -r '^L'
 bindkey '^L' autosuggest-accept
 
+# radio/music settings
+alias abc='mpv http://www.abc.net.au/res/streaming/audio/aac/news_radio.pls'
+alias bgm="mpv --volume=50 --no-video 'https://www.youtube.com/playlist?list=PLkVD01XL1G9LNt5iprsJYrqOcqtYNUh3e'"
+alias music="mpv --volume=50 --no-video 'https://www.youtube.com/playlist?list=PLkVD01XL1G9JAFImX9SrKa_GXQxRuESuU'"
+
 # Opencode settings
 export OPENCODE_ENABLE_EXA=1
 
