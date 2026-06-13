@@ -1,2 +1,3 @@
-zsh/custom/secrets.zsh
+*secrets*
+!*.example
 nvim/lazy-lock.json

@@ -1,5 +1,29 @@
 # Common Aliases & Exports (Cross-Platform)
 
+# === History ===
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+setopt extended_history hist_expire_dups_first hist_ignore_dups hist_verify share_history
+
+# === Smart ↑ history search ===
+autoload -U up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+
+# === Completion ===
+zmodload -i zsh/complist
+unsetopt menu_complete flowcontrol
+setopt auto_menu complete_in_word always_to_end
+autoload -U compinit bashcompinit && compinit -u && bashcompinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' use-cache yes
+zstyle ':completion:*' cache-path "$HOME/.cache/zsh/completions"
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
 # bin instead of rm (If trash exists)
 if command -v trash >/dev/null 2>&1; then
     alias bi='trash'
