@@ -4,7 +4,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # === Custom config ===
-source "$HOME/repos/dotfiles/zsh/secrets.zsh"
+[[ -f "$HOME/repos/dotfiles/zsh/secrets.zsh" ]] && source "$HOME/repos/dotfiles/zsh/secrets.zsh"
 source "$HOME/repos/dotfiles/zsh/common.zsh"
 source "$HOME/repos/dotfiles/zsh/macos.zsh"
 source "$HOME/repos/dotfiles/zsh/linux.zsh"
