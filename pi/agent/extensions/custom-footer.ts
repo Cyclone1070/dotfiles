@@ -81,8 +81,8 @@ export default function (pi: ExtensionAPI) {
                     const branch = footerData.getGitBranch();
 
                     // Colored stat labels — using valid theme token names only
-                    const upColor = input > 1_000_000 ? "error" : "success";
-                    const downColor = output > 500_000 ? "error" : "success";
+                    const upColor = input > 1_000_000 ? "error" : input > 500_000 ? "warning" : "success";
+                    const downColor = output > 500_000 ? "error" : output > 250_000 ? "warning" : "success";
                     const arrowUp = theme.fg(upColor, "↑") + theme.fg("dim", fmt(input));
                     const arrowDown = theme.fg(downColor, "↓") + theme.fg("dim", fmt(output));
                     const reasoningStr = reasoning > 0
