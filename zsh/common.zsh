@@ -52,7 +52,7 @@ bindkey -r '^L'
 bindkey '^L' autosuggest-accept
 
 # radio/music settings
-alias abc='mpv http://www.abc.net.au/res/streaming/audio/aac/news_radio.pls'
+alias abc='mpv --stream-lavf-o="reconnect=1,reconnect_at_eof=1,reconnect_streamed=1,reconnect_delay_max=5" http://www.abc.net.au/res/streaming/audio/aac/news_radio.pls'
 alias bgm="mpv --volume=50 --no-video --loop-playlist --volume-max=300 --display-tags= --script-opts=stats-key_page_0=6 --script=$HOME/repos/dotfiles/zsh/scripts/auto-stats.lua 'https://www.youtube.com/playlist?list=PLkVD01XL1G9LNt5iprsJYrqOcqtYNUh3e'"
 alias music="mpv --volume=70 --no-video --loop-playlist --volume-max=300 --display-tags= --script-opts=stats-key_page_0=6 --script=$HOME/repos/dotfiles/zsh/scripts/auto-stats.lua 'https://www.youtube.com/playlist?list=PLkVD01XL1G9JAFImX9SrKa_GXQxRuESuU'"
 
