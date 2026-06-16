@@ -40,7 +40,7 @@ alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfough
 alias cd='z'
 
 # Common Exports
-export GREP_OPTIONS='--color=auto'
+alias grep='grep --color=auto'
 export LANG="en_US.UTF-8"
 export LC_COLLATE="C"
 
