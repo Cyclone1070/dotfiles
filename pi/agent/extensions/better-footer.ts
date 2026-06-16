@@ -126,7 +126,7 @@ export default function (pi: ExtensionAPI) {
                         gitStr,
                     ].filter(Boolean);
 
-                    const right = rightParts.join(" " + theme.fg("dim", "•") + " ");
+                    const right = rightParts.join(sep);
                     const midSep = right ? " " + theme.fg("dim", "│") + " " : "";
 
                     // Pad left side so right side is right-aligned
