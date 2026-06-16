@@ -7,7 +7,8 @@
   "packages": [
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
-    "npm:@termdraw/pi"
+    "npm:@termdraw/pi",
+    "npm:tdd-enforcer"
   ],
   "extensions": [
     "/Users/mac/.pi/agent/extensions/minimal-subagent/src/index.ts"
