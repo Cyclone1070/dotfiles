@@ -76,3 +76,11 @@ If you can't answer all three, don't run the command. Think first.
 If needed, pipe into a typescript/python/shell script for advanced processing. The context window is precious — bash commands must only return curated, concise, surgical results.
 
 **Violation of this rule (running blind/bash grep/find commands without intent) is a critical protocol violation.**
+
+## TDD: Small Cycles, Real Refactors
+
+- Keep cycles tiny: 1 test case per red-green-refactor cycle. Never batch-write tests. Let implementation code grow naturally, one behavior at a time.
+- Refactor phase is mandatory, not a formality. Never hand-wave it with "nothing to refactor" — actively hunt for:
+  - **Common pitfalls**: duplicated/copy-pasted logic, magic numbers or strings, unused parameters, dead code, over-long functions, awkward abstractions etc.
+  - **Code style**: short, precise, intention-revealing names for functions and variables etc.
+  - **Clean code**: DRY, YAGNI (no speculative code), clean, modular contract/api shape, extract complexity into private helpers, design with reuse in mind, design for reuse etc.
