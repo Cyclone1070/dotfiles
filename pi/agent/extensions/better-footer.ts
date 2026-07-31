@@ -93,13 +93,14 @@ export default function (pi: ExtensionAPI) {
                         ? theme.fg("mdLink", fmt(lastSpeed) + " t/s")
                         : "";
 
-                    const levelDot = theme.fg("accent", "●");
+                    const levelDot = theme.fg("accent", "\uf0eb");
                     const modelStr = theme.fg("accent", ctx.model?.id || "no-model");
                     const levelStr = theme.fg("accent", thinkingLevel);
 
                     // Git branch
                     const gitStr = branch ? theme.fg("dim", " " + branch) : "";
-                    const cwdStr = theme.fg("dim", ctx.cwd.split("/").pop() || ctx.cwd);
+                    const repoName = ctx.cwd.split("/").pop() || ctx.cwd;
+                    const cwdStr = theme.fg("dim", "\ueaf7 " + repoName);
 
                     const cacheStr = cacheRead > 0
                         ? theme.fg("mdLink", "R") + theme.fg("dim", fmt(cacheRead))

@@ -22,3 +22,32 @@ source "$HOME/repos/dotfiles/zsh/themes/powerlevel10k/powerlevel10k.zsh-theme"
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 eval "$(zoxide init zsh)"
+
+# sssh Zsh Integration Hook
+
+sssh-accept-line() {
+    if sssh check-intercept "$BUFFER" "$PWD"; then
+        BUFFER="sssh $BUFFER"
+    fi
+    zle sssh-orig-accept-line
+}
+
+() {
+    if [[ "$widgets[accept-line]" != "user:sssh-accept-line" ]]; then
+        local sssh_orig_widget="${widgets[accept-line]}"
+        if [[ "$sssh_orig_widget" == *:* ]]; then
+            sssh_orig_widget="${sssh_orig_widget#*:}"
+            zle -N sssh-orig-accept-line "$sssh_orig_widget"
+        else
+            sssh-orig-accept-line() {
+                zle .accept-line
+            }
+            zle -N sssh-orig-accept-line
+        fi
+        zle -N accept-line sssh-accept-line
+    fi
+}
+
+# Run sync in background on terminal startup to restore links, syncs, and listeners
+(sssh sync >/dev/null 2>&1 &)
+

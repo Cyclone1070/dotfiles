@@ -1,7 +1,7 @@
 keybind = global:opt+space=toggle_quick_terminal
 quick-terminal-position = center
 quick-terminal-animation-duration = 0.1
-quick-terminal-size = 100%,100%
+quick-terminal-size = 70%,90%
 quick-terminal-autohide = false
 quick-terminal-space-behavior = remain
 
