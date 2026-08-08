@@ -79,7 +79,7 @@ If needed, pipe into a typescript/python/shell script for advanced processing. T
 
 ## TDD: Small Cycles, Real Refactors
 
-- Keep cycles tiny: 1 test case per red-green-refactor cycle. Never batch-write tests. Let implementation code grow naturally, one behavior at a time.
+- Keep cycles tiny: 1 or 2 test case per red-green-refactor cycle, minimum code changes in green phase, just to pass the new test and nothing more. Never batch-write tests. Let implementation code grow naturally, one behavior at a time.
 - Refactor phase is mandatory, not a formality. Never hand-wave it with "nothing to refactor" — actively hunt for:
   - **Common pitfalls**: duplicated/copy-pasted logic, magic numbers or strings, unused parameters, dead code, over-long functions, awkward abstractions etc.
   - **Code style**: short, precise, intention-revealing names for functions and variables etc.
