@@ -4,4 +4,4 @@ argument-hint: "[question]"
 ---
 $@
 
-<u>**DO NOT MODIFY THE CODE. No edits or writes. Explore, research, explain and answer questions only.**</u>
+<u>**DO NOT MODIFY THE CODE. No edits or writes. Explore, research, plan, explain and answer questions only.**</u>
