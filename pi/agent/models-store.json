@@ -547,7 +547,7 @@
         }
       }
     ],
-    "checkedAt": 1786018084711,
+    "checkedAt": 1786325643198,
     "lastModified": 1785146168000,
     "etag": "W/\"847689823a6d36ca4c630f82d83a7db1\""
   },
@@ -555,7 +555,7 @@
     "models": [
       {
         "id": "deepseek-v4-flash",
-        "name": "DeepSeek V4 Flash (New)",
+        "name": "DeepSeek V4 Flash (2x usage)",
         "api": "openai-completions",
         "provider": "opencode-go",
         "baseUrl": "https://opencode.ai/zen/go/v1",
@@ -564,9 +564,9 @@
           "text"
         ],
         "cost": {
-          "input": 0.14,
-          "output": 0.28,
-          "cacheRead": 0.0028,
+          "input": 0.07,
+          "output": 0.14,
+          "cacheRead": 0.0014,
           "cacheWrite": 0
         },
         "compat": {
@@ -1044,9 +1044,9 @@
         "maxTokens": 131072
       }
     ],
-    "checkedAt": 1786018085114,
-    "lastModified": 1785841810000,
-    "etag": "W/\"9acd354f1fe084eec04a65a7ad727beb\""
+    "checkedAt": 1786325643205,
+    "lastModified": 1786098938000,
+    "etag": "W/\"fc45c5903aaf73b9f2cdfd74cc3f77f9\""
   },
   "opencode": {
     "models": [
@@ -1121,26 +1121,6 @@
         },
         "contextWindow": 200000,
         "maxTokens": 64000
-      },
-      {
-        "id": "claude-opus-4-1",
-        "name": "Claude Opus 4.1",
-        "api": "anthropic-messages",
-        "provider": "opencode",
-        "baseUrl": "https://opencode.ai/zen",
-        "reasoning": true,
-        "input": [
-          "text",
-          "image"
-        ],
-        "cost": {
-          "input": 15,
-          "output": 75,
-          "cacheRead": 1.5,
-          "cacheWrite": 18.75
-        },
-        "contextWindow": 200000,
-        "maxTokens": 32000
       },
       {
         "id": "claude-opus-4-5",
@@ -1367,7 +1347,7 @@
       },
       {
         "id": "deepseek-v4-flash",
-        "name": "DeepSeek V4 Flash 0731",
+        "name": "DeepSeek V4 Flash",
         "api": "openai-completions",
         "provider": "opencode",
         "baseUrl": "https://opencode.ai/zen/v1",
@@ -1402,7 +1382,7 @@
       },
       {
         "id": "deepseek-v4-flash-free",
-        "name": "DeepSeek V4 Flash Free (New)",
+        "name": "DeepSeek V4 Flash Free",
         "api": "openai-completions",
         "provider": "opencode",
         "baseUrl": "https://opencode.ai/zen/v1",
@@ -2331,7 +2311,7 @@
       {
         "id": "grok-build-0.1",
         "name": "Grok Build 0.1",
-        "api": "openai-completions",
+        "api": "openai-responses",
         "provider": "opencode",
         "baseUrl": "https://opencode.ai/zen/v1",
         "reasoning": true,
@@ -2346,10 +2326,8 @@
           "cacheWrite": 0
         },
         "compat": {
-          "supportsStore": false,
-          "supportsDeveloperRole": false,
-          "supportsReasoningEffort": false,
-          "maxTokensField": "max_tokens"
+          "sessionAffinityFormat": "openai-nosession",
+          "supportsReasoningEffort": false
         },
         "contextWindow": 256000,
         "maxTokens": 256000,
@@ -2507,8 +2485,8 @@
         }
       },
       {
-        "id": "ling-3.0-flash-free",
-        "name": "Ling-3.0-flash Free",
+        "id": "ling-3.0-tiny-free",
+        "name": "Ling-3.0-tiny Free",
         "api": "openai-completions",
         "provider": "opencode",
         "baseUrl": "https://opencode.ai/zen/v1",
@@ -2528,16 +2506,31 @@
           "maxTokensField": "max_tokens"
         },
         "contextWindow": 262144,
-        "maxTokens": 32768,
-        "thinkingLevelMap": {
-          "off": null,
-          "minimal": null,
-          "low": "low",
-          "medium": "medium",
-          "high": "high",
-          "xhigh": null,
-          "max": null
-        }
+        "maxTokens": 32768
+      },
+      {
+        "id": "longcat-2.0-free",
+        "name": "LongCat-2.0 Free",
+        "api": "openai-completions",
+        "provider": "opencode",
+        "baseUrl": "https://opencode.ai/zen/v1",
+        "reasoning": true,
+        "input": [
+          "text"
+        ],
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "compat": {
+          "supportsStore": false,
+          "supportsDeveloperRole": false,
+          "maxTokensField": "max_tokens"
+        },
+        "contextWindow": 1000000,
+        "maxTokens": 131072
       },
       {
         "id": "mimo-v2.5-free",
@@ -2736,9 +2729,9 @@
         "maxTokens": 65536
       }
     ],
-    "checkedAt": 1785854768184,
-    "lastModified": 1785841809000,
-    "etag": "W/\"6a8d635c1854e90dcd972ee55d3ba535\""
+    "checkedAt": 1786198060850,
+    "lastModified": 1786098937000,
+    "etag": "W/\"6a3d869f61e07364aa91690663bac71e\""
   },
   "github-copilot": {
     "models": [
@@ -3754,6 +3747,37 @@
         }
       },
       {
+        "id": "kimi-k3",
+        "name": "Kimi K3",
+        "api": "openai-completions",
+        "provider": "github-copilot",
+        "baseUrl": "https://api.individual.githubcopilot.com",
+        "reasoning": true,
+        "input": [
+          "text",
+          "image"
+        ],
+        "cost": {
+          "input": 0.95,
+          "output": 4,
+          "cacheRead": 0.19,
+          "cacheWrite": 0
+        },
+        "contextWindow": 1048576,
+        "maxTokens": 131072,
+        "headers": {
+          "User-Agent": "GitHubCopilotChat/0.35.0",
+          "Editor-Version": "vscode/1.107.0",
+          "Editor-Plugin-Version": "copilot-chat/0.35.0",
+          "Copilot-Integration-Id": "vscode-chat"
+        },
+        "compat": {
+          "supportsStore": false,
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        }
+      },
+      {
         "id": "mai-code-1-flash-picker",
         "name": "MAI-Code-1-Flash",
         "api": "openai-responses",
@@ -3788,8 +3812,8 @@
         }
       }
     ],
-    "checkedAt": 1785854770241,
-    "lastModified": 1785841793000,
-    "etag": "W/\"4fb0e6b4a542b895ae29356eb82b4952\""
+    "checkedAt": 1786325644839,
+    "lastModified": 1786098917000,
+    "etag": "W/\"335adf891b521321ae4a07eacab9106c\""
   }
 }
