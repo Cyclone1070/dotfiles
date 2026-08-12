@@ -547,7 +547,7 @@
         }
       }
     ],
-    "checkedAt": 1786348510798,
+    "checkedAt": 1786364223835,
     "lastModified": 1785146168000,
     "etag": "W/\"847689823a6d36ca4c630f82d83a7db1\""
   },
@@ -1044,7 +1044,7 @@
         "maxTokens": 131072
       }
     ],
-    "checkedAt": 1786348394346,
+    "checkedAt": 1786412413884,
     "lastModified": 1786098938000,
     "etag": "W/\"fc45c5903aaf73b9f2cdfd74cc3f77f9\""
   },
@@ -2729,7 +2729,7 @@
         "maxTokens": 65536
       }
     ],
-    "checkedAt": 1786348394344,
+    "checkedAt": 1786412640416,
     "lastModified": 1786098937000,
     "etag": "W/\"6a3d869f61e07364aa91690663bac71e\""
   },
@@ -3758,9 +3758,9 @@
           "image"
         ],
         "cost": {
-          "input": 0.95,
-          "output": 4,
-          "cacheRead": 0.19,
+          "input": 3,
+          "output": 15,
+          "cacheRead": 0.3,
           "cacheWrite": 0
         },
         "contextWindow": 1048576,
@@ -3812,8 +3812,8 @@
         }
       }
     ],
-    "checkedAt": 1786325644839,
-    "lastModified": 1786098917000,
-    "etag": "W/\"335adf891b521321ae4a07eacab9106c\""
+    "checkedAt": 1786412640418,
+    "lastModified": 1786351873000,
+    "etag": "W/\"7ffd4ef2818d64e7c0d7d68f071d52ec\""
   }
 }
