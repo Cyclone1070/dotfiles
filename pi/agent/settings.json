@@ -1,9 +1,9 @@
 {
-  "defaultModel": "deepseek-v4-flash-free",
+  "defaultModel": "hy3-free",
   "defaultProvider": "opencode",
-  "defaultThinkingLevel": "max",
+  "defaultThinkingLevel": "high",
   "hideThinkingBlock": true,
-  "lastChangelogVersion": "0.84.1",
+  "lastChangelogVersion": "0.84.2",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
