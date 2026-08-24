@@ -6,13 +6,14 @@ import os
 import random
 import time
 
-# MODIFIED: Throttled frame rate to 20 FPS (1 / 0.05 = 20)
-UPDATE_INTERVAL = 0.02 # Original value was 0.015
+# Frame interval for 20 FPS (prevents terminal event-loop saturation in Neovim)
+UPDATE_INTERVAL = 0.05
 
 # --- Rain Configuration ---
-RAIN_CHARS = ['|', '.', '`']
-COLOR_PAIR_RAIN_NORMAL = 1
-COLOR_PAIR_LIGHTNING = 4
+RAIN_CHARS = ['│', '|', ':', '·', '.']
+COLOR_PAIR_RAIN = 1
+COLOR_PAIR_RAIN_DIM = 2
+COLOR_PAIR_LIGHTNING = 3
 
 # Defined curses color names (lowercase) for argument parsing
 CURSES_COLOR_MAP = {
@@ -28,199 +29,159 @@ CURSES_COLOR_MAP = {
 
 
 class Raindrop:
-    def __init__(self, x, y, speed, char):
+    __slots__ = ('x', 'y', 'speed', 'char', 'attr')
+
+    def __init__(self, x, y, speed, char, attr):
         self.x = x
         self.y = y
         self.speed = speed
         self.char = char
+        self.attr = attr
 
 
 # --- Lightning ---
-LIGHTNING_COLOR_ATTR = None
-LIGHTNING_CHANCE = 0.015 # Increased from 0.005
+LIGHTNING_CHANCE = 0.035
 LIGHTNING_CHARS = ['*', '+', '#']
-LIGHTNING_GROWTH_DELAY = 0.002
-LIGHTNING_MAX_BRANCHES = 2
-LIGHTNING_BRANCH_CHANCE = 0.3
-FORK_CHANCE = 0.15
-FORK_HORIZONTAL_SPREAD = 3
-SEGMENT_LIFESPAN = 0.8
 
 
 class LightningBolt:
+    __slots__ = ('segments', 'created_at', 'lifespan')
+
     def __init__(self, start_row, start_col, max_y, max_x):
-        self.start_col = start_col
-        self.target_length = random.randint(max_y // 2, max_y - 2)
-        self.segments = [(start_row, start_col, time.time())]
-        self.last_growth_time = time.time()
-        self.is_growing = True
-        self.max_y = max_y
-        self.max_x = max_x
+        self.segments = []
+        self.created_at = time.time()
+        self.lifespan = random.uniform(0.40, 0.60)  # Visible for 400-600ms (~8-12 frames)
 
-    def update(self):
-        current_time = time.time()
+        # Generate the full lightning branch tree instantly on strike
+        cur_x = start_col
+        cur_y = start_row
+        target_len = random.randint(max_y * 2 // 3, max_y - 1)
 
-        # Growth
-        if self.is_growing and (current_time - self.last_growth_time >= LIGHTNING_GROWTH_DELAY):
-            self.last_growth_time = current_time
-            new_segments_this_step = []
-            added_segment = False
-            last_y, last_x, _ = self.segments[-1]
+        while cur_y < target_len and cur_y < max_y - 1:
+            self.segments.append((cur_y, cur_x))
+            # Branching
+            if random.random() < 0.22:
+                fork_x = max(0, min(max_x - 1, cur_x + random.choice([-2, -1, 1, 2])))
+                self.segments.append((cur_y + 1, fork_x))
+            cur_x = max(0, min(max_x - 1, cur_x + random.randint(-1, 1)))
+            cur_y += 1
 
-            if len(self.segments) < self.target_length and last_y < self.max_y - 1:
-                branches = 1
-                if random.random() < LIGHTNING_BRANCH_CHANCE:
-                    branches = random.randint(1, LIGHTNING_MAX_BRANCHES + 1)
+    def is_alive(self, now):
+        return (now - self.created_at) < self.lifespan
 
-                current_x = last_x
-                next_primary_x = current_x
-                for i in range(branches):
-                    offset = random.randint(-2, 2)
-                    next_x = max(0, min(self.max_x - 1, current_x + offset))
-                    next_y = min(self.max_y - 1, last_y + 1)
-                    new_segments_this_step.append((next_y, next_x, current_time))
-                    if i == 0: next_primary_x = next_x
-                    current_x = next_x
-                    added_segment = True
+    def draw(self, stdscr, now, attr_bold, attr_norm, attr_dim, max_r, max_c):
+        age = now - self.created_at
+        progress = age / self.lifespan
 
-                if random.random() < FORK_CHANCE:
-                    fork_offset = random.randint(-FORK_HORIZONTAL_SPREAD, FORK_HORIZONTAL_SPREAD)
-                    if fork_offset == 0: fork_offset = random.choice([-1, 1])
-                    fork_x = max(0, min(self.max_x - 1, last_x + fork_offset))
-                    fork_y = min(self.max_y - 1, last_y + 1)
-                    if fork_x != next_primary_x:
-                        new_segments_this_step.append((fork_y, fork_x, current_time))
-                        added_segment = True
+        # Multi-stage realistic lightning decay with natural flicker
+        if progress < 0.25:
+            # Stage 1: Main intense strike
+            char = '#'
+            attr = attr_bold
+        elif progress < 0.50:
+            # Stage 2: Discharge flicker
+            char = '+' if (int(age * 20) % 2 == 0) else '#'
+            attr = attr_bold
+        elif progress < 0.75:
+            # Stage 3: Afterglow
+            char = '*'
+            attr = attr_norm
+        else:
+            # Stage 4: Dissipating ionization trail
+            char = '·'
+            attr = attr_dim
 
-            if not added_segment or len(self.segments) >= self.target_length or last_y >= self.max_y - 1:
-                self.is_growing = False
-
-            if new_segments_this_step:
-                unique_new = list({(s[0], s[1]): s for s in new_segments_this_step}.values())
-                self.segments.extend(unique_new)
-
-        # Check for Removal
-        all_expired = True
-        if not self.segments:
-            return False
-
-        for _, _, creation_time in self.segments:
-            if (current_time - creation_time) <= SEGMENT_LIFESPAN:
-                all_expired = False
-                break
-        return not all_expired
-
-    def draw(self, stdscr):
-        current_time = time.time()
-        max_char_index = len(LIGHTNING_CHARS) - 1
-
-        for y, x, creation_time in self.segments:
-            segment_age = current_time - creation_time
-            char = ' '
-
-            if segment_age <= SEGMENT_LIFESPAN:
-                norm_age = segment_age / SEGMENT_LIFESPAN
-                if norm_age < 0.33:
-                    char_index = 2
-                elif norm_age < 0.66:
-                    char_index = 1
-                else:
-                    char_index = 0
-                char = LIGHTNING_CHARS[char_index]
-            else:
-                continue
-
-            attr = LIGHTNING_COLOR_ATTR
-            try:
-                max_r, max_c = stdscr.getmaxyx()
-                if y < max_r and x < max_c:
-                    stdscr.addstr(int(y), int(x), char, attr)
-            except curses.error:
-                pass
+        for y, x in self.segments:
+            if 0 <= y < max_r and 0 <= x < max_c:
+                try:
+                    stdscr.addstr(y, x, char, attr)
+                except curses.error:
+                    pass
 
 
 def setup_colors(rain_color_str='cyan', lightning_color_str='yellow'):
-    """Initializes color pairs for the rain and lightning based on input strings."""
-    global LIGHTNING_COLOR_ATTR
+    """Initializes color pairs for rain and lightning."""
     if curses.has_colors():
         curses.start_color()
-        # MODIFIED: Use the terminal's default background for transparency
         curses.use_default_colors()
-        bg = -1 # Set background to -1 for transparency
+        bg = -1  # Transparent background
 
         rain_fg = CURSES_COLOR_MAP.get(rain_color_str.lower(), curses.COLOR_CYAN)
         lightning_fg = CURSES_COLOR_MAP.get(lightning_color_str.lower(), curses.COLOR_YELLOW)
 
-        curses.init_pair(COLOR_PAIR_RAIN_NORMAL, rain_fg, bg)
+        curses.init_pair(COLOR_PAIR_RAIN, rain_fg, bg)
+        curses.init_pair(COLOR_PAIR_RAIN_DIM, rain_fg, bg)
         curses.init_pair(COLOR_PAIR_LIGHTNING, lightning_fg, bg)
-        LIGHTNING_COLOR_ATTR = curses.color_pair(COLOR_PAIR_LIGHTNING) | curses.A_BOLD
         return True
     else:
-        # Fallback for terminals without color support
-        curses.init_pair(COLOR_PAIR_RAIN_NORMAL, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(COLOR_PAIR_RAIN, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(COLOR_PAIR_RAIN_DIM, curses.COLOR_WHITE, curses.COLOR_BLACK)
         curses.init_pair(COLOR_PAIR_LIGHTNING, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        LIGHTNING_COLOR_ATTR = curses.color_pair(COLOR_PAIR_LIGHTNING) | curses.A_BOLD
         return False
+
 
 def simulate_rain(stdscr, rain_color_str='cyan', lightning_color_str='yellow'):
     curses.curs_set(0)
     stdscr.nodelay(True)
-    stdscr.timeout(1)
+    setup_colors(rain_color_str, lightning_color_str)
 
-    has_colors = setup_colors(rain_color_str, lightning_color_str)
+    # Pre-cache attributes to avoid calling curses.color_pair inside per-drop loops
+    attr_rain_bold = curses.color_pair(COLOR_PAIR_RAIN) | curses.A_BOLD
+    attr_rain_norm = curses.color_pair(COLOR_PAIR_RAIN)
+    attr_rain_dim = curses.color_pair(COLOR_PAIR_RAIN_DIM) | curses.A_DIM
+
+    attr_lt_bold = curses.color_pair(COLOR_PAIR_LIGHTNING) | curses.A_BOLD
+    attr_lt_norm = curses.color_pair(COLOR_PAIR_LIGHTNING)
+    attr_lt_dim = curses.color_pair(COLOR_PAIR_LIGHTNING) | curses.A_DIM
+
     raindrops = []
     active_bolts = []
     rows, cols = stdscr.getmaxyx()
     is_thunderstorm = True
 
-    last_update_time = time.time()
-
     while True:
+        frame_start = time.perf_counter()
+
+        # Handle keyboard input
         key = stdscr.getch()
         if key == curses.KEY_RESIZE:
             rows, cols = stdscr.getmaxyx()
-            stdscr.clear()
+            stdscr.erase()
             raindrops.clear()
             active_bolts.clear()
-        elif key in [ord('q'), ord('Q'), 27]: # 27 is the Escape key
+        elif key in (ord('q'), ord('Q'), 27):
             break
-        elif key in [ord('t'), ord('T')]:
+        elif key in (ord('t'), ord('T')):
             is_thunderstorm = not is_thunderstorm
-            stdscr.clear()
+            stdscr.erase()
 
-        current_time = time.time()
-        delta_time = current_time - last_update_time
-        if delta_time < UPDATE_INTERVAL:
-            time.sleep(UPDATE_INTERVAL - delta_time)
-        last_update_time = time.time()
+        now = time.time()
 
         # Update Lightning Bolts
-        next_bolts = []
-        if is_thunderstorm and len(active_bolts) < 3 and random.random() < LIGHTNING_CHANCE:
+        if is_thunderstorm and len(active_bolts) < 2 and random.random() < LIGHTNING_CHANCE:
             start_col = random.randint(cols // 4, 3 * cols // 4)
-            start_row = random.randint(0, rows // 5)
+            start_row = random.randint(0, rows // 6)
             active_bolts.append(LightningBolt(start_row, start_col, rows, cols))
 
-        for bolt in active_bolts:
-            if bolt.update():
-                next_bolts.append(bolt)
-        active_bolts = next_bolts
+        active_bolts = [b for b in active_bolts if b.is_alive(now)]
+
+        # Spawn Raindrops (controlled density with natural falling speeds)
+        max_spawn = max(2, cols // 25 if is_thunderstorm else cols // 35)
+        spawn_count = random.randint(1, max_spawn)
+        min_speed = 1.2 if is_thunderstorm else 0.8
+        max_speed = 2.2 if is_thunderstorm else 1.5
+
+        for _ in range(spawn_count):
+            x = random.randint(0, cols - 1)
+            speed = random.uniform(min_speed, max_speed)
+            char = random.choice(RAIN_CHARS)
+            if is_thunderstorm:
+                attr = attr_rain_bold if speed > 1.7 else attr_rain_norm
+            else:
+                attr = attr_rain_norm if speed > 1.1 else attr_rain_dim
+            raindrops.append(Raindrop(x, 0.0, speed, char, attr))
 
         # Update Raindrops
-        generation_chance = 0.5 if is_thunderstorm else 0.3
-        max_new_drops = cols // 8 if is_thunderstorm else cols // 15
-        min_speed = 0.3 if is_thunderstorm else 0.3
-        max_speed = 1.0 if is_thunderstorm else 0.6
-
-        if random.random() < generation_chance:
-            num_new_drops = random.randint(1, max(1, max_new_drops))
-            for _ in range(num_new_drops):
-                x = random.randint(0, cols - 1)
-                y = 0
-                speed = random.uniform(min_speed, max_speed)
-                char = random.choice(RAIN_CHARS)
-                raindrops.append(Raindrop(x, y, speed, char))
-
         next_raindrops = []
         for drop in raindrops:
             drop.y += drop.speed
@@ -228,26 +189,28 @@ def simulate_rain(stdscr, rain_color_str='cyan', lightning_color_str='yellow'):
                 next_raindrops.append(drop)
         raindrops = next_raindrops
 
-        # Drawing
-        stdscr.clear()
+        # Draw using erase() instead of clear() to avoid clearok full-screen resets
+        stdscr.erase()
 
         for bolt in active_bolts:
-            bolt.draw(stdscr)
+            bolt.draw(stdscr, now, attr_lt_bold, attr_lt_norm, attr_lt_dim, rows, cols)
 
         for drop in raindrops:
-            try:
-                attr = curses.color_pair(COLOR_PAIR_RAIN_NORMAL)
-                if is_thunderstorm:
-                    attr |= curses.A_BOLD
-                elif drop.speed < 0.8:
-                    attr |= curses.A_DIM
-                if int(drop.y) < rows:
-                    stdscr.addstr(int(drop.y), drop.x, drop.char, attr)
-            except curses.error:
-                pass
-                
+            iy = int(drop.y)
+            if 0 <= iy < rows and 0 <= drop.x < cols:
+                try:
+                    stdscr.addstr(iy, drop.x, drop.char, drop.attr)
+                except curses.error:
+                    pass
+
         stdscr.noutrefresh()
         curses.doupdate()
+
+        # Precise frame interval pacing
+        elapsed = time.perf_counter() - frame_start
+        sleep_time = UPDATE_INTERVAL - elapsed
+        if sleep_time > 0:
+            time.sleep(sleep_time)
 
 
 def main():
@@ -276,19 +239,22 @@ def main():
     try:
         curses.wrapper(simulate_rain, args.rain_color, args.lightning_color)
     except curses.error as e:
-        try: curses.endwin()
-        except Exception: pass
+        try:
+            curses.endwin()
+        except Exception:
+            pass
         print(f"\nA curses error occurred: {e}")
-        print("Terminal might not fully support curses features (like color/attributes).")
-        print("Try resizing the terminal or using a different terminal emulator.")
     except KeyboardInterrupt:
         print("\nExiting...")
     except Exception as e:
-        try: curses.endwin()
-        except Exception: pass
+        try:
+            curses.endwin()
+        except Exception:
+            pass
         print(f"\nAn unexpected error occurred: {e}")
         import traceback
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     main()
