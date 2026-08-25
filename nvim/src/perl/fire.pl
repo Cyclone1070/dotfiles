@@ -1,91 +1,136 @@
-#!/usr/bin/perl -w
-
+#!/usr/bin/env perl
 use strict;
-use lib "./modules";
-use Term::ANSIScreen qw/:color :cursor :screen :keyboard/;
-use Term::ReadKey;
-use Time::HiRes qw( usleep ualarm gettimeofday tv_interval nanosleep
-                      clock_gettime clock_getres clock_nanosleep clock
-                      stat lstat utime);
+use warnings;
 use utf8;
+use Time::HiRes qw(time usleep);
+use Term::ReadKey;
+
+$| = 1;
 binmode STDOUT, ":encoding(UTF-8)";
- 
-our ($width, $height) = GetTerminalSize ();
 
-our @buf1; our @buf2;
-our @chars; our @cols;
-our $maxchars=8;
-our $maxdots=20;
+my $TARGET_FPS = 30;
+my $FRAME_INTERVAL = 1.0 / $TARGET_FPS;
 
-my $key; # pressed key
+my @CHARS = (" ", " ", "+", "+", "O", "0", "X", "X", "@");
+my @COLOR_ID = (0, 0, 1, 2, 3, 3, 4, 3, 5);
+my @COLOR_CODE = (
+    "\e[0m",      # 0: reset
+    "\e[1;33m",   # 1: bold yellow
+    "\e[0;33m",   # 2: yellow
+    "\e[0;31m",   # 3: red
+    "\e[1;31m",   # 4: bold red
+    "\e[1;37m",   # 5: white
+);
 
-# buffer&color init
-sub clearbufs { 
-  my $x; my $y;
-  for ($y=0; $y<=$height; $y++) {
-    for ($x=0; $x<=$width; $x++) {
-      $buf1[$x][$y]=0;
-      $buf2[$x][$y]=0;
+my $maxchars = 8;
+my ($width, $height);
+my (@buf1, @buf2);
+my ($cur_buf, $next_buf);
+
+sub get_size {
+    my ($w, $h);
+    {
+        local $SIG{__WARN__} = sub {};
+        eval { ($w, $h) = GetTerminalSize(*STDOUT); };
+        if (!$w || !$h) {
+            eval { ($w, $h) = GetTerminalSize(*STDIN); };
+        }
     }
-  }
-  $chars[0]=" "; $cols[0]="black";
-  $chars[1]=" "; $cols[1]="black";
-  $chars[2]="+"; $cols[2]="bold yellow";
-  $chars[3]="+"; $cols[3]="yellow";
-  $chars[4]="O"; $cols[4]="red";
-  $chars[5]="0"; $cols[5]="red";
-  $chars[6]="X"; $cols[6]="bold red";
-  $chars[7]="X"; $cols[7]="red";
-  $chars[8]="@"; $cols[8]="white";
+    $w ||= $ENV{COLUMNS} || 80;
+    $h ||= $ENV{LINES}   || 24;
+    return ($w, $h);
 }
 
-sub copybuf2to1 { @buf1=@buf2; }
+sub init_buffers {
+    ($width, $height) = get_size();
 
-# calc buf1 -> buf2
-sub calctobuf2 {
-  my $y; my $x;
-  for ($y=1; $y<$height-1; $y++) {
-    for ($x=1; $x<$width-1; $x++) {
-      $buf2[$x][$y-1]=int(($buf1[$x][$y]+$buf1[$x+1][$y]+$buf1[$x-1][$y]+$buf1[$x][$y+1]+$buf1[$x][$y-1])/5 + rand()*0.35 ) ;
+    @buf1 = ();
+    @buf2 = ();
+    for my $x (0 .. $width) {
+        $buf1[$x] = [ (0) x ($height + 1) ];
+        $buf2[$x] = [ (0) x ($height + 1) ];
     }
-  }   
+    $cur_buf  = \@buf1;
+    $next_buf = \@buf2;
 }
 
-# put the whole shit to screen
-sub buf2toscr {
-  my $y; my $x;
-  for ($y=1; $y<$height; $y++) {
-    for ($x=1; $x<$width; $x++) {
-      locate $y,$x; 
-      print color ($cols[$buf2[$x][$y]]), $chars[$buf2[$x][$y]], color("reset");
+sub resize_handler {
+    init_buffers();
+    print "\e[2J\e[H";
+}
+
+$SIG{WINCH} = \&resize_handler;
+
+sub cleanup {
+    print "\e[?25h\e[0m";
+    eval { local $SIG{__WARN__} = sub {}; ReadMode('normal'); };
+}
+
+$SIG{INT}  = sub { cleanup(); exit(0); };
+$SIG{TERM} = sub { cleanup(); exit(0); };
+END { cleanup(); }
+
+print "\e[?25l";
+eval { local $SIG{__WARN__} = sub {}; ReadMode('cbreak'); };
+
+init_buffers();
+
+while (1) {
+    my $t_start = time();
+
+    my $key;
+    eval {
+        local $SIG{__WARN__} = sub {};
+        $key = ReadKey(-1);
+    };
+    last if defined $key and ($key eq 'q' or $key eq 'Q' or ord($key) == 27 or ord($key) == 3);
+
+    my $bottom_y = $height - 2;
+    if ($bottom_y > 0) {
+        for my $x (0 .. $width - 1) {
+            $cur_buf->[$x][$bottom_y] = int(rand($maxchars) + 1);
+        }
+        $cur_buf->[int(rand($width))][max(0, $bottom_y - int(rand(10)))] = $maxchars;
     }
-  }   
+
+    for (my $y = 1; $y < $height - 1; $y++) {
+        my $target_y = $y - 1;
+        for (my $x = 1; $x < $width - 1; $x++) {
+            my $sum = $cur_buf->[$x][$y]
+                    + $cur_buf->[$x + 1][$y]
+                    + $cur_buf->[$x - 1][$y]
+                    + $cur_buf->[$x][$y + 1]
+                    + $cur_buf->[$x][$y - 1];
+            $next_buf->[$x][$target_y] = int($sum / 5 + rand() * 0.35);
+        }
+    }
+
+    ($cur_buf, $next_buf) = ($next_buf, $cur_buf);
+
+    # State-tracked ANSI rendering (only emits color code on transition)
+    my $frame = "\e[H";
+    my $last_color = 0;
+    for (my $y = 1; $y < $height; $y++) {
+        for (my $x = 1; $x < $width; $x++) {
+            my $val = $cur_buf->[$x][$y] || 0;
+            $val = 8 if $val > 8;
+            my $cid = $COLOR_ID[$val];
+            if ($cid != $last_color) {
+                $frame .= $COLOR_CODE[$cid];
+                $last_color = $cid;
+            }
+            $frame .= $CHARS[$val];
+        }
+        $frame .= "\n" if $y < $height - 1;
+    }
+    $frame .= "\e[0m" if $last_color != 0;
+    print $frame;
+
+    my $elapsed = time() - $t_start;
+    my $sleep_time = $FRAME_INTERVAL - $elapsed;
+    if ($sleep_time > 0) {
+        usleep($sleep_time * 1_000_000);
+    }
 }
 
-# bottom random pixel line
-sub putbottom {
-  my $x;
-  for ($x=0; $x<$width; $x++) {
-    $buf1[$x][$height-2]=int(rand($maxchars)+1);
-  }
-}
-
-# random bright flying dots
-sub putrnddots {
-  $buf1[int(rand($width))][$height-2-int(rand(10))]=$maxchars;
-}
-
-# main loop
-
-&clearbufs;
-
-while (not defined ($key = ReadKey(-1))) {
-  &putbottom;
-  &putrnddots;
-  &calctobuf2;
-  &copybuf2to1;
-  &buf2toscr;
-  usleep(20000);
-}
-
-# perec!
+sub max { $_[0] > $_[1] ? $_[0] : $_[1] }
