@@ -96,7 +96,7 @@ parse() {
         B) BOLD=0;;
         C) NOCOLOR=1;;
         K) KEEPCT=1;;
-        h) echo -e "Usage: $(basename $0) [OPTION]..."
+        h) echo -e "Usage: $(basename "$0") [OPTION]..."
             echo -e "Animated pipes terminal screensaver.\n"
             echo -e " -p [1-]\tnumber of pipes (D=1)."
             echo -e " -t [0-$((${#sets[@]} - 1))]\ttype of pipes, can be used more than once (D=0)."
@@ -113,7 +113,7 @@ parse() {
             echo -e " -v\t\tprint version number.\n"
             exit 0;;
         v) echo "$(basename -- "$0") $VERSION"
-            exit 0
+            exit 0;;
         esac
     done
 
@@ -127,22 +127,24 @@ parse() {
 
 cleanup() {
     # clear out standard input
-    read -t 0.001 && cat </dev/stdin>/dev/null
+    read -t 0.001 -r && cat </dev/stdin >/dev/null 2>&1
 
-    # terminal has no smcup and rmcup capabilities
-    ((FORCE_RESET)) && reset && exit 0
-
-    tput reset  # fix for konsole, see pipeseroni/pipes.sh#43
-    tput rmcup
-    tput cnorm
-    stty echo
-    ((NOCOLOR)) && echo -ne '\e[0m'
+    # restore cursor and colors
+    printf '\e[?1049l\e[?25h\e[0m'
+    stty echo 2>/dev/null
     exit 0
 }
 
 
 resize() {
-    w=$(tput cols) h=$(tput lines)
+    w=${COLUMNS:-80}
+    h=${LINES:-24}
+    if [[ -t 1 ]]; then
+        read -r h w < <(stty size 2>/dev/null) || {
+            w=$(tput cols 2>/dev/null || echo 80)
+            h=$(tput lines 2>/dev/null || echo 24)
+        }
+    fi
 }
 
 
@@ -164,11 +166,10 @@ init() {
         vi = (vi + 1) % VN
     ));}
 
-    stty -echo
-    tput smcup || FORCE_RESET=1
-    tput civis
-    tput clear
-    trap cleanup HUP TERM
+    stty -echo 2>/dev/null
+    # Enter alternate screen, hide cursor, clear screen
+    printf '\e[?1049h\e[?25l\e[2J\e[H'
+    trap cleanup HUP TERM INT
 }
 
 
@@ -178,20 +179,29 @@ main() {
     parse "$@"
     init "$@"
 
-    # any key press exits the loop and this script
-    trap 'break 2' INT
+    local sleep_delay
+    if ((f == 100)); then
+        sleep_delay="0.01"
+    else
+        sleep_delay="0.0$((1000 / f))"
+    fi
+
+    local out
+    local col_code
     while REPLY=; do
-        read -t 0.0$((1000 / f)) -n 1 2>/dev/null
+        read -t "$sleep_delay" -n 1 -r 2>/dev/null
         case "$REPLY" in
             P) ((s = s <  15 ? s + 1 : s));;
             O) ((s = s >   3 ? s - 1 : s));;
-            F) ((f = f < 100 ? f + 1 : f));;
-            D) ((f = f >  20 ? f - 1 : f));;
+            F) ((f = f < 100 ? f + 1 : f)); sleep_delay="0.0$((1000 / f))";;
+            D) ((f = f >  20 ? f - 1 : f)); sleep_delay="0.0$((1000 / f))";;
             B) ((BOLD = (BOLD + 1) % 2));;
             C) ((NOCOLOR = (NOCOLOR + 1) % 2));;
             K) ((KEEPCT = (KEEPCT + 1) % 2));;
             ?) break;;
         esac
+
+        out=""
         for ((i = 0; i < p; i++)); do
             # New position:
             # l[] direction = 0: up, 1: right, 2: down, 3: left
@@ -208,14 +218,22 @@ main() {
             ((n[i] = (n[i] > 1 || n[i] == 0) ? l[i] : l[i] + n[i]))
             ((n[i] = (n[i] < 0) ? 3 : n[i] % 4))
 
-            # Print:
-            tput cup ${y[i]} ${x[i]}
-            echo -ne "\e[${BOLD}m"
-            ((NOCOLOR)) && echo -ne "\e[0m" || echo -ne "\e[3${c[i]}m"
-            echo -n "${sets[v[i]]:l[i]*4+n[i]:1}"
+            # Pure bash ANSI cursor positioning and color formatting (zero subprocess forks)
+            ((NOCOLOR)) && col_code="\e[0m" || col_code="\e[3${c[i]}m"
+            out+="\e[$((y[i] + 1));$((x[i] + 1))H\e[${BOLD}m${col_code}${sets[v[i]]:l[i]*4+n[i]:1}"
             l[i]=${n[i]}
         done
-        ((r > 0 && t * p >= r)) && tput reset && tput civis && t=0 || ((t++))
+
+        # Reset screen when character limit reached
+        if ((r > 0 && t * p >= r)); then
+            out+="\e[2J\e[H"
+            t=0
+        else
+            ((t++))
+        fi
+
+        # Single I/O write per frame
+        printf "%b" "$out"
     done
 
     cleanup
