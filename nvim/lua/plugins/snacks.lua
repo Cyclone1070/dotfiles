@@ -154,10 +154,9 @@ local terminal_commands = {
   get_bin("cbonsai") .. " -t 0.01 -l -L 40",
   "TERM=screen-256color " .. get_bin("lavat"),
   "TERM=screen-256color " .. get_bin("terminal_rain_lightning.py"),
+  get_bin("cxxmatrix") .. " --preserve-background --no-diffuse --no-twinkle --frame-rate 10 -s conway -s loop",
+  get_bin("cxxmatrix") .. " --preserve-background --no-diffuse --no-twinkle --frame-rate 10 -s rain-forever",
 }
--- heavy matrix headers
---  get_bin("cxxmatrix") .. " --preserve-background --frame-rate 10 -s rain-forever",
---  get_bin("cxxmatrix") .. " --preserve-background --frame-rate 10 -s conway -s loop",
 
 local chosen_terminal_command
 -- match fire to fade logo
