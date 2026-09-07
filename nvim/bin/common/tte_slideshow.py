@@ -52,7 +52,7 @@ ACTIVE_EFFECTS = [
     "blackhole",
     "bubbles",
     # "errorcorrect",  # excluded
-    "highlight",
+    # "highlight", # excluded: lame
     # "matrix",  # excluded: slow
     "middleout",
     "orbittingvolley",
@@ -65,7 +65,7 @@ ACTIVE_EFFECTS = [
     "spotlights",
     "spray",
     "unstable",
-    "wipe",
+    # "wipe", # excluded: lame
     # Tier 2 (6.0 - 10.0 FPS)
     "binarypath",
     "bouncyballs",
@@ -76,7 +76,7 @@ ACTIVE_EFFECTS = [
     "expand",
     "fireworks",
     "laseretch",
-    "overflow",
+    # "overflow", # exclude: epilepsy induced
     "rings",
     "scattered",
     "swarm",
@@ -89,10 +89,12 @@ ACTIVE_EFFECTS = [
 # Tier 3 animations (< 6.0 FPS) - excluded:
 # "beams", "smoke", "synthgrid"
 
+
 def clear_all_caches():
     """Clear geometry and graphics LRU caches to prevent unbounded memory growth."""
     try:
         from terminaltexteffects.utils import geometry, graphics, easing
+
         for mod in (geometry, graphics, easing):
             for attr in dir(mod):
                 obj = getattr(mod, attr)
@@ -101,7 +103,9 @@ def clear_all_caches():
     except Exception:
         pass
 
+
 ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
+
 
 def str_width(s):
     try:
@@ -110,8 +114,21 @@ def str_width(s):
     except Exception:
         return len(s)
 
+
 class TopBarReviewer:
-    def __init__(self, include_startup=False, extra_text=None, fps=15.0, step=4, delay=1.0, start_effect=None, all_effects=False, shuffle=True, title_idx=None, custom_logos=None):
+    def __init__(
+        self,
+        include_startup=False,
+        extra_text=None,
+        fps=15.0,
+        step=4,
+        delay=1.0,
+        start_effect=None,
+        all_effects=False,
+        shuffle=True,
+        title_idx=None,
+        custom_logos=None,
+    ):
         self.include_startup = include_startup
         self.extra_text = extra_text
         self.fps = float(fps)
@@ -123,7 +140,9 @@ class TopBarReviewer:
         if all_effects:
             available = sorted(list(self.effect_resource_map.keys()))
         else:
-            available = sorted([e for e in ACTIVE_EFFECTS if e in self.effect_resource_map])
+            available = sorted(
+                [e for e in ACTIVE_EFFECTS if e in self.effect_resource_map]
+            )
         self.available_effects = available
 
         if self.shuffle:
@@ -144,7 +163,9 @@ class TopBarReviewer:
         else:
             self.available_titles = []
 
-        if self.fixed_title_idx is not None and 0 <= self.fixed_title_idx < len(self.available_titles):
+        if self.fixed_title_idx is not None and 0 <= self.fixed_title_idx < len(
+            self.available_titles
+        ):
             self.title_playlist = [self.available_titles[self.fixed_title_idx]]
             self.title_idx = 0
         elif self.shuffle:
@@ -193,7 +214,9 @@ class TopBarReviewer:
                 next_title_idx = self.title_idx + 1
                 if next_title_idx >= len(self.title_playlist):
                     prev_last_title = self.title_playlist[-1]
-                    self.title_playlist = self._generate_shuffled_title_playlist(prev_last=prev_last_title)
+                    self.title_playlist = self._generate_shuffled_title_playlist(
+                        prev_last=prev_last_title
+                    )
                     self.title_idx = 0
                 else:
                     self.title_idx = next_title_idx
@@ -254,7 +277,13 @@ class TopBarReviewer:
         if not r:
             return None
         data = os.read(sys.stdin.fileno(), 16)
-        if data in (b"\x1b[C", b"l", b" ", b"\r", b"\n"):  # Right / l / Space / Enter = Next
+        if data in (
+            b"\x1b[C",
+            b"l",
+            b" ",
+            b"\r",
+            b"\n",
+        ):  # Right / l / Space / Enter = Next
             return "next"
         elif data in (b"\x1b[D", b"h"):  # Left / h = Prev
             return "prev"
@@ -289,19 +318,33 @@ class TopBarReviewer:
                 row_offset = 1
 
                 t_conf = TerminalConfig._build_config()
-                t_conf.frame_rate = 0  # Disable internal TTE sleeping; timing is enforced by runner
+                t_conf.frame_rate = (
+                    0  # Disable internal TTE sleeping; timing is enforced by runner
+                )
                 t_conf.canvas_width = canvas_w
                 t_conf.canvas_height = canvas_h
                 t_conf.anchor_canvas = "c"
                 t_conf.anchor_text = "c"
 
                 e_conf = eff_conf_cls._build_config()
+                if eff_name == "slice":
+                    e_conf.slice_direction = "diagonal"
+
+                if eff_name == "slide":
+                    e_conf.merge = True
+
                 if eff_name == "spotlights":
                     if hasattr(e_conf, "beam_width_ratio"):
                         e_conf.beam_width_ratio = 5.0
 
-                    from terminaltexteffects.effects.effect_spotlights import SpotlightsIterator
-                    from terminaltexteffects.utils.geometry import Coord, find_length_of_line
+                    from terminaltexteffects.effects.effect_spotlights import (
+                        SpotlightsIterator,
+                    )
+                    from terminaltexteffects.utils.geometry import (
+                        Coord,
+                        find_length_of_line,
+                    )
+
                     orig_make = SpotlightsIterator.make_spotlights
 
                     def bounded_make_spotlights(it_self, num_spotlights: int):
@@ -320,14 +363,25 @@ class TopBarReviewer:
                         def text_coord(outside_scope=False):
                             if outside_scope:
                                 return old_random(outside_scope=True)
-                            return Coord(random.randint(min_x, max_x), random.randint(min_y, max_y))
+                            return Coord(
+                                random.randint(min_x, max_x),
+                                random.randint(min_y, max_y),
+                            )
 
-                        def bounded_find_coord(origin_coord: Coord, minimum_distance: int) -> Coord:
+                        def bounded_find_coord(
+                            origin_coord: Coord, minimum_distance: int
+                        ) -> Coord:
                             for _ in range(50):
-                                coord = Coord(random.randint(min_x, max_x), random.randint(min_y, max_y))
+                                coord = Coord(
+                                    random.randint(min_x, max_x),
+                                    random.randint(min_y, max_y),
+                                )
                                 if find_length_of_line(origin_coord, coord) >= min_dist:
                                     return coord
-                            return Coord(random.randint(min_x, max_x), random.randint(min_y, max_y))
+                            return Coord(
+                                random.randint(min_x, max_x),
+                                random.randint(min_y, max_y),
+                            )
 
                         c.random_coord = text_coord
                         it_self.find_coord_at_minimum_distance = bounded_find_coord
@@ -386,7 +440,9 @@ class TopBarReviewer:
                     now = time.monotonic()
                     dt_m = now - last_metric_time
                     if dt_m >= metric_window:
-                        cur_cols, cur_rows = shutil.get_terminal_size(fallback=(cols, rows))
+                        cur_cols, cur_rows = shutil.get_terminal_size(
+                            fallback=(cols, rows)
+                        )
                         if cur_cols != cols or cur_rows != rows:
                             cols, rows = cur_cols, cur_rows
                             prev_lines = None  # Force full repaint on terminal resize
@@ -397,7 +453,11 @@ class TopBarReviewer:
                         last_metric_time = now
                         window_bytes = 0
                         window_frames = 0
-                        buf.append(self.get_window_title_seq(cur_cpu, cur_ram, cur_kbs, cur_fps))
+                        buf.append(
+                            self.get_window_title_seq(
+                                cur_cpu, cur_ram, cur_kbs, cur_fps
+                            )
+                        )
 
                     # Subtiling: dirty-line diff (only write lines that changed)
                     if prev_lines is None:
@@ -409,7 +469,10 @@ class TopBarReviewer:
                         for r_idx, line in enumerate(lines):
                             target_r = row_offset + r_idx
                             if target_r <= rows:
-                                if r_idx >= len(prev_lines) or line != prev_lines[r_idx]:
+                                if (
+                                    r_idx >= len(prev_lines)
+                                    or line != prev_lines[r_idx]
+                                ):
                                     buf.append(f"\033[{target_r};1H{line}")
 
                     prev_lines = lines
@@ -482,25 +545,70 @@ class TopBarReviewer:
 def main():
     import argparse
     import base64
-    parser = argparse.ArgumentParser(description="TTE Reviewer & Neovim Dashboard Runner")
-    parser.add_argument("--startup", action="store_true", help="Include Neovim startup time text")
-    parser.add_argument("--extra", type=str, default=None, help="Extra text below title (e.g. startup stats)")
-    parser.add_argument("--extra-b64", type=str, default=None, help="Base64-encoded extra text")
-    parser.add_argument("--logos-b64", type=str, default=None, help="Base64-encoded JSON array of logos from Lua")
-    parser.add_argument("--fps", type=float, default=15.0, help="Target framerate (default: 15)")
-    parser.add_argument("--step", type=int, default=4, help="Frames to step per tick (default: 4)")
-    parser.add_argument("--delay", type=float, default=1.0, help="Pause in seconds between animation loops")
-    parser.add_argument("--effect", type=str, default=None, help="Specific effect to start at")
-    parser.add_argument("--all", action="store_true", default=False, help="Include all effects, including slow ones (<10 FPS)")
-    parser.add_argument("--shuffle", action="store_true", default=True, help="Shuffle playlist order (default: True)")
-    parser.add_argument("--no-shuffle", action="store_false", dest="shuffle", help="Sequential alphabetical order")
+
+    parser = argparse.ArgumentParser(
+        description="TTE Reviewer & Neovim Dashboard Runner"
+    )
+    parser.add_argument(
+        "--startup", action="store_true", help="Include Neovim startup time text"
+    )
+    parser.add_argument(
+        "--extra",
+        type=str,
+        default=None,
+        help="Extra text below title (e.g. startup stats)",
+    )
+    parser.add_argument(
+        "--extra-b64", type=str, default=None, help="Base64-encoded extra text"
+    )
+    parser.add_argument(
+        "--logos-b64",
+        type=str,
+        default=None,
+        help="Base64-encoded JSON array of logos from Lua",
+    )
+    parser.add_argument(
+        "--fps", type=float, default=15.0, help="Target framerate (default: 15)"
+    )
+    parser.add_argument(
+        "--step", type=int, default=4, help="Frames to step per tick (default: 4)"
+    )
+    parser.add_argument(
+        "--delay",
+        type=float,
+        default=1.0,
+        help="Pause in seconds between animation loops",
+    )
+    parser.add_argument(
+        "--effect", type=str, default=None, help="Specific effect to start at"
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        default=False,
+        help="Include all effects, including slow ones (<10 FPS)",
+    )
+    parser.add_argument(
+        "--shuffle",
+        action="store_true",
+        default=True,
+        help="Shuffle playlist order (default: True)",
+    )
+    parser.add_argument(
+        "--no-shuffle",
+        action="store_false",
+        dest="shuffle",
+        help="Sequential alphabetical order",
+    )
     parser.add_argument("--logo-idx", type=int, default=None, help="Fixed logo index")
     args = parser.parse_args()
 
     extra_text = args.extra
     if args.extra_b64:
         try:
-            extra_text = base64.b64decode(args.extra_b64.encode("utf-8")).decode("utf-8")
+            extra_text = base64.b64decode(args.extra_b64.encode("utf-8")).decode(
+                "utf-8"
+            )
         except Exception:
             extra_text = args.extra
 
@@ -533,6 +641,7 @@ def main():
     signal.signal(signal.SIGTERM, handle_signal)
 
     reviewer.run()
+
 
 if __name__ == "__main__":
     main()
