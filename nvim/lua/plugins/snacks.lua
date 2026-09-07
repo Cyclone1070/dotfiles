@@ -12,14 +12,6 @@ local logos = {
 █  ███   ██        ███      ██████  █████        ██  ████  █
 ████████████████████████████████████████████████████████████
 	]],
-  [[                                                    
- ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗ 
- ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║ 
- ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║ 
- ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║ 
- ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║ 
- ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝ 
-	]],
   [[
                                                                      
        ████ ██████           █████      ██                     
@@ -93,20 +85,15 @@ U| |\  |u  | |___.-,_| |_| | /\ V /_,-. | |      | |  | |
 |  | \   |  |  `---.  '  '-'  '\-'\   /    |  |'->|  |   |  |
 `--'  `--'  `------'   `-----'     `-'     `--'   `--'   `--'
     ]],
+  [[
+ )\  )\   )\.---.     .-./(       .-.  .'(   )\   )\  
+(  \, /  (   ,-._(  ,'     )  ,'  /  ) \  ) (  ',/ /  
+ ) \ (    \  '-,   (  .-, (  (  ) | (  ) (   )    (   
+( ( \ \    ) ,-`    ) '._\ )  ) './ /  \  ) (  \(\ \  
+ `.)/  )  (  ``-.  (  ,   (  (  ,  (    ) \  `.) /  ) 
+    '.(    )..-.(   )/ ._.'   )/..'      )/      '.(  
+    ]],
 }
-
--- Choose a logo once when Neovim starts
-local chosen_dashboard_logo = logos[math.random(1, #logos)]
--- Calculate terminal section size based on logo line count and total screen lines
-local logo_line_count = 0
-for _ in string.gmatch(chosen_dashboard_logo, "([^\n]*)") do
-  logo_line_count = logo_line_count + 1
-end
-local terminal_section_height = vim.opt.lines:get() - logo_line_count + 4 -- Total screen lines
-local dashboard_width = vim.opt.columns:get()
-if dashboard_width > 120 then
-  dashboard_width = 120
-end
 
 -- Helper function to get the correct binary path based on OS
 local function get_bin(name)
@@ -120,37 +107,25 @@ local function get_bin(name)
   return config_path .. "/bin/common/" .. name
 end
 
--- Randomly choose a terminal command
-local terminal_commands = {
-  get_bin("fire"),
-  get_bin("asciiquarium") .. " -t",
-  get_bin("pipes.sh") .. " -p 7 -t 1 -t 3 -f 100 -r 3000",
-  get_bin("cbonsai") .. " -t 0.01 -l -L 40",
-  "TERM=screen-256color " .. get_bin("lavat"),
-  "TERM=screen-256color " .. get_bin("terminal_rain_lightning.py"),
-  get_bin("cxxmatrix") .. " --preserve-background --no-diffuse --no-twinkle --frame-rate 10 -s conway -s loop",
-  get_bin("cxxmatrix") .. " --preserve-background --no-diffuse --no-twinkle --frame-rate 10 -s rain-forever",
-}
-
-local chosen_terminal_command
--- match fire to fade logo
-if chosen_dashboard_logo == logos[1] then
-  chosen_terminal_command = terminal_commands[1]
-else
-  chosen_terminal_command = terminal_commands[math.random(1, #terminal_commands)]
-end
-if chosen_terminal_command == terminal_commands[1] then
-  chosen_dashboard_logo = logos[1]
-end
--- adjust terminal section height for specific commands if needed
-if chosen_terminal_command:find("fire") then
-  terminal_section_height = 22
-end
--- random color for lavat
-if chosen_terminal_command:find("lavat") then
-  -- red, blue, yellow, green, cyan, magenta, whit
-  local colors = { "red", "blue", "yellow", "green", "cyan", "magenta", "white" }
-  chosen_terminal_command = chosen_terminal_command .. " -c " .. colors[math.random(1, #colors)]
+-- Prevent unbounded memory leak in snacks.nvim streaming terminal jobs
+do
+  local ok, Job = pcall(require, "snacks.util.job")
+  if ok and Job and Job.new then
+    local orig_new = Job.new
+    Job.new = function(buf, cmd, opts)
+      local job = orig_new(buf, cmd, opts)
+      if job.opts.term then
+        -- Clear callbacks before job:start() so Neovim pipes directly to PTY with 0 Lua memory allocations
+        job.opts.on_stdout = nil
+        job.opts.on_stderr = nil
+        function job:on_output() end
+        if buf and vim.api.nvim_buf_is_valid(buf) then
+          vim.bo[buf].scrollback = 1
+        end
+      end
+      return job
+    end
+  end
 end
 
 return {
@@ -298,15 +273,21 @@ return {
     scope = { enabled = true },
     animate = { enabled = true },
     util = { enabled = true },
-    styles = { enabled = true },
+    styles = {
+      enabled = true,
+      dashboard = {
+        width = 0,
+        height = 0,
+        border = "none",
+      },
+    },
     toggle = { enabled = true },
 
     dashboard = {
       enabled = true,
-      width = dashboard_width,
-      row = nil, -- dashboard position. nil for center
-      col = nil, -- dashboard position. nil for center
-      pane_gap = 4, -- empty columns between vertical panes
+      row = 0, -- dashboard position at the top
+      col = 0, -- dashboard position at the left
+      pane_gap = 0, -- empty columns between vertical panes
       autokeys = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", -- autokey sequence
       -- These settings are used by some built-in sections
       preset = {
@@ -327,8 +308,6 @@ return {
           { icon = " ", key = "s", desc = "Restore Session", section = "session", hidden = true },
           { icon = " ", key = "q", desc = "Quit", action = ":qa", hidden = true },
         },
-        -- Used by the `header` section
-        header = chosen_dashboard_logo,
       },
       -- item field formatters
       formats = {
@@ -336,15 +315,29 @@ return {
         header = { "%s", align = "center" },
       },
       sections = {
-        { section = "header", padding = 1 },
-        {
-          section = "terminal",
-          cmd = chosen_terminal_command,
-          height = terminal_section_height,
-          padding = 1,
-          ttl = 5 * 60,
-        },
-        { section = "startup", padding = 1 },
+        function()
+          local stats = require("lazy.stats").stats()
+          local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+          local extra = string.format(
+            " Neovim loaded %d/%d plugins in %.2fms\n\n github.com/Cyclone1070\n linkedin.com/in/huy-hoang-mai/",
+            stats.loaded,
+            stats.count,
+            ms
+          )
+          local b64 = vim.base64.encode(extra)
+          local logos_b64 = vim.base64.encode(vim.json.encode(logos))
+          local cmd = string.format("python3 %s --logos-b64 %s --extra-b64 %s", get_bin("tte_slideshow.py"), logos_b64, b64)
+          local win_h = vim.o.lines - vim.o.cmdheight
+          local win_w = vim.o.columns
+          return {
+            section = "terminal",
+            cmd = cmd,
+            height = win_h,
+            width = win_w,
+            padding = 0,
+            ttl = 0,
+          }
+        end,
         { section = "keys" },
       },
     },

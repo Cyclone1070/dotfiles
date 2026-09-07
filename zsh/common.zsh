@@ -1,5 +1,8 @@
 # Common Aliases & Exports (Cross-Platform)
 
+# Standard emacs keybindings
+bindkey -e
+
 # === History ===
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
