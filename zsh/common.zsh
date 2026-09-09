@@ -55,7 +55,7 @@ bindkey -r '^L'
 bindkey '^L' autosuggest-accept
 
 # radio/music settings
-alias abc='mpv --cache=no --stream-lavf-o="reconnect=1,reconnect_at_eof=1,reconnect_streamed=1,reconnect_delay_max=30" http://abc.streamguys1.com/live/newsradio/icecast.audio'
+alias abc='mpv --no-video https://mediaserviceslive.akamaized.net/hls/live/2038311/newsradio/index.m3u8'
 alias bgm="mpv --volume=46 --no-video --loop-playlist --shuffle --volume-max=300 --display-tags= --script-opts=stats-key_page_0=6 --script=\$HOME/repos/dotfiles/zsh/scripts/auto-stats.lua --ytdl-raw-options=\"extractor-args=youtube:player_client=web_embedded\" 'https://www.youtube.com/playlist?list=PLkVD01XL1G9LNt5iprsJYrqOcqtYNUh3e'"
 alias music="mpv --volume=70 --no-video --loop-playlist --shuffle --volume-max=300 --display-tags= --script-opts=stats-key_page_0=6 --script=$HOME/repos/dotfiles/zsh/scripts/auto-stats.lua 'https://www.youtube.com/playlist?list=PLkVD01XL1G9JAFImX9SrKa_GXQxRuESuU'"
 
