@@ -339,6 +339,9 @@ class TopBarReviewer:
                 if eff_name == "binarypath":
                     e_conf.movement_speed = 1.5
 
+                if eff_name == "vhstape":
+                    e_conf.glitch_line_chance = 0.1
+
                 if eff_name == "spotlights":
                     if hasattr(e_conf, "beam_width_ratio"):
                         e_conf.beam_width_ratio = 5.0
