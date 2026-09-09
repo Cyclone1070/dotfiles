@@ -333,6 +333,12 @@ class TopBarReviewer:
                 if eff_name == "slide":
                     e_conf.merge = True
 
+                if eff_name == "swarm":
+                    e_conf.swarm_size = 0.2
+
+                if eff_name == "binarypath":
+                    e_conf.movement_speed = 1.5
+
                 if eff_name == "spotlights":
                     if hasattr(e_conf, "beam_width_ratio"):
                         e_conf.beam_width_ratio = 5.0

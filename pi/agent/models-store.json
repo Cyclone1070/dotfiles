@@ -506,7 +506,7 @@
         }
       }
     ],
-    "checkedAt": 1788776863233,
+    "checkedAt": 1788836254932,
     "lastModified": 1788776508000,
     "etag": "W/\"82d850ac898f9406a8bedcd62f25e6da\""
   },
@@ -1303,7 +1303,7 @@
         }
       }
     ],
-    "checkedAt": 1788776864100,
+    "checkedAt": 1788836255039,
     "lastModified": 1788776524000,
     "etag": "W/\"55d12abe1f71bc22552b418c2e14d8b2\""
   },
@@ -3257,7 +3257,7 @@
         "maxTokens": 65536
       }
     ],
-    "checkedAt": 1788776863262,
+    "checkedAt": 1788836254944,
     "lastModified": 1788776523000,
     "etag": "W/\"1d9d85ca687a5877340af69ffce00612\""
   },
@@ -4041,7 +4041,7 @@
       {
         "id": "gpt-6-astra",
         "name": "GPT-6 Astra",
-        "api": "openai-completions",
+        "api": "openai-responses",
         "provider": "github-copilot",
         "baseUrl": "https://api.individual.githubcopilot.com",
         "reasoning": true,
@@ -4072,14 +4072,17 @@
           "Editor-Plugin-Version": "copilot-chat/0.35.0",
           "Copilot-Integration-Id": "vscode-chat"
         },
-        "compat": {
-          "supportsStore": false,
-          "supportsDeveloperRole": false,
-          "supportsReasoningEffort": false
-        },
         "thinkingLevelMap": {
+          "off": null,
+          "minimal": null,
+          "low": "low",
+          "medium": "medium",
+          "high": "high",
           "xhigh": "xhigh",
           "max": "max"
+        },
+        "compat": {
+          "supportsOpenAIGrammarTools": true
         }
       },
       {
@@ -4302,8 +4305,8 @@
         }
       }
     ],
-    "checkedAt": 1788776869059,
-    "lastModified": 1788770216000,
-    "etag": "W/\"c8a83e4ef221c071f954595223913041\""
+    "checkedAt": 1788836254935,
+    "lastModified": 1788784735000,
+    "etag": "W/\"6921ae004baf0a792a1fa6e168e3b7be\""
   }
 }
