@@ -104,6 +104,71 @@ def clear_all_caches():
         pass
 
 
+def patch_spotlights_bounds():
+    """Ensure SpotlightsIterator.make_spotlights stays bounded within the text area.
+
+    Idempotent monkeypatch: only patches once and preserves the true original method,
+    preventing infinite recursion when the spotlights effect is replayed or revisited.
+    """
+    try:
+        from terminaltexteffects.effects.effect_spotlights import SpotlightsIterator
+        from terminaltexteffects.utils.geometry import Coord, find_length_of_line
+
+        if hasattr(SpotlightsIterator, "_orig_make_spotlights"):
+            return
+
+        orig_make = SpotlightsIterator.make_spotlights
+        SpotlightsIterator._orig_make_spotlights = orig_make
+
+        def bounded_make_spotlights(it_self, num_spotlights: int):
+            c = it_self.terminal.canvas
+            pad_x = 4
+            pad_y = 2
+            min_x = max(c.text_left - pad_x, 1)
+            max_x = min(c.text_right + pad_x, c.right)
+            min_y = max(c.text_bottom - pad_y, 1)
+            max_y = min(c.text_top + pad_y, c.top)
+            min_dist = max(min(max_x - min_x, max_y - min_y) // 3, 2)
+
+            old_random = c.random_coord
+            old_find = it_self.find_coord_at_minimum_distance
+
+            def text_coord(outside_scope=False):
+                if outside_scope:
+                    return old_random(outside_scope=True)
+                return Coord(
+                    random.randint(min_x, max_x),
+                    random.randint(min_y, max_y),
+                )
+
+            def bounded_find_coord(
+                origin_coord: Coord, minimum_distance: int
+            ) -> Coord:
+                for _ in range(50):
+                    coord = Coord(
+                        random.randint(min_x, max_x),
+                        random.randint(min_y, max_y),
+                    )
+                    if find_length_of_line(origin_coord, coord) >= min_dist:
+                        return coord
+                return Coord(
+                    random.randint(min_x, max_x),
+                    random.randint(min_y, max_y),
+                )
+
+            c.random_coord = text_coord
+            it_self.find_coord_at_minimum_distance = bounded_find_coord
+            try:
+                return orig_make(it_self, num_spotlights)
+            finally:
+                c.random_coord = old_random
+                it_self.find_coord_at_minimum_distance = old_find
+
+        SpotlightsIterator.make_spotlights = bounded_make_spotlights
+    except Exception:
+        pass
+
+
 ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
 
 
@@ -345,62 +410,7 @@ class TopBarReviewer:
                 if eff_name == "spotlights":
                     if hasattr(e_conf, "beam_width_ratio"):
                         e_conf.beam_width_ratio = 5.0
-
-                    from terminaltexteffects.effects.effect_spotlights import (
-                        SpotlightsIterator,
-                    )
-                    from terminaltexteffects.utils.geometry import (
-                        Coord,
-                        find_length_of_line,
-                    )
-
-                    orig_make = SpotlightsIterator.make_spotlights
-
-                    def bounded_make_spotlights(it_self, num_spotlights: int):
-                        c = it_self.terminal.canvas
-                        pad_x = 4
-                        pad_y = 2
-                        min_x = max(c.text_left - pad_x, 1)
-                        max_x = min(c.text_right + pad_x, c.right)
-                        min_y = max(c.text_bottom - pad_y, 1)
-                        max_y = min(c.text_top + pad_y, c.top)
-                        min_dist = max(min(max_x - min_x, max_y - min_y) // 3, 2)
-
-                        old_random = c.random_coord
-                        old_find = it_self.find_coord_at_minimum_distance
-
-                        def text_coord(outside_scope=False):
-                            if outside_scope:
-                                return old_random(outside_scope=True)
-                            return Coord(
-                                random.randint(min_x, max_x),
-                                random.randint(min_y, max_y),
-                            )
-
-                        def bounded_find_coord(
-                            origin_coord: Coord, minimum_distance: int
-                        ) -> Coord:
-                            for _ in range(50):
-                                coord = Coord(
-                                    random.randint(min_x, max_x),
-                                    random.randint(min_y, max_y),
-                                )
-                                if find_length_of_line(origin_coord, coord) >= min_dist:
-                                    return coord
-                            return Coord(
-                                random.randint(min_x, max_x),
-                                random.randint(min_y, max_y),
-                            )
-
-                        c.random_coord = text_coord
-                        it_self.find_coord_at_minimum_distance = bounded_find_coord
-                        try:
-                            return orig_make(it_self, num_spotlights)
-                        finally:
-                            c.random_coord = old_random
-                            it_self.find_coord_at_minimum_distance = old_find
-
-                    SpotlightsIterator.make_spotlights = bounded_make_spotlights
+                    patch_spotlights_bounds()
 
                 effect = eff_cls(title_payload, e_conf, t_conf)
 
