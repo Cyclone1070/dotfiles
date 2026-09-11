@@ -11,7 +11,6 @@ import termios
 import tty
 import psutil
 import gc
-import re
 import random
 import json
 import wcwidth
@@ -51,9 +50,6 @@ ACTIVE_EFFECTS = [
     # Tier 1 (> 10.0 FPS)
     "blackhole",
     "bubbles",
-    # "errorcorrect",  # excluded
-    # "highlight", # excluded: lame
-    # "matrix",  # excluded: slow
     "middleout",
     "orbittingvolley",
     "pour",
@@ -65,7 +61,6 @@ ACTIVE_EFFECTS = [
     "spotlights",
     "spray",
     "unstable",
-    # "wipe", # excluded: lame
     # Tier 2 (6.0 - 10.0 FPS)
     "binarypath",
     "bouncyballs",
@@ -76,7 +71,6 @@ ACTIVE_EFFECTS = [
     "expand",
     "fireworks",
     "laseretch",
-    # "overflow", # exclude: epilepsy induced
     "rings",
     "scattered",
     "swarm",
@@ -142,7 +136,7 @@ def patch_spotlights_bounds():
                 )
 
             def bounded_find_coord(
-                origin_coord: Coord, minimum_distance: int
+                origin_coord: Coord, _minimum_distance: int
             ) -> Coord:
                 for _ in range(50):
                     coord = Coord(
@@ -167,9 +161,6 @@ def patch_spotlights_bounds():
         SpotlightsIterator.make_spotlights = bounded_make_spotlights
     except Exception:
         pass
-
-
-ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
 
 
 def str_width(s):
@@ -323,11 +314,11 @@ class TopBarReviewer:
         if sys.stdin.isatty():
             self.old_term = termios.tcgetattr(sys.stdin)
             tty.setcbreak(sys.stdin.fileno())
-        sys.stdout.write("[?25l[H[2J")
+        sys.stdout.write("\x1b[?25l\x1b[H\x1b[2J")
         sys.stdout.flush()
 
     def restore_terminal(self):
-        sys.stdout.write("[?25h[0m")
+        sys.stdout.write("\x1b[?25h\x1b[0m")
         sys.stdout.flush()
         if self.old_term and sys.stdin.isatty():
             try:
@@ -364,7 +355,7 @@ class TopBarReviewer:
             f"[{self.effect_idx + 1:02d}/{len(self.effects):02d}] {eff_name} | "
             f"CPU: {cpu:.1f}% | RAM: {ram:.1f}MB | {kbs:.1f} KB/s | {fps:.1f} FPS"
         )
-        return f"]0;{title}"
+        return f"\x1b]0;{title}\x07"
 
     def run(self):
         self.setup_terminal()
@@ -652,7 +643,7 @@ def main():
         custom_logos=custom_logos,
     )
 
-    def handle_signal(sig, frame):
+    def handle_signal(_sig, _frame):
         reviewer.running = False
         sys.exit(0)
 
