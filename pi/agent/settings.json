@@ -1,6 +1,6 @@
 {
-  "defaultModel": "qwen/qwen3.8-27b",
-  "defaultProvider": "groq",
+  "defaultModel": "deepseek-flash",
+  "defaultProvider": "deepseek",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": true,
   "lastChangelogVersion": "0.87.0",
