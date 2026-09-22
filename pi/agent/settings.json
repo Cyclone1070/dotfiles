@@ -1,9 +1,9 @@
 {
-  "defaultModel": "big-pickle",
-  "defaultProvider": "opencode",
+  "defaultModel": "qwen/qwen3.8-27b",
+  "defaultProvider": "groq",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": true,
-  "lastChangelogVersion": "0.85.1",
+  "lastChangelogVersion": "0.87.0",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
