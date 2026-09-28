@@ -8,9 +8,18 @@ importers:
 
   .:
     dependencies:
+      dsh-mermaid:
+        specifier: link:../../plugins/dsh-mermaid
+        version: link:../../plugins/dsh-mermaid
+      dsh-notification:
+        specifier: link:../../plugins/dsh-notification
+        version: link:../../plugins/dsh-notification
       dsh-opencode-session-header:
         specifier: ^0.1.0
         version: 0.1.0
+      tdd-enforcer:
+        specifier: 0.5.0
+        version: 0.5.0
 
 packages:
 
@@ -18,6 +27,19 @@ packages:
     resolution: {integrity: sha512-F0JUVoXs5/z8L2gLperzTbzcletIXSw0+jHiZduhkWz3WR6RE9wz6STSIM4MmvqtBnXJroKsPJXZt4hif2oYNA==}
     engines: {node: '>=20'}
 
+  picomatch@4.0.7:
+    resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
+    engines: {node: '>=12'}
+
+  tdd-enforcer@0.5.0:
+    resolution: {integrity: sha512-NdT7LY30+p87M0AS6uWrRz9ovNhACU7ccceUX37EhAU4tM8FJQ06iftkyiLwS3Y+Qt/Mfh2ha43OV8XGH8QV+A==}
+
 snapshots:
 
   dsh-opencode-session-header@0.1.0: {}
+
+  picomatch@4.0.7: {}
+
+  tdd-enforcer@0.5.0:
+    dependencies:
+      picomatch: 4.0.7

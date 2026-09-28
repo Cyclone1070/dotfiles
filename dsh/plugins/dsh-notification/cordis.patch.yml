@@ -1,0 +1,7 @@
+# dsh-notification bundle patch — inserts our own notification plugin row.
+#
+# The host half is deliberately empty; every behaviour lives in the browser half,
+# which dsh-client-modules picks up from the package's `dsh.client` declaration.
+- insert:
+    - id: dsh-notification
+      name: 'dsh-notification'

@@ -3,3 +3,5 @@ packages:
 
 nodeLinker: hoisted
 autoInstallPeers: false
+minimumReleaseAgeExclude:
+  - tdd-enforcer@0.5.0

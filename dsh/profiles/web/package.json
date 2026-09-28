@@ -2,14 +2,20 @@
   "name": "dsh-profile-web",
   "private": true,
   "dependencies": {
-    "dsh-opencode-session-header": "^0.1.0"
+    "dsh-mermaid": "link:../../plugins/dsh-mermaid",
+    "dsh-notification": "link:../../plugins/dsh-notification",
+    "dsh-opencode-session-header": "^0.1.0",
+    "tdd-enforcer": "0.5.0"
   },
   "dsh": {
     "profile": {
       "bundles": [
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-web-app",
-        "dsh-opencode-session-header"
+        "dsh-opencode-session-header",
+        "tdd-enforcer",
+        "dsh-notification",
+        "dsh-mermaid"
       ],
       "patchReload": "live"
     }

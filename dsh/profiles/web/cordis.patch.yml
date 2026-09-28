@@ -74,8 +74,8 @@
         id: coding
         name: Coding
         description: Debloated full coding agent — shell, files and images, skills,
-          subagents, web, MCP; no plan mode, todos, goal tools, workflow, ralph,
-          fork, or tool-result pruning.
+          subagents, web, MCP; no plan mode, todos, workflow, ralph, fork, or
+          tool-result pruning.
         order: 10
         plugins:
           - id: persona
@@ -153,11 +153,16 @@
 
           # ── goals ───────────────────────────────────────────────────────────────────
 
-          # Human-facing only: `/goal` lets the person create and steer a goal, while the
-          # model gets no goal tools (the `tool-goal` row is deliberately absent). The
-          # goal service and its session driver stay on the host plane.
+          # `/goal` lets the person create and steer a goal; `tool-goal` gives the model
+          # the matching `get_goal`/`create_goal`/`update_goal` tools, and the host-plane
+          # round driver continues the session on an active goal. Both rows are
+          # preset-scoped on purpose: `dsh-web-app` disables the command and tool rows on
+          # the host plane, while the goal service and its session driver stay there.
           - id: command-goal
             name: '@deepseek-ai/dsh-command-goal'
+
+          - id: tool-goal
+            name: '@deepseek-ai/dsh-tool-goal'
 
           # ── compaction ──────────────────────────────────────────────────────────────
 
