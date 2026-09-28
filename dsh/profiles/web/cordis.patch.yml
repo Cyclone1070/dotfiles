@@ -84,8 +84,9 @@
               suffix: Your working directory is {{cwd}}.
               prefix: |-
                 ## Response Style
-                - Extremely concise and direct. Zero conversational fluff, preamble, or sign-offs.
-                - Use plain, simple, coherent language instead of complex phrasing. State the point and stop.
+                - Extremely concise and direct. Zero conversational fluff, preamble, or sign-offs. Aim for as few words as possible while staying clear.
+                - No unnecessarily verbose sentences. Keep them short and simple, flowing straight to the point, with no filler or padding.
+                - Explain through high-level reasoning in plain English, building intuition for the reader. Never explain with code or jargon unless explicitly asked for.
 
                 ## Structured Output & Visuals
                 - Format responses for fast scanning: use markdown tables, itemised lists, arrows and inline code blocks.

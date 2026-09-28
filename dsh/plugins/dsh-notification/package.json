@@ -1,6 +1,6 @@
 {
   "name": "dsh-notification",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Browser task notifications for DeepSeek Harness — tells you when the agent needs you or has actually finished a turn, and never fires while delegated background work is still running.",
   "license": "MIT",

@@ -54,7 +54,17 @@ var SETTINGS_KEY = 'dsh.notification.settings.v1';
 var DONE_GRACE_MS = 2500;
 var WIRE_ATTEMPTS = 40;
 var WIRE_INTERVAL_MS = 250;
+// A dismissed permission prompt leaves `permission` at 'default' forever, so the
+// gesture listener keeps asking — but slowly enough not to nag.
+var PERMISSION_RETRY_MS = 300000;
 var MAX_WALK = 200;
+// Chrome keys a page's notifications by TAG. This plugin's needs-input tag was
+// stable across page loads (the interaction counter restarts at 1), so a notice
+// still sitting in the notification centre could be replaced — silently, with no
+// banner — leaving the cue as the only sign. One id per page load keeps every
+// notice distinct while intra-page replacement still works.
+var RUN_ID = Math.random().toString(36).slice(2, 8);
+var testSeq = 0;
 var CUES = {
   input: [[880, 0, 0.14], [1174, 0.16, 0.14], [1568, 0.32, 0.20]],
   done: [[784, 0, 0.15], [1046, 0.18, 0.24]]
@@ -67,11 +77,12 @@ var DEFAULTS = {
   waitForBackground: true,
   system: 'always',     // off | background | always
   // Fixed behaviours, kept as data so the engine stays explicit but no longer
-  // worth a settings row: cue volume, the tab-title marker while input is
-  // pending, and needs-input notices that stay until handled.
+  // worth a settings row: cue volume and the tab-title marker while input is
+  // pending. Needs-input notices no longer ask the OS to keep them on screen:
+  // that flag was the one difference from the finished notice, which is the one
+  // that demonstrably reaches the screen. The in-page card is what persists.
   volume: 0.5,
-  titleMarker: true,
-  persist: true
+  titleMarker: true
 };
 
 var STRINGS = {
@@ -96,6 +107,8 @@ var STRINGS = {
     unsupported: 'not supported in this browser',
     request: 'Allow notifications',
     test: 'Send a test',
+    inPage: 'Until then, alerts appear in the corner of this page.',
+    inPageOff: 'Alerts appear in the corner of this page.',
     testTitle: 'Notifications are on',
     testBody: 'This is what an alert looks like.',
     needsAnswer: 'Needs your answer',
@@ -124,6 +137,8 @@ var STRINGS = {
     unsupported: '此浏览器不支持',
     request: '允许通知',
     test: '发一条测试',
+    inPage: '在此之前，提醒会显示在页面角上。',
+    inPageOff: '提醒会显示在页面角上。',
     testTitle: '通知已开启',
     testBody: '通知长这样。',
     needsAnswer: '需要你回答',
@@ -348,8 +363,87 @@ function createTitleMarker() {
   };
 }
 
-/* ──────────────────────────────── engine ─────────────────────────────── */
+/**
+ * In-page alert — the channel that cannot be taken away.
+ *
+ * Every reason the desktop notice can fail is outside our control: no support,
+ * permission never granted, the constructor throwing, the OS swallowing the
+ * banner. A cue with nothing visible is the worst thing this plugin can do —
+ * the alarm rings and there is nothing to act on — so whenever the notice is
+ * not shown, this card carries the same facts instead.
+ */
+function createBanner() {
+  var host = null;
+  var cards = Object.create(null);
 
+  function ensureHost() {
+    if (host && host.parentNode) return host;
+    host = document.createElement('div');
+    host.setAttribute('data-dsh-notification-banners', '');
+    host.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:2147483000;'
+      + 'display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+    document.body.appendChild(host);
+    return host;
+  }
+
+  function dismiss(key) {
+    var card = cards[key];
+    if (!card) return;
+    delete cards[key];
+    try { card.remove(); } catch (error) { /* ignore */ }
+  }
+
+  return {
+    show: function (options) {
+      try {
+        dismiss(options.key);
+        var card = document.createElement('div');
+        card.setAttribute('data-dsh-notification-banner', options.key);
+        card.style.cssText = 'pointer-events:auto;cursor:pointer;max-width:320px;'
+          + 'background:#1f2328;color:#fff;border-radius:10px;padding:10px 12px;'
+          + 'box-shadow:0 6px 20px rgba(0,0,0,.28);display:flex;gap:10px;align-items:flex-start;'
+          + 'font:13px/18px system-ui,-apple-system,"Segoe UI",sans-serif;';
+        var text = document.createElement('div');
+        text.style.cssText = 'flex:1 1 auto;';
+        var title = document.createElement('div');
+        title.style.cssText = 'font-weight:600;';
+        title.textContent = options.title;
+        var body = document.createElement('div');
+        body.style.cssText = 'opacity:.72;margin-top:2px;';
+        body.textContent = options.body || '';
+        text.appendChild(title);
+        if (options.body) text.appendChild(body);
+        var close = document.createElement('button');
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Dismiss');
+        close.style.cssText = 'background:none;border:0;color:#fff;opacity:.55;cursor:pointer;'
+          + 'font-size:15px;line-height:15px;padding:0 2px;';
+        close.textContent = '\u00D7';
+        close.onclick = function (event) {
+          event.stopPropagation();
+          dismiss(options.key);
+        };
+        card.onclick = function () {
+          dismiss(options.key);
+          if (typeof options.onOpen === 'function') options.onOpen();
+        };
+        card.appendChild(text);
+        card.appendChild(close);
+        ensureHost().appendChild(card);
+        cards[options.key] = card;
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    dismiss: dismiss,
+    clearAll: function () {
+      for (var key in cards) dismiss(key);
+    }
+  };
+}
+
+/* ──────────────────────────────── engine ─────────────────────────────── */
 function createEngine(ctx) {
   var settings = loadSettings();
   var prevById = Object.create(null);
@@ -365,6 +459,7 @@ function createEngine(ctx) {
   var wireAttempts = 0;
   var audio = createAudio(function () { return settings; });
   var marker = createTitleMarker();
+  var banner = createBanner();
 
   function emitSettings() {
     for (var i = 0; i < settingsListeners.length; i += 1) {
@@ -487,19 +582,16 @@ function createEngine(ctx) {
     var Ctor = notificationCtor();
     if (!Ctor) {
       // Involuntary: the browser cannot show notices at all. Keep the audible
-      // cue so the moment is not lost, and say why in the log/settings.
+      // cue so the moment is not lost, and put the same facts on screen.
       audio.play(options.cue);
-      entry.reason = 'notifications unsupported in this browser';
-      recordAttempt(entry);
-      return null;
+      return fallback(options, entry, 'notifications unsupported in this browser');
     }
     if (Ctor.permission !== 'granted') {
       // Involuntary too: permission is asked on the first page gesture, so this
-      // is the "has not clicked anywhere yet" window. Stay audible and explain.
+      // is the "has not clicked anywhere yet" window, and also every push after
+      // a prompt the person dismissed or Chrome refused to show.
       audio.play(options.cue);
-      entry.reason = 'permission:' + Ctor.permission;
-      recordAttempt(entry);
-      return null;
+      return fallback(options, entry, 'permission:' + Ctor.permission);
     }
     audio.play(options.cue);
     try {
@@ -516,13 +608,36 @@ function createEngine(ctx) {
       };
       entry.delivered = true;
       recordAttempt(entry);
+      // A notice the OS accepts can still be swallowed (Focus, quieter
+      // messaging, a silent replacement). When the page is not on screen that
+      // leaves nothing to find, so leave the card behind as the receipt.
+      if (options.backgroundCard === true && document.hidden) showCard(options);
       return notice;
     } catch (error) {
-      entry.reason = 'threw: ' + String((error && error.message) || error);
-      recordAttempt(entry);
       console.warn('[dsh-notification] notification failed:', error);
-      return null;
+      return fallback(options, entry, 'threw: ' + String((error && error.message) || error));
     }
+  }
+
+  /**
+   * The desktop notice did not happen: log the reason and show the in-page card.
+   * A cue never plays without something visible next to it.
+   */
+  function fallback(options, entry, reason) {
+    entry.reason = reason;
+    recordAttempt(entry);
+    showCard(options);
+    return null;
+  }
+
+  /** The in-page card, keyed so a second event for the same session replaces it. */
+  function showCard(options) {
+    banner.show({
+      key: options.bannerKey || options.tag || 'dsh-notification-notice',
+      title: options.title,
+      body: options.body,
+      onOpen: function () { focusAndOpen(options.id); }
+    });
   }
 
   /** What the agent is waiting for — used as the notification TITLE. */
@@ -577,14 +692,20 @@ function createEngine(ctx) {
           push({
             id: id,
             cue: 'input',
-            tag: 'dsh-notification-input-' + current.pendingKey,
+            tag: 'dsh-notification-input-' + RUN_ID + '-' + current.pendingKey,
+            bannerKey: 'input:' + id,
+            backgroundCard: true,
             // Status first (that is what a notification is FOR), session second.
             title: kindBody(interaction && interaction.kind),
-            body: labelOf(id, row, byId),
-            requireInteraction: settings.persist
+            body: labelOf(id, row, byId)
           });
         }
+      } else if (!current.pendingKey) {
+        // Answered, rejected or gone: the in-page card has served its purpose.
+        banner.dismiss('input:' + id);
       }
+      // Running again means the previous round's business is settled.
+      if (current.running === true) banner.dismiss('done:' + id);
 
       if (isSubagent) {
         prevById[id] = current;
@@ -619,7 +740,8 @@ function createEngine(ctx) {
           push({
             id: id,
             cue: 'done',
-            tag: 'dsh-notification-done-' + id,
+            tag: 'dsh-notification-done-' + RUN_ID + '-' + id,
+            bannerKey: 'done:' + id,
             title: t('finished'),
             body: labelOf(id, row, byId),
             requireInteraction: false
@@ -693,33 +815,26 @@ function createEngine(ctx) {
       if (typeof ctx.on === 'function') ctx.on('connection/reset', resetBaselines);
     } catch (error) { /* ignore */ }
 
-    // Browser permission may only be requested from a user gesture.
-    if (permissionState() === 'default') {
-      var once = function () {
-        window.removeEventListener('pointerdown', once, true);
-        window.removeEventListener('keydown', once, true);
-        requestPermission();
-        audio.unlock();
-      };
-      window.addEventListener('pointerdown', once, true);
-      window.addEventListener('keydown', once, true);
-      disposers.push(function () {
-        window.removeEventListener('pointerdown', once, true);
-        window.removeEventListener('keydown', once, true);
-      });
-    } else {
-      var unlockOnce = function () {
-        window.removeEventListener('pointerdown', unlockOnce, true);
-        window.removeEventListener('keydown', unlockOnce, true);
-        audio.unlock();
-      };
-      window.addEventListener('pointerdown', unlockOnce, true);
-      window.addEventListener('keydown', unlockOnce, true);
-      disposers.push(function () {
-        window.removeEventListener('pointerdown', unlockOnce, true);
-        window.removeEventListener('keydown', unlockOnce, true);
-      });
-    }
+    // Browser permission may only be requested from a user gesture — and a
+    // prompt that is dismissed leaves `permission` at 'default' for good, so
+    // asking exactly once means every later alarm becomes a cue with no notice.
+    // Unlock audio on every gesture; re-ask while the answer is still 'default'.
+    var lastAsk = 0;
+    var gesture = function () {
+      audio.unlock();
+      if (permissionState() !== 'default') return;
+      var now = Date.now();
+      if (now - lastAsk < PERMISSION_RETRY_MS) return;
+      lastAsk = now;
+      var result = requestPermission();
+      if (result && typeof result.then === 'function') result.then(emitSettings, emitSettings);
+    };
+    window.addEventListener('pointerdown', gesture, true);
+    window.addEventListener('keydown', gesture, true);
+    disposers.push(function () {
+      window.removeEventListener('pointerdown', gesture, true);
+      window.removeEventListener('keydown', gesture, true);
+    });
 
     evaluate();
   }
@@ -734,6 +849,7 @@ function createEngine(ctx) {
     }
     graceTimers = Object.create(null);
     marker.clear();
+    banner.clearAll();
   }
 
   return {
@@ -764,21 +880,34 @@ function createEngine(ctx) {
       if (result && typeof result.then === 'function') result.then(emitSettings, emitSettings);
       return result;
     },
-    test: function (persist) {
+    test: function (mode) {
+      // 'banner' exercises the in-page card on its own — the path taken when the
+      // desktop notice cannot be shown (no permission, no support, or a throw).
+      if (mode === 'banner') {
+        return banner.show({
+          key: 'dsh-notification-test',
+          title: t('testTitle'),
+          body: t('testBody'),
+          onOpen: function () { focusAndOpen(null); }
+        }) ? 'banner' : 'banner failed';
+      }
       var Ctor = notificationCtor();
       if (!Ctor) return 'unsupported';
       if (Ctor.permission !== 'granted') return 'permission:' + Ctor.permission;
-      // `persist` mirrors what a real needs-input notice uses, so a test can
-      // exercise the exact option set.
+      // `mode: true` mirrors the needs-input notice as it was when it asked the OS
+      // to keep it on screen; no argument mirrors the finished notice, which is
+      // the one that reaches the screen. Running both A/Bs the flag in one page.
+      // Every test gets a fresh tag, so nothing is ever a silent replacement.
+      testSeq += 1;
       push({
         id: null,
         cue: 'input',
-        tag: 'dsh-notification-test',
+        tag: 'dsh-notification-test-' + RUN_ID + '-' + String(testSeq),
         title: t('testTitle'),
         body: t('testBody'),
-        requireInteraction: persist === true
+        requireInteraction: mode === true
       });
-      return 'sent';
+      return mode === true ? 'sent (requireInteraction: true)' : 'sent';
     }
   };
 
@@ -853,6 +982,8 @@ function makeSettingsCard(engine) {
         )
       ),
       e('div', { style: note }, t('permission') + ': ' + permissionText),
+      permission === 'granted' ? null
+        : e('div', { style: note }, permission === 'unsupported' ? t('inPageOff') : t('inPage')),
       e('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } },
         e('button', {
           type: 'button',
@@ -921,7 +1052,8 @@ function apply(ctx) {
           slots: !!slots,
           settingsRegistered: settingsRegistered,
           inject: module.exports.inject,
-          wired: engine.wired()
+          wired: engine.wired(),
+          permission: engine.permission()
         };
       },
       probe: function (sessionId) {

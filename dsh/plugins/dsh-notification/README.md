@@ -13,7 +13,7 @@ egress. It works wherever the DSH web UI runs, on macOS, Linux and Windows alike
 
 | Event | Behaviour |
 |---|---|
-| Agent needs you (approval, question, plan review) | OS notification, persistent while `requireInteraction` is on, so it stays until you handle it. Click → focus the page and open that session. |
+| Agent needs you (approval, question, plan review) | OS notification plus an in-page card that stays until you handle it. Click either → focus the page and open that session. |
 | Turn finished | OS notification with the session label (and workspace prefix if enabled). |
 | Session yielded to background work | **No notification.** This is the point of the plugin. |
 | A delegated subagent finishes | No notification (subagent sessions are not notification subjects). |
@@ -92,6 +92,26 @@ A cue still plays when the browser *cannot* deliver (no permission yet, or no
 support at all) so the moment is not lost; nothing plays when you asked for
 silence through the send mode.
 
+Whatever the reason, the notice's title and session are also shown as a card in
+the bottom-right corner of the page, which stays until you click it (it opens the
+session) or the interaction is answered. That card is the fallback channel: it
+cannot be blocked by the browser, so a cue never plays with nothing on screen.
+
+A notice the OS *accepts* can still be swallowed — Focus mode, Chrome's quieter
+messaging, or a same-tag replacement. So a needs-input alert also leaves the card
+behind whenever the page is not on screen (`document.hidden`), which is exactly
+when a missed alert would otherwise go unnoticed. While you are looking at the
+page, the notice is enough and no card appears.
+
+## Permission
+
+Chrome only grants notifications from a user gesture, and a prompt that gets
+dismissed leaves the answer at `default` — which used to mean every later alert
+was a cue with no notice. The plugin therefore asks again on a later gesture, at
+most once every five minutes, and stops once the answer is `granted` or `denied`.
+If the answer is `denied`, allow notifications for the DSH origin in
+`chrome://settings/content/notifications`; the in-page card works either way.
+
 ## Install
 
 Installed into a profile by absolute path, because the npm name
@@ -155,7 +175,7 @@ dsh plugin --profile web remove dsh-notification   # then reload
   delivered once the tab is closed.
 - **iOS/Android WebViews cannot show these notifications** (local
   `new Notification()` needs a service-worker push there). The settings page
-  reports the permission state instead of pretending it works.
+  reports the permission state, and the in-page card still appears.
 - **The first sound after a page load may be silent** until you interact with the
   page once — browser autoplay policy unlocks the audio context on the first
   gesture.
