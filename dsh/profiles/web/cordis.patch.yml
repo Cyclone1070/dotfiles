@@ -24,7 +24,15 @@
           - id: deepseek-v4.1-flash
             name: DeepSeek V4.1 Flash
             contextWindow: 500000
-            maxTokens: 384000
+            # Deliberately capped at 500000: beyond that these models degrade.
+            # maxTokens is the OUTPUT RESERVATION, not an output ceiling, and
+            # dsh-compaction-basic clamps its trigger to
+            # `contextWindow - maxTokens - headroomTokens (65536)`. At 384000
+            # that left 116000 of message budget and fired auto-compaction at
+            # 50464 tokens = 10% of the window instead of 80%. 32768 keeps the
+            # clamp above `contextWindow * 0.8`, so the threshold is the full
+            # 400000. Raise it only if the clamp still clears 0.8 * window.
+            maxTokens: 32768
             # Vision verified against the live endpoint: a solid magenta 64x64 PNG
             # answered "Magenta", while the same question with no image answered
             # "Unknown". deepseek-v4-pro rejects image parts outright ("this model
