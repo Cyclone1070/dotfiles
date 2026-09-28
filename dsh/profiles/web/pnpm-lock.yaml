@@ -1,0 +1,23 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      dsh-opencode-session-header:
+        specifier: ^0.1.0
+        version: 0.1.0
+
+packages:
+
+  dsh-opencode-session-header@0.1.0:
+    resolution: {integrity: sha512-F0JUVoXs5/z8L2gLperzTbzcletIXSw0+jHiZduhkWz3WR6RE9wz6STSIM4MmvqtBnXJroKsPJXZt4hif2oYNA==}
+    engines: {node: '>=20'}
+
+snapshots:
+
+  dsh-opencode-session-header@0.1.0: {}

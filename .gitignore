@@ -1,3 +1,8 @@
 *secrets*
 !*.example
 nvim/lazy-lock.json
+
+# dsh profile — versioned config; machine-local state stays untracked
+dsh/profiles/*/node_modules/
+dsh/profiles/*/.plugin-manager/
+dsh/profiles/*/cordis.yml

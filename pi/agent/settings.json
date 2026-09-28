@@ -1,6 +1,6 @@
 {
-  "defaultModel": "deepseek-flash",
-  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4.1-flash",
+  "defaultProvider": "opencode-go",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": true,
   "lastChangelogVersion": "0.87.0",
