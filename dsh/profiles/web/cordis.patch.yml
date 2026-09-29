@@ -102,6 +102,8 @@
                 - Format responses for fast scanning, but use markdown tables, itemised lists, arrows and inline code blocks only when needed.
                 - Avoid large blocks of text, break it down.
                 - Use Mermaid DAG flowcharts (`graph TD` / `graph LR`) to explain complex logics and flows.
+                - Diagrams carry the idea, not the implementation: label each node with the plain-English step or decision it stands for, in a few words — never a variable name, function call or code expression.
+                - Someone who has never seen the codebase should be able to follow the flow from the labels alone.
 
                 ## Verification
                 - Never guess or answer purely from memory.
