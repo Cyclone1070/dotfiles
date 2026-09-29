@@ -23,15 +23,23 @@
         models:
           - id: deepseek-v4.1-flash
             name: DeepSeek V4.1 Flash
-            contextWindow: 500000
-            # Deliberately capped at 500000: beyond that these models degrade.
-            # maxTokens is the OUTPUT RESERVATION, not an output ceiling, and
-            # dsh-compaction-basic clamps its trigger to
-            # `contextWindow - maxTokens - headroomTokens (65536)`. At 384000
-            # that left 116000 of message budget and fired auto-compaction at
-            # 50464 tokens = 10% of the window instead of 80%. 32768 keeps the
-            # clamp above `contextWindow * 0.8`, so the threshold is the full
-            # 400000. Raise it only if the clamp still clears 0.8 * window.
+            # Declared BELOW the previous 500000 on purpose: the window is the only
+            # knob that moves the auto-compaction trigger without touching the
+            # compaction plugin, whose settings every routed model shares.
+            # dsh-compaction-basic fires at `min(thresholdRatio x contextWindow,
+            # contextWindow - maxTokens - headroomTokens (65536))`, thresholdRatio
+            # defaulting to 0.8. The clamp binds for any window under 491520, so the
+            # trigger is simply `window - 98304`:
+            #   354304 - 32768 - 65536 = 256000 -> summarized at exactly 256k, while
+            #   0.8 x 354304 = 283443 stays out of the way.
+            # Consequences of using the window rather than the ratio: the context
+            # meter reads against 354304, not 500000, and the verbatim tail kept per
+            # compaction is 16% of the (smaller) message budget, ~51.4k tokens
+            # instead of ~74.7k. Declaring 500000 would trigger at 400000; declaring
+            # 256000 would hand the decision to the clamp and fire at 157696. To
+            # retune, move the window by the same delta.
+            # maxTokens is the OUTPUT RESERVATION, not an output ceiling.
+            contextWindow: 354304
             maxTokens: 32768
             # Vision verified against the live endpoint: a solid magenta 64x64 PNG
             # answered "Magenta", while the same question with no image answered
@@ -173,6 +181,11 @@
           # deliberately NOT in this realm: the meter stays on the HOST plane and the row
           # here resolves that one instance, because it owns context-meter projection
           # units the browser reads for every session.
+          #
+          # `compaction-basic` is left at its defaults ON PURPOSE — no thresholdRatio
+          # here, because a top-level ratio would retune every routed model, not just
+          # this one. The 256k trigger is set from the DeepSeek model row's
+          # `contextWindow` instead; see the comment there for the arithmetic.
           - id: compaction
             name: cordis:group
             group: true
@@ -237,8 +250,11 @@
 
           # ── remaining model-facing rows ─────────────────────────────────────────────
 
+          # Disabled on request: the question modal interrupts the turn, and the
+          # model can ask in prose and stop instead. Flip `disabled` to restore.
           - id: tool-ask-user
             name: '@deepseek-ai/dsh-tool-ask-user'
+            disabled: true
 
           # The `web` service and its search provider stay in the host composition; only
           # the model-facing tool is per-session.
