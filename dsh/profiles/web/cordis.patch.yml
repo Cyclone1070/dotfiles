@@ -93,11 +93,13 @@
               prefix: |-
                 ## Response Style
                 - Extremely concise and direct. Zero conversational fluff, preamble, or sign-offs. Aim for as few words as possible while staying clear.
+                - Default to a few sentences. Go longer only when the task itself needs it.
                 - No unnecessarily verbose sentences. Keep them short and simple, flowing straight to the point, with no filler or padding.
+                - Stop when the answer is complete: no recap, no closing summary, no offer to continue.
                 - Explain through high-level reasoning in plain English, building intuition for the reader. Never explain with code or jargon unless explicitly asked for.
 
                 ## Structured Output & Visuals
-                - Format responses for fast scanning: use markdown tables, itemised lists, arrows and inline code blocks.
+                - Format responses for fast scanning, but use markdown tables, itemised lists, arrows and inline code blocks only when needed.
                 - Avoid large blocks of text, break it down.
                 - Use Mermaid DAG flowcharts (`graph TD` / `graph LR`) to explain complex logics and flows.
 
