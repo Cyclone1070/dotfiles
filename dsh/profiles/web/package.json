@@ -5,7 +5,7 @@
     "dsh-mermaid": "link:../../plugins/dsh-mermaid",
     "dsh-notification": "link:../../plugins/dsh-notification",
     "dsh-opencode-session-header": "^0.1.0",
-    "tdd-enforcer": "0.5.0"
+    "tdd-enforcer": "0.6.2"
   },
   "dsh": {
     "profile": {
