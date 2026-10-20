@@ -34,6 +34,10 @@ OPTIONS=number_pad:0
 OPTIONS=statuslines:3
 OPTIONS=msg_window:r
 OPTIONS=align_message:top
+# Skip the "Do you want a tutorial?" prompt at game start. The default is
+# On, which means "ask" every new game. This option is config-file only --
+# it cannot be changed once the game is running.
+OPTIONS=!tutorial
 
 # --- Meta / Alt (Option) key -------------------------------------------
 # NetHack does NOT treat "ESC c" as M-c unless this is on. Terminals send
