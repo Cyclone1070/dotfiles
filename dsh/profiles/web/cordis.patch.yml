@@ -120,8 +120,9 @@
 - id: agent-default-model
   name: "@deepseek-ai/dsh-agent-default-model"
   config:
-    provider: opencode-go-free
-    model: space-bunny-free
+    provider: opencode-go
+    model: deepseek-v4.1-flash
+    reasoningEffort: max
 - id: ui-theme
   name: "@deepseek-ai/dsh-client-ui-theme"
   config:

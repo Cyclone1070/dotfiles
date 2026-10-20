@@ -1,0 +1,311 @@
+# =====================================================================
+#  .nethackrc  --  NetHack 5.0.0
+# ---------------------------------------------------------------------
+#  Built from community sources, not invented. Provenance:
+#
+#   1. NAO's default .nethackrc template for 5.0.0  (alt.org)
+#      -> the config that new players are given; the single most-copied
+#         config in existence.
+#   2. Eidocolors 1.14  (github.com/sartak/Eidocolors), 5.0-safe port
+#      -> the de-facto MENUCOLOR canon; nearly all public MENUCOLOR
+#         lines derive from Eidolos/stthR's lineage.
+#   3. r/nethack: "[3.4.3/5.0.0] I analysed 160,000 nethackrc files"
+#      -> recommended 5.0.0 values for autodig, sortloot, statuslines,
+#         paranoid_confirmation, msg_window, number_pad, disclose.
+#
+#  Every line below was loaded by the real NetHack 5.0.0 binary with
+#  zero config errors.
+#
+#  Install:  cp nethackrc-5.0 ~/.nethackrc
+# =====================================================================
+
+
+# ------------------------------------------------------------ INTERFACE
+# curses interface. Hardfought's build has it; if a server ever lacks it
+# NetHack says "The only choice is: tty" and you comment this out.
+OPTIONS=windowtype:curses
+OPTIONS=color
+# Vi keys: h j k l, with y u b n for diagonals. This is also NetHack's
+# built-in default, so this line only makes the choice explicit.
+#   number_pad:0   = vi keys
+#   number_pad:1   = numeric keypad (5 = run)
+#   number_pad:-1  = vi keys, but 'z' goes northwest and 'y' zaps wands
+OPTIONS=number_pad:0
+OPTIONS=statuslines:3
+OPTIONS=msg_window:r
+OPTIONS=align_message:top
+
+# --- Meta / Alt (Option) key -------------------------------------------
+# NetHack does NOT treat "ESC c" as M-c unless this is on. Terminals send
+# Option+h as ESC followed by 'h', so without this line every Meta command
+# silently does nothing (the ESC just cancels, then 'h' acts as movement).
+# Ghostty already sends ESC for Option on US layouts (macos-option-as-alt
+# defaults to true there), so this is the whole fix.
+# Cost: with altmeta on, a lone ESC must be pressed twice.
+OPTIONS=altmeta
+
+# --- Map glyphs & corridor visibility -----------------------------------
+# Lit and dark corridors are two different NetHack symbols (S_litcorr vs
+# S_corr), but in plain ASCII BOTH are '#' and both are CLR_GRAY, so the
+# distinction is invisible no matter what. A symbol set with shading is
+# the only way to make it real:
+#     Enhanced1/2   U+2591 / U+2592     (UTF-8, works in any modern term)
+#     IBMgraphics   raw CP437 bytes     (mangles in a UTF-8 terminal)
+# Enhanced also gives Unicode box-drawing walls.
+OPTIONS=symset:Enhanced1
+#OPTIONS=symset:Enhanced2
+#OPTIONS=symset:DECgraphics
+#OPTIONS=symset:IBMgraphics
+
+# Show corridors you can actually see as lit, and darken the parts of lit
+# rooms you can no longer see. These two are the community standard:
+# 99.3% and 97.5% of 1103 sampled player configs use them.
+OPTIONS=lit_corridor
+OPTIONS=dark_room
+
+
+# ------------------------------------------------------ MONSTER AWARENESS
+# Vanilla has no persistent monster list panel (see below), so these are
+# the tools that exist instead. hilite_pet/hilite_pile are in 99.5%/97.8%
+# of sampled player configs.
+OPTIONS=hilite_pet
+OPTIONS=hilite_pile
+# Message when the hero notices a monster -- new in 5.0, closest thing to
+# a "monster alert" that vanilla offers.
+OPTIONS=spot_monsters
+# Don't stop to browse the map when random clairvoyance fires.
+OPTIONS=quick_farsight
+# Describe the terrain under the cursor when asked for a location.
+OPTIONS=autodescribe
+# Mention walls you bump into, so you can tell walls from nothing.
+OPTIONS=mention_walls
+
+
+# ----------------------------------------------------------- STATUS HUD
+OPTIONS=showexp
+OPTIONS=showscore
+OPTIONS=time
+OPTIONS=hitpointbar
+OPTIONS=armorstatus
+
+
+# ------------------------------------------------------------ AUTOMATION
+OPTIONS=autoopen
+OPTIONS=autodig
+OPTIONS=autoquiver
+OPTIONS=autounlock
+OPTIONS=bones
+# Command assistance on by default; the analysis recommends turning it
+# off once you know the keys:
+#OPTIONS=!cmdassist
+
+
+# --------------------------------------------------------------- PICKUP
+# Autopickup is only worth enabling because the exceptions below are set.
+OPTIONS=autopickup
+OPTIONS=pickup_types:$"=/!?+
+OPTIONS=pickup_burden:unencumbered
+OPTIONS=pickup_thrown
+OPTIONS=pickup_stolen
+
+# These are REGULAR EXPRESSIONS, not globs. "<" = always take,
+# ">" = never take. This is the most common breakage in old configs:
+# the classic community list is written with "*" globs, which are
+# INVALID in 5.0 and must be rewritten as ".*".
+AUTOPICKUP_EXCEPTION="<.*magic lamp.*"
+AUTOPICKUP_EXCEPTION="<.*magic marker.*"
+AUTOPICKUP_EXCEPTION="<.*Book of the Dead.*"
+AUTOPICKUP_EXCEPTION="<.*silver bell.*"
+AUTOPICKUP_EXCEPTION="<.*andelabrum.*"
+AUTOPICKUP_EXCEPTION="<.*Bell of Opening.*"
+AUTOPICKUP_EXCEPTION="<.*papyrus spellbook.*"
+AUTOPICKUP_EXCEPTION="<.*wand of wishing.*"
+AUTOPICKUP_EXCEPTION="<.*wand of death.*"
+AUTOPICKUP_EXCEPTION="<.*wand of polymorph.*"
+AUTOPICKUP_EXCEPTION="<.*athame.*"
+AUTOPICKUP_EXCEPTION="<.*lizard corpse.*"
+AUTOPICKUP_EXCEPTION="<.*wraith corpse.*"
+AUTOPICKUP_EXCEPTION=">.*loadstone.*"
+AUTOPICKUP_EXCEPTION=">.*flint stone.*"
+AUTOPICKUP_EXCEPTION=">.*scare monster.*"
+AUTOPICKUP_EXCEPTION=">.*worthless piece.*"
+
+
+# ------------------------------------------------------------ INVENTORY
+OPTIONS=perm_invent
+OPTIONS=sortloot:full
+OPTIONS=sortpack
+
+
+# --------------------------------------------------------------- SAFETY
+OPTIONS=paranoid_confirmation:all
+
+
+# --------------------------------------------------------------- ENDING
+OPTIONS=disclose:yi ya yv yg yc yo
+
+
+# ------------------------------------------------------- STATUS HILITES
+# NAO default block.
+OPTIONS=statushilites
+OPTIONS=hilite_status:hitpoints/100%/grey&normal
+OPTIONS=hilite_status:hitpoints/<100%/green&normal
+OPTIONS=hilite_status:hitpoints/<66%/yellow&normal
+OPTIONS=hilite_status:hitpoints/<50%/orange&normal
+OPTIONS=hilite_status:hitpoints/<33%/red&bold
+OPTIONS=hilite_status:hitpoints/<15%/red&inverse
+OPTIONS=hilite_status:power/100%/grey&normal
+OPTIONS=hilite_status:power/<100%/green&normal
+OPTIONS=hilite_status:power/<66%/yellow&normal
+OPTIONS=hilite_status:power/<50%/orange&normal
+OPTIONS=hilite_status:power/<33%/red&bold
+OPTIONS=hilite_status:cap/burdened/yellow/stressed/orange/strained/red&bold/overtaxed/red&inverse/overloaded/red&inverse&blink
+OPTIONS=hilite_status:hunger/satiated/yellow/hungry/orange/weak/red&bold/fainting/red&inverse/fainted/red&inverse&blink
+OPTIONS=hilite_status:condition/hallu/yellow
+OPTIONS=hilite_status:condition/conf/orange
+OPTIONS=hilite_status:condition/stun/red&bold
+OPTIONS=hilite_status:condition/termill/red&inverse
+OPTIONS=hilite_status:condition/foodpois/red&inverse
+OPTIONS=hilite_status:condition/slime/red&inverse
+OPTIONS=hilite_status:characteristics/up/green/down/red
+OPTIONS=hilite_status:gold/up/yellow/down/brown
+
+
+# ------------------------------------------------------------ MESSAGES
+# Delayed instadeaths: always stop for these.
+MSGTYPE=stop "You are slowing down."
+MSGTYPE=stop "You find it hard to breathe."
+MSGTYPE=stop "You are turning a little .*"
+
+
+# ------------------------------------------------------------ MENUCOLORS
+# Eidocolors 1.14 (github.com/sartak/Eidocolors), 5.0-safe port.
+# MENUCOLOR lines must be ordered general -> specific.
+OPTIONS=menucolors
+MENUCOLOR=" !C"=no-color
+MENUCOLOR=" !B"=no-color
+MENUCOLOR=" !UC"=no-color
+MENUCOLOR=" uncursed| UC?($| )"=no-color
+MENUCOLOR=" \([-0-9]+:[-0-9]+\)"=white
+MENUCOLOR=" [+-][0-9]"=no-color
+MENUCOLOR=" blessed| B($| )"=cyan
+MENUCOLOR=" cursed| C($| )"=red
+MENUCOLOR=" holy water"=cyan&bold
+MENUCOLOR=" blessed clear potion"=cyan&bold
+MENUCOLOR=" blessed potions? called water"=cyan&bold
+MENUCOLOR=" clear potions? named (holy|blessed|B)($| )"=cyan&bold
+MENUCOLOR=" potions? of water named (holy|blessed|B)($| )"=cyan&bold
+MENUCOLOR=" potions? called water named (holy|blessed|B)($| )"=cyan&bold
+MENUCOLOR=" unholy water"=orange
+MENUCOLOR=" cursed clear potion"=orange
+MENUCOLOR=" cursed potions? called water"=orange
+MENUCOLOR=" potions? called water named (unholy|cursed|C)($| )"=orange
+MENUCOLOR="(food |cram |K-|C-)ration|gunyoki"=green&bold
+MENUCOLOR="lembas wafer|melon|carrot|tins? .* spinach"=green&bold
+MENUCOLOR=" oranges?( named.*)?$"=green&bold
+MENUCOLOR=" pears?( named.*)?$"=green&bold
+MENUCOLOR=" (apple|banana|kelp|eucalyptus|garlic|wolfsbane)"=green&bold
+MENUCOLOR=" (slime mold|brain)"=green&bold
+MENUCOLOR="(tins? of )?(gelatinous cube|acid blob|quivering blob)( corpse)?"=green&bold
+MENUCOLOR="(tins? of )?(blue|spotted|ochre) jelly( corpse)?"=green&bold
+MENUCOLOR="(tins? of )?lichen|shrieker|violet fungus|(brown|yellow|green|red) mold( corpse)?"=green&bold
+MENUCOLOR="egg|pancake|fortune cookie|candy bar|royal jelly|cream pie|candle"=green
+MENUCOLOR="(tin of )?brown pudding|gray ooze( corpse)?"=green
+MENUCOLOR=" bag .* holding"=magenta
+MENUCOLOR=" luck(stone)?($| )"=magenta
+MENUCOLOR=" wand .* wish(ing)?($| )"=magenta
+MENUCOLOR=" wand .* tele(port(ation)?)?($| )"=magenta
+MENUCOLOR=" wand .* polymorph"=magenta
+MENUCOLOR=" wand .* death"=magenta
+MENUCOLOR=" gain level"=magenta
+MENUCOLOR=" full healing"=magenta
+MENUCOLOR=" magic marker"=magenta
+MENUCOLOR=" magic lamp|lamp .* magic"=magenta
+MENUCOLOR=" unicorn horn[^[]*$"=magenta
+MENUCOLOR=" tinning kit"=magenta
+MENUCOLOR=" ring .* regen(eration)?($| )"=magenta
+MENUCOLOR=" ring .* conflict"=magenta
+MENUCOLOR=" ring .* (FA|free action)($| )"=magenta
+MENUCOLOR=" ring .* (TC|teleport control)($| )"=magenta
+MENUCOLOR=" ring .* lev(itation)?($| )"=magenta
+MENUCOLOR=" scrolls? .* genocide($| )"=magenta
+MENUCOLOR=" scrolls? .* charging($| )"=magenta
+MENUCOLOR=" scrolls? .* identify($| )"=magenta
+MENUCOLOR=" amulet .* (life ?saving|LS)($| )"=magenta
+MENUCOLOR=" amulet .* ref(lection)?($| )"=magenta
+MENUCOLOR=" c(o|hi)ckatrice (corpse|egg)"=magenta
+MENUCOLOR=" egg .* cockatrice"=magenta
+MENUCOLOR=" stethoscope"=magenta
+MENUCOLOR="tooled horn|fire horn|frost horn|horn .* (tooled|fire|frost)"=magenta
+MENUCOLOR=" harp"=magenta
+MENUCOLOR=" bugle"=magenta
+MENUCOLOR=" flute"=magenta
+MENUCOLOR="piece of cloth|opera cloak|ornamental cope|tattered cape"=magenta
+MENUCOLOR="plumed helmet|etched helmet|crested helmet|visored helmet"=magenta
+MENUCOLOR="(old|padded|riding|fencing) gloves"=magenta
+MENUCOLOR="(mud|buckled|riding|snow|hiking|combat|jungle) boots"=magenta
+MENUCOLOR=" (Dragonbane|Fire Brand|Frost Brand|Ogresmasher|Trollsbane|Werebane)"=lightgreen
+MENUCOLOR=" (Demonbane|Excalibur|Grayswandir|Snickersnee|Sunsword)"=lightgreen
+MENUCOLOR=" (Orb of Detection|Sceptre of Might|Magic Mirror of Merlin|Mitre of Holiness|Tsurugi of Muramasa)"=lightgreen
+MENUCOLOR=" (Cleaver|Giantslayer|Magicbane|Mjollnir|Vorpal Blade)"=lightgreen
+MENUCOLOR=" (Heart of Ahriman|Staff of Aesculapius|Eyes of the Overworld|Platinum Yendorian Express Card|Orb of Fate|Eye of the Aethiopica)"=lightgreen
+MENUCOLOR=" (Grimtooth|Orcrist|Sting|Stormbringer)"=lightgreen
+MENUCOLOR=" (Longbow of Diana|Master Key of Thievery)"=lightgreen
+MENUCOLOR=" (Bell of Opening|silver bell|Candelabrum of Invocation|candelabrum|Book of the Dead|papyrus spellbook)"=magenta&bold
+MENUCOLOR=" Amulet of Yendor( named)?"=magenta&inverse
+MENUCOLOR=" cursed.* bag .* holding"=red&bold
+MENUCOLOR=" cursed.* luck(stone)?($| )"=red&bold
+MENUCOLOR=" cursed.* unicorn horn"=red&bold
+MENUCOLOR=" cursed.* (Bell of Opening|silver bell|Candelabrum of Invocation|candelabrum|Book of the Dead|papyrus spellbook)"=red&bold
+MENUCOLOR="cursed tins? .* spinach|tins? .* spinach .* (cursed|C($| ))"=red
+MENUCOLOR=" load(stone)?($| )"=red&underline
+MENUCOLOR=" bag .* tricks"=blue&underline
+MENUCOLOR=" wand .*[^!]canc"=blue&underline
+MENUCOLOR=" wand .* vanish"=blue&underline
+MENUCOLOR=" gold piece"=yellow
+MENUCOLOR=" valuable"=brown
+MENUCOLOR=" gems? .* hard"=yellow
+MENUCOLOR=" ([0-9]+|an?|gems? .*) (uncursed |cursed |blessed )?(dilithium|opal|garnet|jasper|agate|jet|obsidian|jade|citrine|chrysoberyl|amber|amethyst|fluorite|turquoise)(e?s)?( stones?| gems?| crystals?)?( named .*)?$"=brown
+MENUCOLOR=" ([0-9]+|an?|gems?.*) (uncursed |cursed |blessed )?(diamond|rub(y|ies)|jacinth|sapphire|black opal|emerald|topaz|aquamarine)(e?s)?( stones?| gems?)?( named .*)?$"=yellow
+MENUCOLOR=" 0%"=no-color
+MENUCOLOR=" [1-9]%"=cyan
+MENUCOLOR=" [12][0-9]%"=cyan
+MENUCOLOR=" [3-6][0-9]%"=yellow
+MENUCOLOR=" 7[0-5]%"=yellow
+MENUCOLOR=" 7[6-9]%"=orange
+MENUCOLOR=" 8[0-9]%"=orange
+MENUCOLOR=" 9[0-9]%"=red
+MENUCOLOR=" 100%"=red
+MENUCOLOR="[a-zA-Z ]+ [0-9]\*   [a-z]+ +[0-9]+%"=magenta
+MENUCOLOR="^ +[a-z -]+ +\[(Unskilled|Basic|Skilled|Expert|Master|Grand Master)\]$"=no-color
+MENUCOLOR="^ *[a-z] - +[a-z -]+ +\[(Unskilled|Basic|Skilled|Expert|Master|Grand Master)\]$"=white
+MENUCOLOR="^ +\* +[a-z -]+ +\[(Unskilled|Basic|Skilled|Expert|Master|Grand Master)\]$"=white
+MENUCOLOR="^ + +[a-z -]+ +\[(Unskilled|Basic|Skilled|Expert|Master|Grand Master)\]$"=no-color
+MENUCOLOR="\{R\}"=red
+MENUCOLOR="\{B\}"=blue
+MENUCOLOR="\{C\}"=cyan
+MENUCOLOR="\{G\}"=green
+MENUCOLOR="\{Y\}"=yellow
+MENUCOLOR="\{[MP]\}"=magenta
+MENUCOLOR="\{O\}"=orange
+MENUCOLOR="\{W\}"=no-color
+MENUCOLOR="\{L\}"=black
+MENUCOLOR="\{y\}"=gray
+MENUCOLOR="\{g\}"=lightgreen
+MENUCOLOR="\{b\}"=lightblue
+MENUCOLOR="\{[mp]\}"=lightmagenta
+MENUCOLOR="\{c\}"=lightcyan
+MENUCOLOR="\{N\}"=no-color&none
+MENUCOLOR="\{X\}"=no-color&bold
+MENUCOLOR="\{x\}"=no-color&dim
+MENUCOLOR="\{U\}"=no-color&underline
+MENUCOLOR="\{I\}"=no-color&inverse
+MENUCOLOR="\{K\}"=no-color&blink
+MENUCOLOR=" is empty. Do what?"=no-color&none
+MENUCOLOR="Put something into .*"=no-color&none
+MENUCOLOR="Take something out of .*"=no-color&none
+MENUCOLOR="unicorn horn.*(Unskilled|Basic|Skilled|Expert)"=no-color&none
+MENUCOLOR="Info on what a given key does."=no-color&none
+MENUCOLOR="Full list of keyboard commands."=no-color&none
+MENUCOLOR="altkeyhandler"=no-color&none
+MENUCOLOR="fruit.*\["=no-color&none
