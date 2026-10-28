@@ -15,17 +15,13 @@ importers:
         specifier: link:../../plugins/dsh-notification
         version: link:../../plugins/dsh-notification
       dsh-pdf-markdown:
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: link:../../plugins/dsh-pdf-markdown
+        version: link:../../plugins/dsh-pdf-markdown
       tdd-enforcer:
         specifier: 0.6.2
         version: 0.6.2
 
 packages:
-
-  dsh-pdf-markdown@0.1.0:
-    resolution: {integrity: sha512-N0/08ZgVxm0gW3Z30OfcVsMDJS423h6ch03a5uBNGMkONFw2lUE546QYHIwc1NHVFFBKVPxQavdYuyzhuP5gDA==}
-    engines: {node: '>=22.19.0'}
 
   picomatch@4.0.7:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
@@ -35,8 +31,6 @@ packages:
     resolution: {integrity: sha512-DEIxdxZCRdCdi1h99fgPbzRvOzrElbVDmPMufSCJ+uaNPhsGJg/mo56blAWSASwFm5/E+zM+2jcy7oP1n70oZg==}
 
 snapshots:
-
-  dsh-pdf-markdown@0.1.0: {}
 
   picomatch@4.0.7: {}
 
