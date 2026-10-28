@@ -4,7 +4,7 @@
   "dependencies": {
     "dsh-mermaid": "link:../../plugins/dsh-mermaid",
     "dsh-notification": "link:../../plugins/dsh-notification",
-    "dsh-pdf-markdown": "link:../../plugins/dsh-pdf-markdown",
+    "dsh-pdf-markdown": "0.1.0",
     "tdd-enforcer": "0.6.2"
   },
   "dsh": {
