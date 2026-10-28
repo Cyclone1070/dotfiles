@@ -61,11 +61,12 @@
 # 0.1.7 has no preset directory to scan, so a declaration row is the only form.
 - insert:
     - id: preset-coding
-      name: '@deepseek-ai/dsh-agent-preset'
+      name: "@deepseek-ai/dsh-agent-preset"
       config:
         id: coding
         name: Coding
-        description: Debloated full coding agent — shell, files and images, skills,
+        description:
+          Debloated full coding agent — shell, files and images, skills,
           subagents, web, MCP; no plan mode, todos, workflow, ralph, fork, or
           tool-result pruning.
         order: 10
@@ -73,10 +74,10 @@
           # Stamps the current date/time and the browser time zone into every
           # request's runtime-context snapshot, refreshed per step.
           - id: time-context
-            name: '@deepseek-ai/dsh-time-context'
+            name: "@deepseek-ai/dsh-time-context"
 
           - id: persona
-            name: '@deepseek-ai/dsh-persona'
+            name: "@deepseek-ai/dsh-persona"
             config:
               # No `cwd` line here: 0.2.1 removed the `cwd` prompt variable, and the
               # host `dsh-working-directory` row now puts "Current working directory:
@@ -101,7 +102,7 @@
                 - <u>**DEFAULT TO A FEW SENTENCES.**</u> Go longer ONLY when the task itself needs it.
                 - <u>**NO UNNECESSARILY VERBOSE SENTENCES.**</u> Keep them short and simple, flowing straight to the point, with no filler or padding.
                 - <u>**STOP WHEN THE ANSWER IS COMPLETE:**</u> no recap, no closing summary, no offer to continue.
-                - <u>**EXPLAIN THROUGH HIGH-LEVEL REASONING IN PLAIN ENGLISH, BUILDING INTUITION FOR THE READER.**</u> <u>**NEVER**</u> explain with code or jargon unless explicitly asked for.
+                - <u>**EXPLAIN THROUGH HIGH-LEVEL REASONING IN PLAIN ENGLISH, FOCUS ON THE IDEA OF IT.**</u> <u>**NEVER**</u> explain with code or jargon unless explicitly asked for.
 
                 ## 2. <u>**STRUCTURED OUTPUT & VISUALS**</u>
 
@@ -136,7 +137,7 @@
                 > <u>**IF ANY ANSWER IS NO, FIX IT BEFORE YOU RESPOND.**</u>
 
           - id: agent-instructions
-            name: '@deepseek-ai/dsh-agent-instructions'
+            name: "@deepseek-ai/dsh-agent-instructions"
             config:
               maxBytes: 65536
 
@@ -149,15 +150,15 @@
           # Background work needs the host job runtime, and `tool-jobs` below is the
           # model-facing half of it.
           - id: tool-bash
-            name: '@deepseek-ai/dsh-tool-bash'
+            name: "@deepseek-ai/dsh-tool-bash"
             disabled: !!js process.platform === 'win32'
 
           - id: tool-pwsh
-            name: '@deepseek-ai/dsh-tool-pwsh'
+            name: "@deepseek-ai/dsh-tool-pwsh"
             disabled: !!js process.platform !== 'win32'
 
           - id: tool-jobs
-            name: '@deepseek-ai/dsh-tool-jobs'
+            name: "@deepseek-ai/dsh-tool-jobs"
 
           # ── filesystem ──────────────────────────────────────────────────────────────
 
@@ -165,7 +166,7 @@
           # realm. The `fs` service and its policy stay in the host. `read_image` is the
           # reason this row stays whole — see the header.
           - id: tool-fs
-            name: '@deepseek-ai/dsh-tool-fs'
+            name: "@deepseek-ai/dsh-tool-fs"
 
           # ── skills ──────────────────────────────────────────────────────────────────
 
@@ -175,10 +176,10 @@
           # and `tool-skill` gives them the catalog and loader; the merged catalog also
           # carries whatever the deployment registered globally.
           - id: skill-filesystem
-            name: '@deepseek-ai/dsh-skill-filesystem'
+            name: "@deepseek-ai/dsh-skill-filesystem"
 
           - id: tool-skill
-            name: '@deepseek-ai/dsh-tool-skill'
+            name: "@deepseek-ai/dsh-tool-skill"
 
           # ── goals ───────────────────────────────────────────────────────────────────
 
@@ -188,10 +189,10 @@
           # preset-scoped on purpose: `dsh-web-app` disables the command and tool rows on
           # the host plane, while the goal service and its session driver stay there.
           - id: command-goal
-            name: '@deepseek-ai/dsh-command-goal'
+            name: "@deepseek-ai/dsh-command-goal"
 
           - id: tool-goal
-            name: '@deepseek-ai/dsh-tool-goal'
+            name: "@deepseek-ai/dsh-tool-goal"
 
           # ── compaction ──────────────────────────────────────────────────────────────
 
@@ -213,10 +214,10 @@
               compaction: true
             config:
               - id: compaction-basic
-                name: '@deepseek-ai/dsh-compaction-basic'
+                name: "@deepseek-ai/dsh-compaction-basic"
 
               - id: command-compact
-                name: '@deepseek-ai/dsh-command-compact'
+                name: "@deepseek-ai/dsh-command-compact"
 
           # ── delegation ──────────────────────────────────────────────────────────────
 
@@ -234,17 +235,17 @@
             group: true
             config:
               - id: tool-subagent-control
-                name: '@deepseek-ai/dsh-tool-subagent-control'
+                name: "@deepseek-ai/dsh-tool-subagent-control"
 
               - id: tool-subagent-list-agents
-                name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
+                name: "@deepseek-ai/dsh-tool-subagent-control/list-agents"
 
               # `backgroundMode`/`enableRunInBackground` were removed in 0.2.1: the
               # tool now always returns a continuable activation (subagentId), so
               # background delegation is the only mode. `agentPreset` and
               # `allowedAgentPresets` are the new keys if per-child presets are wanted.
               - id: tool-subagent
-                name: '@deepseek-ai/dsh-tool-subagent'
+                name: "@deepseek-ai/dsh-tool-subagent"
                 config:
                   provider: spawn
                   toolName: subagent
@@ -254,7 +255,7 @@
               # matching Bundle in this Profile and restart the Host, then remove
               # `disabled` from the row. Host availability alone grants no tool.
               - id: tool-subagent-codex
-                name: '@deepseek-ai/dsh-tool-subagent'
+                name: "@deepseek-ai/dsh-tool-subagent"
                 disabled: true
                 config:
                   provider: codex
@@ -262,7 +263,7 @@
                   maxDepth: provider-managed
 
               - id: tool-subagent-claude-code
-                name: '@deepseek-ai/dsh-tool-subagent'
+                name: "@deepseek-ai/dsh-tool-subagent"
                 disabled: true
                 config:
                   provider: claude-code
@@ -274,13 +275,13 @@
           # Disabled on request: the question modal interrupts the turn, and the
           # model can ask in prose and stop instead. Flip `disabled` to restore.
           - id: tool-ask-user
-            name: '@deepseek-ai/dsh-tool-ask-user'
+            name: "@deepseek-ai/dsh-tool-ask-user"
             disabled: true
 
           # The `web` service and its search provider stay in the host composition; only
           # the model-facing tool is per-session.
           - id: tool-web
-            name: '@deepseek-ai/dsh-tool-web'
+            name: "@deepseek-ai/dsh-tool-web"
             config:
               fetch: true
               searchTimeoutMs: 60000
@@ -293,13 +294,18 @@
           # adds its tool schemas to every request, and a stdio server runs a local
           # program, so enable only what is needed.
           - id: mcp-example
-            name: '@deepseek-ai/dsh-mcp-client'
+            name: "@deepseek-ai/dsh-mcp-client"
             disabled: true
             config:
               serverName: example
               transport: stdio
               command: npx
-              args: [ '-y', '@modelcontextprotocol/server-filesystem', '/Users/mac/repos' ]
+              args:
+                [
+                  "-y",
+                  "@modelcontextprotocol/server-filesystem",
+                  "/Users/mac/repos",
+                ]
 - id: agent-preset-registry
   name: "@deepseek-ai/dsh-agent-preset-registry"
   config:
