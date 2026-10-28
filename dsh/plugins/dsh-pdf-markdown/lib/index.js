@@ -106,6 +106,7 @@ export function apply(ctx, config = {}) {
     description:
       'Convert a PDF into a Markdown file with its figures extracted as PNG assets and linked in place. ' +
       'Use this instead of reading a PDF directly: it recovers headings, reading order, tables and images, and it never returns the document body — read the returned markdown path. ' +
+      'For a quick text-only skim or a single page range, `gs -sDEVICE=txtwrite` is cheaper than a full conversion. ' +
       'The conversion runs on a remote worker and can take a minute or more on a long document.',
     parameters: PARAMETERS,
     output: OUTPUT,
