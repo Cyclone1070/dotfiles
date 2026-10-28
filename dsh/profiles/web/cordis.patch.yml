@@ -14,8 +14,8 @@
         # The shipped pi-ai catalog declares these at contextWindow 1000000 with
         # maxTokens 384000, which drives compaction-basic to a 550,464-token trigger
         # (1000000 - 384000 - 65536 headroom) and reserves 384k of output per request.
-        # These overrides pin them to the same values the free route uses, which
-        # reproduces an exact 256,000-token compaction trigger:
+        # These overrides pin them to values that reproduce an exact 256,000-token
+        # compaction trigger:
         #   354304 - 32768 - 65536 = 256000
         # modelOverrides reshapes named catalog models in place and leaves the other
         # 27 in the catalog untouched — unlike `models:`, which would replace it.
@@ -33,90 +33,9 @@
             maxTokens: 32768
           muse-spark-1.3-contributor:
             # Catalog: contextWindow 1048576, maxTokens 131072. Pinned for the same
-            # reason, and because this model is openai-responses on the catalog route
-            # — so unlike the hand-declared route it also gets the native
-            # x-opencode-session header, without the third-party plugin.
+            # reason as its siblings.
             contextWindow: 354304
             maxTokens: 32768
-      # Hand-declared route: ONLY the two free models, because pi-ai's baked-in
-      # opencode-go catalog does not describe them and modelOverrides cannot add.
-      # DeepSeek and Muse Spark come from the `opencode-go` catalog route above,
-      # which carries them natively with the session header already wired.
-      # This route exists solely for what the catalog is missing.
-      opencode-go-free:
-        displayName: OpenCode Go (Free)
-        apiKeyEnv: OPENCODE_GO_API_KEY
-        api: openai-completions
-        baseURL: https://opencode.ai/zen/go/v1
-        # SESSION HEADER — do NOT add a static `headers: {x-opencode-session: ...}`
-        # here. It would be a landmine, and a dead one.
-        #
-        # Why a header is required: this hand-declared route is built from the BARE
-        # pi-ai openAICompletionsApi (dsh-llm-pi-ai/lib/index.js:803), which never
-        # passes through withOpenCodeSessionHeader — that wrapper only exists inside
-        # pi-ai's two catalog factories (providers/opencode-go.js, opencode.js).
-        # Without the header the gateway returns 400 MissingSessionID.
-        #
-        # Why a static value is NOT a valid substitute: the gateway accepts
-        # x-session-affinity as a session id (verified HTTP 200), and pi-ai's bare
-        # transport will send exactly that header — but only when
-        # `compat.sendSessionAffinityHeaders` is set, and dsh-llm-pi-ai's COMPAT_GATE
-        # marks that field "withhold" (lib/index.js:403), so it cannot be configured.
-        # That withheld switch is the entire reason dsh-opencode-session-header exists,
-        # and the reason it cannot be removed from this profile.
-        #
-        # The plugin stamps a PER-CONVERSATION id at the fetch layer and overwrites
-        # unconditionally (Headers.set, plugin lib/index.js:170), so a static header
-        # here would never reach the wire anyway. A literal string is one id for every
-        # conversation, which would silently collapse per-conversation prompt-cache
-        # routing the moment the plugin is ever disabled.
-        models:
-          - id: space-bunny-free
-            name: Space Bunny
-            contextWindow: 354304
-            maxTokens: 32768
-            input:
-              - text
-              - image
-            reasoningEfforts:
-              off: null
-              low: low
-              high: high
-              max: max
-          # Free and unlimited on the Go plan, same openai-completions endpoint as the
-          # rest of this route. Every field below was probed against the live endpoint,
-          # not assumed:
-          #  - reasoningEfforts deliberately ABSENT. The gateway accepts every level
-          #    (including "off" as a literal string, which Space Bunny rejects), but
-          #    reasoning_tokens stay flat at ~189 across omit/minimal/low/medium/high/
-          #    xhigh/max. The parameter is a no-op here, so a selector would advertise
-          #    control that does not exist. It always reasons; nothing turns that off.
-          #  - `image` deliberately ABSENT. The gateway accepts image payloads with
-          #    HTTP 200, but the model misread 2 of 3 flat colour tests (blue->Black,
-          #    green->Red). Declaring image would let the harness hand it images it
-          #    silently misreads.
-          #  - contextWindow matches the 354304 its siblings use. Measured working to
-          #    444,457 prompt tokens, so there is verified headroom to raise it; the
-          #    advertised 1M is UNconfirmed (a 900k probe hit a 429 throttle, which
-          #    says nothing about the real ceiling).
-          - id: longcat-2.5-preview-free
-            name: LongCat 2.5 Preview Free
-            contextWindow: 354304
-            maxTokens: 32768
-            input:
-              - text
-            # Declared at your request. Every level below was probed and accepted
-            # (200) by the gateway — including a literal "off" string, which
-            # Space Bunny rejects. `off: null` still omits the field, matching the
-            # other rows. KNOWN LIMIT: reasoning_tokens stayed flat at ~189 across
-            # all of omit/minimal/low/medium/high/xhigh/max, so the upstream model
-            # appears to ignore this parameter. Expect the selector to work and the
-            # model's actual thinking to stay the same.
-            reasoningEfforts:
-              off: null
-              low: low
-              high: high
-              max: max
 - id: agent-default-model
   name: "@deepseek-ai/dsh-agent-default-model"
   config:
@@ -127,6 +46,13 @@
   name: "@deepseek-ai/dsh-client-ui-theme"
   config:
     fontSize: 15
+# The tool ships in the dsh-pdf-markdown bundle; this row only says where the
+# worker lives. `elitedesk` is a Tailscale MagicDNS name, so it resolves only
+# inside the tailnet and is useless to anyone reading this file.
+- id: pdf-markdown
+  name: dsh-pdf-markdown
+  config:
+    url: http://elitedesk:8765
 
 # ── agent presets ───────────────────────────────────────────────────────────
 # The `coding` preset is declared HERE, not as a separate bundle package: a
@@ -144,12 +70,18 @@
           tool-result pruning.
         order: 10
         plugins:
+          # Stamps the current date/time and the browser time zone into every
+          # request's runtime-context snapshot, refreshed per step.
+          - id: time-context
+            name: '@deepseek-ai/dsh-time-context'
+
           - id: persona
             name: '@deepseek-ai/dsh-persona'
             config:
+              # No `cwd` line here: 0.2.1 removed the `cwd` prompt variable, and the
+              # host `dsh-working-directory` row now puts "Current working directory:
+              # ..." in the runtime-context snapshot instead.
               suffix: |-
-                Your working directory is {{cwd}}.
-
                 > [!CAUTION]
                 > <u>**BINDING REMINDER — THE FIVE RULE SETS AT THE TOP OF THIS PROMPT ARE MANDATORY AND ARE RESTATED HERE ON PURPOSE: BE CONCISE · BE SCANNABLE · NEVER GUESS, VERIFY WITH PROOF · ASK BEFORE ANY DESTRUCTIVE GIT COMMAND · RED-GREEN-REFACTOR, 1–2 TESTS PER CYCLE.**</u>
               prefix: |-
@@ -307,13 +239,16 @@
               - id: tool-subagent-list-agents
                 name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
 
+              # `backgroundMode`/`enableRunInBackground` were removed in 0.2.1: the
+              # tool now always returns a continuable activation (subagentId), so
+              # background delegation is the only mode. `agentPreset` and
+              # `allowedAgentPresets` are the new keys if per-child presets are wanted.
               - id: tool-subagent
                 name: '@deepseek-ai/dsh-tool-subagent'
                 config:
                   provider: spawn
                   toolName: subagent
                   modelSelectionSettings: true
-                  backgroundMode: continuable
 
               # Production dsh does not install these optional providers. Install the
               # matching Bundle in this Profile and restart the Host, then remove
@@ -324,7 +259,6 @@
                 config:
                   provider: codex
                   toolName: subagent_codex
-                  backgroundMode: one-shot
                   maxDepth: provider-managed
 
               - id: tool-subagent-claude-code
@@ -333,7 +267,6 @@
                 config:
                   provider: claude-code
                   toolName: subagent_claude_code
-                  backgroundMode: one-shot
                   maxDepth: provider-managed
 
           # ── remaining model-facing rows ─────────────────────────────────────────────
@@ -372,8 +305,3 @@
   config:
     default: standard
     selectedDefault: coding
-- id: speech-to-text
-  name: "@deepseek-ai/dsh-experimental-speech-to-text"
-  config:
-    defaultProvider: sensevoice-local
-    language: en

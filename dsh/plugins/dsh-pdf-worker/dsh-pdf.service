@@ -1,0 +1,22 @@
+[Unit]
+Description=dsh-pdf worker (PDF → Markdown over HTTP)
+Documentation=https://github.com/Cyclone1070/dotfiles
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Bound to the Tailscale interface, so the endpoint is reachable only from the
+# tailnet. Replace the address with `tailscale ip -4` if the node is re-keyed.
+ExecStartPre=-/usr/bin/podman rm -f dsh-pdf
+ExecStart=/usr/bin/podman run --rm --name dsh-pdf \
+    -p 100.73.151.89:8765:8765 \
+    -v dsh-pdf-models:/models \
+    localhost/dsh-pdf-worker:0.1.0
+ExecStop=/usr/bin/podman stop -t 10 dsh-pdf
+Restart=always
+RestartSec=5
+TimeoutStartSec=600
+
+[Install]
+WantedBy=default.target

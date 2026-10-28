@@ -4,7 +4,7 @@
   "dependencies": {
     "dsh-mermaid": "link:../../plugins/dsh-mermaid",
     "dsh-notification": "link:../../plugins/dsh-notification",
-    "dsh-opencode-session-header": "^0.1.0",
+    "dsh-pdf-markdown": "link:../../plugins/dsh-pdf-markdown",
     "tdd-enforcer": "0.6.2"
   },
   "dsh": {
@@ -12,10 +12,10 @@
       "bundles": [
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-web-app",
-        "dsh-opencode-session-header",
         "tdd-enforcer",
         "dsh-notification",
-        "dsh-mermaid"
+        "dsh-mermaid",
+        "dsh-pdf-markdown"
       ],
       "patchReload": "live"
     }

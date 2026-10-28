@@ -1,0 +1,7 @@
+# dsh-pdf-markdown bundle patch: mounts the one-tool PDF converter into the
+# profile roster. The row is a bare plugin by package name; the node half runs
+# in the host process and registers the model-facing `pdf_to_markdown` tool.
+# No `dsh.client` declaration: there is nothing for the browser to render.
+- insert:
+    - id: pdf-markdown
+      name: 'dsh-pdf-markdown'

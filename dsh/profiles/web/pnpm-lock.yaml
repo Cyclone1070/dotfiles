@@ -14,18 +14,11 @@ importers:
       dsh-notification:
         specifier: link:../../plugins/dsh-notification
         version: link:../../plugins/dsh-notification
-      dsh-opencode-session-header:
-        specifier: ^0.1.0
-        version: 0.1.0
       tdd-enforcer:
         specifier: 0.6.2
         version: 0.6.2
 
 packages:
-
-  dsh-opencode-session-header@0.1.0:
-    resolution: {integrity: sha512-F0JUVoXs5/z8L2gLperzTbzcletIXSw0+jHiZduhkWz3WR6RE9wz6STSIM4MmvqtBnXJroKsPJXZt4hif2oYNA==}
-    engines: {node: '>=20'}
 
   picomatch@4.0.7:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
@@ -35,8 +28,6 @@ packages:
     resolution: {integrity: sha512-DEIxdxZCRdCdi1h99fgPbzRvOzrElbVDmPMufSCJ+uaNPhsGJg/mo56blAWSASwFm5/E+zM+2jcy7oP1n70oZg==}
 
 snapshots:
-
-  dsh-opencode-session-header@0.1.0: {}
 
   picomatch@4.0.7: {}
 
