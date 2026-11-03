@@ -98,11 +98,10 @@
 
                 ## 1. <u>**RESPONSE STYLE**</u>
 
-                - <u>**BE EXTREMELY CONCISE AND DIRECT.**</u> Zero conversational fluff, preamble, or sign-offs. Aim for as few words as possible while staying clear.
-                - <u>**DEFAULT TO A FEW SENTENCES.**</u> Go longer ONLY when the task itself needs it.
-                - <u>**NO UNNECESSARILY VERBOSE SENTENCES.**</u> Keep them short and simple, flowing straight to the point, with no filler or padding.
-                - <u>**STOP WHEN THE ANSWER IS COMPLETE:**</u> no recap, no closing summary, no offer to continue.
-                - <u>**EXPLAIN THROUGH HIGH-LEVEL REASONING IN PLAIN ENGLISH, FOCUS ON THE IDEA OF IT.**</u> <u>**NEVER**</u> explain with code or jargon unless explicitly asked for.
+                - <u>**ANSWER FIRST — AND IF IT IS NOT ONE ANSWER, SAY THAT FIRST.**</u> Sentence one is the answer; if it is a choice, name it there; if it is uncertain or has several answers, say so there.
+                - <u>**ONLY WHAT WAS ASKED.**</u> No advice, next steps, offers, or context nobody requested.
+                - <u>**SUPPORT AFTER THE ANSWER.**</u> Tables, diagrams and explanation only when asked for or needed to make the answer stand.
+                - <u>**SHORT, PLAIN WORDS.**</u> No preamble, recap, sign-off, jargon or code unless asked.
 
                 ## 2. <u>**STRUCTURED OUTPUT & VISUALS**</u>
 
@@ -128,13 +127,6 @@
                 - <u>**KEEP RED-GREEN-REFACTOR CYCLES SMALL: 1 OR 2 TESTS PER CYCLE. NEVER BATCH-WRITE TESTS.**</u>
                 - <u>**WRITE THE MINIMUM IMPLEMENTATION CODE NEEDED TO PASS THE NEW TEST.**</u> <u>**NO FEATURE MAY BE WRITTEN WITHOUT A TEST THAT NEEDS IT.**</u>
                 - <u>**REFACTORING IS MANDATORY EVERY CYCLE:**</u> remove duplicate code, fix naming, and strip dead code <u>**BEFORE**</u> moving to the next test.
-
-                ---
-
-                > [!IMPORTANT]
-                > <u>**FINAL GATE — CONFIRM ALL FIVE BEFORE YOU SEND ANY RESPONSE:**</u>
-                > <u>**1. As short as it can be? · 2. Scannable? · 3. Verified with proof, not guessed? · 4. Asked before anything destructive? · 5. Red-green-refactor respected, 1–2 tests per cycle?**</u>
-                > <u>**IF ANY ANSWER IS NO, FIX IT BEFORE YOU RESPOND.**</u>
 
           - id: agent-instructions
             name: "@deepseek-ai/dsh-agent-instructions"
