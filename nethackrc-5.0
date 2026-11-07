@@ -25,6 +25,7 @@
 # NetHack says "The only choice is: tty" and you comment this out.
 OPTIONS=windowtype:curses
 OPTIONS=color
+OPTIONS=!tip
 # Vi keys: h j k l, with y u b n for diagonals. This is also NetHack's
 # built-in default, so this line only makes the choice explicit.
 #   number_pad:0   = vi keys
@@ -38,15 +39,6 @@ OPTIONS=align_message:top
 # On, which means "ask" every new game. This option is config-file only --
 # it cannot be changed once the game is running.
 OPTIONS=!tutorial
-
-# --- Meta / Alt (Option) key -------------------------------------------
-# NetHack does NOT treat "ESC c" as M-c unless this is on. Terminals send
-# Option+h as ESC followed by 'h', so without this line every Meta command
-# silently does nothing (the ESC just cancels, then 'h' acts as movement).
-# Ghostty already sends ESC for Option on US layouts (macos-option-as-alt
-# defaults to true there), so this is the whole fix.
-# Cost: with altmeta on, a lone ESC must be pressed twice.
-OPTIONS=altmeta
 
 # --- Map glyphs & corridor visibility -----------------------------------
 # Lit and dark corridors are two different NetHack symbols (S_litcorr vs
