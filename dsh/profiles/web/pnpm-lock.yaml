@@ -18,8 +18,8 @@ importers:
         specifier: link:../../plugins/dsh-pdf-markdown
         version: link:../../plugins/dsh-pdf-markdown
       tdd-enforcer:
-        specifier: 0.6.2
-        version: 0.6.2
+        specifier: 0.7.0
+        version: 0.7.0
 
 packages:
 
@@ -27,13 +27,13 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  tdd-enforcer@0.6.2:
-    resolution: {integrity: sha512-DEIxdxZCRdCdi1h99fgPbzRvOzrElbVDmPMufSCJ+uaNPhsGJg/mo56blAWSASwFm5/E+zM+2jcy7oP1n70oZg==}
+  tdd-enforcer@0.7.0:
+    resolution: {integrity: sha512-MBmkusM5gPr22EVP7dCSsAQALY8ypo3HIjnA2UiXppf5ozOz8UHxQ7zoA4tzRKL9PaD57BpLRvSV9/vysyJHpQ==}
 
 snapshots:
 
   picomatch@4.0.7: {}
 
-  tdd-enforcer@0.6.2:
+  tdd-enforcer@0.7.0:
     dependencies:
       picomatch: 4.0.7

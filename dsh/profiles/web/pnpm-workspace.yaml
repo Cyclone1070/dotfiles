@@ -7,3 +7,4 @@ minimumReleaseAgeExclude:
   - tdd-enforcer@0.5.0
   - tdd-enforcer@0.6.0
   - tdd-enforcer@0.6.1
+  - tdd-enforcer@0.7.0
