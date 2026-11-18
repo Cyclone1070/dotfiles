@@ -36,9 +36,6 @@ fi
 alias ls='lsd -ltr --group-dirs=first --date=relative --blocks=size,date,git,name'
 alias lsa='lsd -a -ltr --group-dirs=first --date=relative --blocks=size,date,name'
 
-# nethack 
-alias nethack='ssh -o SetEnv="DGLAUTH=cyclone1070:h0angmai" nethack@au.hardfought.org'
-
 # map cd to zoxide
 alias cd='z'
 

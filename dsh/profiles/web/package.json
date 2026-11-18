@@ -4,8 +4,7 @@
   "dependencies": {
     "dsh-mermaid": "link:../../plugins/dsh-mermaid",
     "dsh-notification": "link:../../plugins/dsh-notification",
-    "dsh-pdf-markdown": "link:../../plugins/dsh-pdf-markdown",
-    "tdd-enforcer": "0.7.0"
+    "dsh-pdf-markdown": "link:../../plugins/dsh-pdf-markdown"
   },
   "dsh": {
     "profile": {
@@ -14,8 +13,7 @@
         "@deepseek-ai/dsh-web-app",
         "dsh-notification",
         "dsh-mermaid",
-        "dsh-pdf-markdown",
-        "tdd-enforcer"
+        "dsh-pdf-markdown"
       ],
       "patchReload": "live"
     }
