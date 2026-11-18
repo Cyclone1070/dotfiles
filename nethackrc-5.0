@@ -25,6 +25,9 @@
 # NetHack says "The only choice is: tty" and you comment this out.
 OPTIONS=windowtype:curses
 OPTIONS=color
+# Hardfought's sysconf turns this on; brew's macOS sysconf sets it off.
+# TTY-only: renders black glyphs as bold black rather than blue.
+OPTIONS=use_darkgray
 OPTIONS=!tip
 # Vi keys: h j k l, with y u b n for diagonals. This is also NetHack's
 # built-in default, so this line only makes the choice explicit.
@@ -48,10 +51,16 @@ OPTIONS=!tutorial
 #     Enhanced1/2   U+2591 / U+2592     (UTF-8, works in any modern term)
 #     IBMgraphics   raw CP437 bytes     (mangles in a UTF-8 terminal)
 # Enhanced also gives Unicode box-drawing walls.
-OPTIONS=symset:Enhanced1
-#OPTIONS=symset:Enhanced2
+#OPTIONS=symset:Enhanced1
+OPTIONS=symset:Enhanced2
 #OPTIONS=symset:DECgraphics
 #OPTIONS=symset:IBMgraphics
+
+# Neither Enhanced1 nor Enhanced2 defines S_boulder, so boulders fall back
+# to S_rock, which is '`'. Hardfought's server-wide sysconf sets this for
+# everyone; vanilla/Homebrew's does not. `boulder` is the deprecated alias
+# for S_boulder, but it still works in 5.0 and also covers the rogue set.
+OPTIONS=boulder:0
 
 # Show corridors you can actually see as lit, and darken the parts of lit
 # rooms you can no longer see. These two are the community standard:
@@ -131,6 +140,11 @@ AUTOPICKUP_EXCEPTION=">.*worthless piece.*"
 OPTIONS=perm_invent
 OPTIONS=sortloot:full
 OPTIONS=sortpack
+# Hardfought's sysconf sets the bare `menu_objsyms`, which means mode 1:
+# show the object-class symbol on each inventory class header line.
+OPTIONS=menu_objsyms:1
+# Show a popup item menu instead of the "[ij or ?*]" text prompt.
+OPTIONS=force_invmenu
 
 
 # --------------------------------------------------------------- SAFETY
@@ -168,6 +182,8 @@ OPTIONS=hilite_status:gold/up/yellow/down/brown
 
 
 # ------------------------------------------------------------ MESSAGES
+# Hardfought default: don't report every mistyped command key.
+MSGTYPE=hide "Unknown command *"
 # Delayed instadeaths: always stop for these.
 MSGTYPE=stop "You are slowing down."
 MSGTYPE=stop "You find it hard to breathe."
