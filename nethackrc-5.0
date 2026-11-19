@@ -25,6 +25,8 @@
 # NetHack says "The only choice is: tty" and you comment this out.
 OPTIONS=windowtype:curses
 OPTIONS=color
+# Animate thrown objects/beams (aklys tether, etc.).
+OPTIONS=timed_delay
 # Hardfought's sysconf turns this on; brew's macOS sysconf sets it off.
 # TTY-only: renders black glyphs as bold black rather than blue.
 OPTIONS=use_darkgray
@@ -143,8 +145,6 @@ OPTIONS=sortpack
 # Hardfought's sysconf sets the bare `menu_objsyms`, which means mode 1:
 # show the object-class symbol on each inventory class header line.
 OPTIONS=menu_objsyms:1
-# Show a popup item menu instead of the "[ij or ?*]" text prompt.
-OPTIONS=force_invmenu
 
 
 # --------------------------------------------------------------- SAFETY
@@ -321,3 +321,5 @@ MENUCOLOR="Info on what a given key does."=no-color&none
 MENUCOLOR="Full list of keyboard commands."=no-color&none
 MENUCOLOR="altkeyhandler"=no-color&none
 MENUCOLOR="fruit.*\["=no-color&none
+# Stoning cure: make lizard corpses stand out in menus.
+MENUCOLOR=" lizard corpse"=magenta
